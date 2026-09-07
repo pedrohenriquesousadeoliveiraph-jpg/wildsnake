@@ -6972,7 +6972,7 @@ body.mobile-mode .skin-grid{
     left:50%;
     top:48%;
     transform:translate(-50%,-50%) rotate(-2deg);
-    opacity:.17;
+    opacity:.34;
     text-align:center;
     filter:drop-shadow(0 0 28px rgba(53,230,155,.20));
 }
@@ -7302,13 +7302,504 @@ body.mobile-mode .skin-grid{
     }
 }
 
-@media(prefers-reduced-motion:reduce){
-    .private-lobby-bg *,
-    .lobby-glow,
-    .lobby-particle,
-    .lobby-worm{
-        animation:none!important;
+
+
+/* =========================================================
+   LOBBY - ANIMAÇÃO VISÍVEL DAS COBRINHAS
+========================================================= */
+
+.private-lobby-bg .lobby-worm{
+    animation-play-state:running!important;
+    animation-timing-function:linear!important;
+}
+
+.private-lobby-bg .lobby-worm i,
+.private-lobby-bg .lobby-worm b{
+    animation:lobbyWormBodyWave 1.15s ease-in-out infinite alternate;
+    animation-play-state:running!important;
+}
+
+.private-lobby-bg .lobby-worm i:nth-child(2){animation-delay:-.12s}
+.private-lobby-bg .lobby-worm i:nth-child(3){animation-delay:-.24s}
+.private-lobby-bg .lobby-worm i:nth-child(4){animation-delay:-.36s}
+.private-lobby-bg .lobby-worm i:nth-child(5){animation-delay:-.48s}
+.private-lobby-bg .lobby-worm i:nth-child(6){animation-delay:-.60s}
+.private-lobby-bg .lobby-worm i:nth-child(7){animation-delay:-.72s}
+.private-lobby-bg .lobby-worm i:nth-child(8){animation-delay:-.84s}
+.private-lobby-bg .lobby-worm b{animation-delay:-.96s}
+
+@keyframes lobbyWormBodyWave{
+    from{translate:0 -4px;scale:.94}
+    to{translate:0 5px;scale:1.05}
+}
+
+.private-lobby-bg .lobby-worm-green{
+    animation-name:lobbyGreenTravel!important;
+    animation-duration:16s!important;
+    animation-iteration-count:infinite!important;
+}
+
+.private-lobby-bg .lobby-worm-purple{
+    animation-name:lobbyPurpleTravel!important;
+    animation-duration:19s!important;
+    animation-iteration-count:infinite!important;
+}
+
+.private-lobby-bg .lobby-worm-blue{
+    animation-name:lobbyBlueTravel!important;
+    animation-duration:18s!important;
+    animation-iteration-count:infinite!important;
+}
+
+.private-lobby-bg .lobby-worm-yellow{
+    animation-name:lobbyYellowTravel!important;
+    animation-duration:22s!important;
+    animation-iteration-count:infinite!important;
+}
+
+.private-lobby-bg .lobby-worm-pink{
+    animation-name:lobbyPinkTravel!important;
+    animation-duration:20s!important;
+    animation-iteration-count:infinite!important;
+}
+
+@keyframes lobbyGreenTravel{
+    0%{transform:translate3d(-130px,-55px,0) rotate(22deg) scale(.92)}
+    35%{transform:translate3d(60px,35px,0) rotate(35deg) scale(1.03)}
+    70%{transform:translate3d(210px,100px,0) rotate(17deg) scale(.98)}
+    100%{transform:translate3d(-130px,-55px,0) rotate(22deg) scale(.92)}
+}
+
+@keyframes lobbyPurpleTravel{
+    0%{transform:translate3d(-120px,65px,0) rotate(-15deg) scale(.76)}
+    38%{transform:translate3d(45px,-25px,0) rotate(8deg) scale(.88)}
+    72%{transform:translate3d(190px,60px,0) rotate(23deg) scale(.80)}
+    100%{transform:translate3d(-120px,65px,0) rotate(-15deg) scale(.76)}
+}
+
+@keyframes lobbyBlueTravel{
+    0%{transform:translate3d(-80px,95px,0) rotate(39deg) scale(.82)}
+    42%{transform:translate3d(80px,-10px,0) rotate(55deg) scale(.94)}
+    74%{transform:translate3d(195px,-105px,0) rotate(27deg) scale(.86)}
+    100%{transform:translate3d(-80px,95px,0) rotate(39deg) scale(.82)}
+}
+
+@keyframes lobbyYellowTravel{
+    0%{transform:translate3d(-90px,55px,0) rotate(-20deg) scale(.62)}
+    45%{transform:translate3d(65px,-15px,0) rotate(-5deg) scale(.76)}
+    78%{transform:translate3d(210px,-55px,0) rotate(8deg) scale(.69)}
+    100%{transform:translate3d(-90px,55px,0) rotate(-20deg) scale(.62)}
+}
+
+@keyframes lobbyPinkTravel{
+    0%{transform:translate3d(95px,-75px,0) rotate(12deg) scale(.60)}
+    44%{transform:translate3d(-25px,15px,0) rotate(29deg) scale(.73)}
+    76%{transform:translate3d(-180px,85px,0) rotate(16deg) scale(.67)}
+    100%{transform:translate3d(95px,-75px,0) rotate(12deg) scale(.60)}
+}
+
+
+/* =========================================================
+   TROCA SEGURA DE NAVEGADOR
+========================================================= */
+
+.session-transfer-overlay{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:
+        radial-gradient(circle at 50% 30%,rgba(53,230,155,.08),transparent 32%),
+        rgba(0,5,8,.88);
+    backdrop-filter:blur(18px);
+}
+
+.session-transfer-overlay.hidden{
+    display:none!important;
+}
+
+.session-transfer-card{
+    width:min(520px,94vw);
+    padding:28px;
+    border:1px solid rgba(53,230,155,.22);
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 84% 12%,rgba(53,230,155,.09),transparent 30%),
+        linear-gradient(145deg,#0d1a20,#050a0e);
+    box-shadow:0 35px 100px rgba(0,0,0,.68);
+    text-align:center;
+}
+
+.session-transfer-icon{
+    display:grid;
+    place-items:center;
+    width:68px;
+    height:68px;
+    margin:0 auto 15px;
+    border:1px solid rgba(53,230,155,.24);
+    border-radius:20px;
+    background:rgba(53,230,155,.08);
+    font-size:31px;
+}
+
+.session-transfer-title{
+    margin:0 0 9px;
+    color:#f0f6f4;
+    font-size:23px;
+    font-weight:1000;
+}
+
+.session-transfer-text{
+    margin:0 auto;
+    max-width:410px;
+    color:#8fa0a7;
+    font-size:11px;
+    line-height:1.65;
+}
+
+.session-transfer-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:22px;
+}
+
+.session-transfer-actions button{
+    min-height:48px;
+    border-radius:12px;
+    font-size:10px;
+    font-weight:1000;
+}
+
+.session-transfer-approve{
+    border:0;
+    background:linear-gradient(180deg,#3deaa9,#20c98f);
+    color:#03110c;
+}
+
+.session-transfer-deny{
+    border:1px solid rgba(255,255,255,.10);
+    background:#111b20;
+    color:#c4d0d5;
+}
+
+@media(max-width:560px){
+    .session-transfer-actions{
+        grid-template-columns:1fr;
     }
+}
+
+
+/* =========================================================
+   QR EXTERNO -> CONTA AUTOMÁTICA -> SALA / TUTORIAL
+========================================================= */
+
+.qr-invite-modal{
+    position:fixed;
+    inset:0;
+    z-index:16000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    overflow:auto;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(53,230,155,.12),transparent 35%),
+        rgba(0,4,6,.90);
+    backdrop-filter:blur(18px);
+}
+
+.qr-invite-card{
+    width:min(520px,96vw);
+    padding:24px;
+    border:1px solid rgba(53,230,155,.20);
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 90% 5%,rgba(168,121,255,.10),transparent 30%),
+        linear-gradient(180deg,#101a20,#050b0f);
+    box-shadow:
+        0 40px 120px rgba(0,0,0,.72),
+        0 0 45px rgba(53,230,155,.05);
+    text-align:center;
+}
+
+.qr-invite-icon{
+    display:grid;
+    place-items:center;
+    width:58px;
+    height:58px;
+    margin:0 auto 12px;
+    border:1px solid rgba(53,230,155,.24);
+    border-radius:18px;
+    background:rgba(53,230,155,.08);
+    font-size:28px;
+}
+
+.qr-invite-kicker{
+    color:#63efb2;
+    font-size:8px;
+    font-weight:1000;
+    letter-spacing:1.5px;
+}
+
+.qr-invite-card h2{
+    margin:7px 0 8px;
+    color:#f0f5f7;
+    font-size:24px;
+    line-height:1.05;
+    font-weight:1000;
+}
+
+.qr-invite-card > p{
+    margin:0 auto 15px;
+    max-width:410px;
+    color:#8b9ba3;
+    font-size:10px;
+    line-height:1.55;
+}
+
+.qr-invite-room{
+    margin:14px 0;
+    padding:14px;
+    border:1px solid rgba(173,118,255,.24);
+    border-radius:15px;
+    background:rgba(92,52,145,.08);
+}
+
+.qr-invite-room small,
+.qr-invite-room span{
+    display:block;
+}
+
+.qr-invite-room small{
+    margin-bottom:5px;
+    color:#8f849c;
+    font-size:7px;
+    font-weight:1000;
+    letter-spacing:1px;
+}
+
+.qr-invite-room strong{
+    display:block;
+    color:#d4adff;
+    font-size:25px;
+    font-weight:1000;
+    letter-spacing:1.3px;
+}
+
+.qr-invite-room span{
+    margin-top:4px;
+    color:#9da7ad;
+    font-size:9px;
+}
+
+.qr-auto-account-notice{
+    margin:12px 0;
+    padding:11px 12px;
+    border:1px solid rgba(56,168,255,.20);
+    border-radius:12px;
+    background:rgba(56,168,255,.06);
+    text-align:left;
+}
+
+.qr-auto-account-notice strong,
+.qr-auto-account-notice span{
+    display:block;
+}
+
+.qr-auto-account-notice strong{
+    margin-bottom:4px;
+    color:#8bd2ff;
+    font-size:8px;
+}
+
+.qr-auto-account-notice span{
+    color:#81939e;
+    font-size:8px;
+    line-height:1.5;
+}
+
+.qr-invite-recommendation{
+    margin:12px 0 13px;
+    padding:11px;
+    border:1px solid rgba(255,211,90,.18);
+    border-radius:12px;
+    background:rgba(255,211,90,.055);
+    color:#ad9f72;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.qr-invite-recommendation strong{
+    color:#ffd35a;
+}
+
+.qr-invite-status{
+    min-height:17px;
+    margin:6px 0 8px;
+    color:#91a2aa;
+    font-size:9px;
+}
+
+.qr-invite-status.error{
+    color:#ff7f93;
+}
+
+.qr-invite-actions{
+    display:grid;
+    gap:9px;
+}
+
+.qr-invite-actions button{
+    min-height:50px;
+    border-radius:13px;
+    font-size:10px;
+    font-weight:1000;
+}
+
+.qr-invite-tutorial{
+    border:0;
+    background:linear-gradient(180deg,#43efb2,#20c98e);
+    color:#03110c;
+    box-shadow:0 12px 32px rgba(35,221,155,.18);
+}
+
+.qr-invite-join{
+    border:1px solid rgba(255,255,255,.11);
+    background:#111b21;
+    color:#d8e3e7;
+}
+
+@media(max-width:560px){
+    .qr-invite-modal{
+        align-items:flex-end;
+        padding:10px;
+    }
+
+    .qr-invite-card{
+        width:100%;
+        max-height:92dvh;
+        overflow:auto;
+        padding:20px 16px;
+        border-radius:22px 22px 18px 18px;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .qr-invite-card h2{
+        font-size:21px;
+    }
+}
+
+
+
+/* =========================================================
+   QR EXTERNO - CONEXÃO DIRETA PARA CONTA JÁ EXISTENTE
+========================================================= */
+.qr-direct-connect-screen{
+    position:fixed;
+    inset:0;
+    z-index:30000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:
+        radial-gradient(circle at 50% 36%,rgba(53,230,155,.12),transparent 30%),
+        rgba(1,7,8,.96);
+    backdrop-filter:blur(18px);
+}
+
+.qr-direct-connect-screen.hidden{
+    display:none!important;
+}
+
+.qr-direct-connect-card{
+    width:min(430px,94vw);
+    padding:27px 22px;
+    border:1px solid rgba(53,230,155,.20);
+    border-radius:22px;
+    background:
+        linear-gradient(180deg,rgba(12,24,28,.96),rgba(4,11,14,.98));
+    box-shadow:0 30px 100px rgba(0,0,0,.62);
+    text-align:center;
+}
+
+.qr-direct-connect-logo{
+    margin-bottom:11px;
+    color:#ecf8f3;
+    font-size:27px;
+    font-weight:1000;
+    letter-spacing:-1px;
+}
+
+.qr-direct-connect-logo span{
+    color:#35e69b;
+}
+
+.qr-direct-connect-title{
+    margin:0 0 7px;
+    color:#e7efec;
+    font-size:16px;
+    font-weight:1000;
+}
+
+.qr-direct-connect-room{
+    display:inline-block;
+    margin:5px 0 15px;
+    padding:7px 11px;
+    border:1px solid rgba(177,124,255,.24);
+    border-radius:999px;
+    background:rgba(177,124,255,.07);
+    color:#cfadff;
+    font-size:10px;
+    font-weight:1000;
+    letter-spacing:1px;
+}
+
+.qr-direct-connect-status{
+    min-height:18px;
+    color:#809097;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.qr-direct-connect-status.error{
+    color:#ff8190;
+}
+
+.qr-direct-connect-spinner{
+    width:42px;
+    height:42px;
+    margin:0 auto 18px;
+    border:4px solid rgba(255,255,255,.08);
+    border-top-color:#35e69b;
+    border-radius:50%;
+    animation:qrDirectSpin .75s linear infinite;
+    box-shadow:0 0 18px rgba(53,230,155,.10);
+}
+
+@keyframes qrDirectSpin{
+    to{transform:rotate(360deg)}
+}
+
+.qr-direct-connect-retry{
+    display:none;
+    width:100%;
+    min-height:46px;
+    margin-top:15px;
+    border:0;
+    border-radius:12px;
+    background:#35e69b;
+    color:#04130e;
+    font-weight:1000;
+    cursor:pointer;
+}
+
+.qr-direct-connect-retry.show{
+    display:block;
 }
 
 </style>
@@ -8689,6 +9180,80 @@ body.mobile-mode .skin-grid{
 
 </section>
 
+
+
+<!-- MODAL - CONVITE ABERTO PELO QR DO CELULAR -->
+<div
+    id="externalQrInviteModal"
+    class="qr-invite-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="externalQrInviteTitle"
+>
+    <div class="qr-invite-card">
+
+        <div class="qr-invite-icon">📱</div>
+
+        <div class="qr-invite-kicker">
+            CONVITE DE SALA PRIVADA
+        </div>
+
+        <h2 id="externalQrInviteTitle">
+            Você abriu o QR Code pelo celular
+        </h2>
+
+        <p id="externalQrInviteMessage">
+            Detectamos um convite para uma sala privada do WildSnake.
+        </p>
+
+        <div class="qr-invite-room">
+            <small>SALA ENCONTRADA</small>
+            <strong id="externalQrInviteCode">WILD-----</strong>
+            <span id="externalQrInviteRoomName">Sala WildSnake</span>
+        </div>
+
+        <div
+            id="externalQrAutoAccountNotice"
+            class="qr-auto-account-notice hidden"
+        >
+            <strong>CONTA CRIADA AUTOMATICAMENTE ✓</strong>
+            <span>
+                Criamos uma conta WildSnake neste aparelho para você entrar.
+                Depois, conecte ao Google no perfil para proteger seu progresso.
+            </span>
+        </div>
+
+        <div class="qr-invite-recommendation">
+            ⭐ <strong>Recomendamos o tutorial.</strong> Se você entrar direto na sala, o tutorial e o bônus serão perdidos para esta conta.
+            No final você recebe o bônus inicial e depois conectamos você
+            automaticamente a esta sala.
+        </div>
+
+        <div
+            id="externalQrInviteStatus"
+            class="qr-invite-status"
+        ></div>
+
+        <div class="qr-invite-actions">
+            <button
+                id="externalQrTutorialButton"
+                class="qr-invite-tutorial"
+                type="button"
+            >
+                🎓 VER TUTORIAL + BÔNUS
+            </button>
+
+            <button
+                id="externalQrJoinButton"
+                class="qr-invite-join"
+                type="button"
+            >
+                ▶ ENTRAR DIRETO NA SALA
+            </button>
+        </div>
+
+    </div>
+</div>
 
 <!-- MODAL ESCANEAR QR DA SALA -->
 <div
@@ -15005,6 +15570,31 @@ function bindSocketEvents(){
 
 
     socket.on(
+        "sessionTransferRequested",
+        data=>{
+
+            v13ShowSessionTransferModal(
+                data
+            );
+
+        }
+    );
+
+    socket.on(
+        "sessionReplaced",
+        data=>{
+
+            v13ForceLocalSessionExit(
+                data?.message
+                ||
+                "Sua conta foi transferida para outro navegador."
+            );
+
+        }
+    );
+
+
+    socket.on(
         "disconnect",
         ()=>{
 
@@ -15419,8 +16009,19 @@ function bindSocketEvents(){
                 &&
                 onlineRoomId
             ){
-                spectatingOnline = true;
+                /*
+                   Ao morrer, NÃO ativa o modo câmera automaticamente.
+                   Ele só será ativado se o jogador clicar em
+                   "ASSISTIR PARTIDA".
+                */
+                spectatingOnline = false;
                 spectatorTargetId = null;
+
+                document.getElementById(
+                    "spectatorHud"
+                )?.classList.remove(
+                    "show"
+                );
 
                 const replayButton =
                     document.getElementById(
@@ -15758,10 +16359,26 @@ function renderPrivateRoomQr(
         return;
     }
 
+    const inviteUrl =
+        new URL(
+            "/",
+            location.origin
+        );
+
+    inviteUrl.searchParams.set(
+        "room",
+        normalized
+    );
+
+    inviteUrl.searchParams.set(
+        "qr",
+        "1"
+    );
+
     new QRCode(
         box,
         {
-            text:normalized,
+            text:inviteUrl.toString(),
             width:170,
             height:170,
             colorDark:"#07110d",
@@ -22229,6 +22846,20 @@ function showDeath(
     serverData=null
 ){
 
+    /*
+       O HUD do espectador nunca deve aparecer só porque o
+       jogador morreu. Ele é exibido exclusivamente após o
+       clique em "ASSISTIR PARTIDA".
+    */
+    spectatingOnline = false;
+    spectatorTargetId = null;
+
+    document.getElementById(
+        "spectatorHud"
+    )?.classList.remove(
+        "show"
+    );
+
     const isOnline =
         gameMode!=="bots";
 
@@ -24180,6 +24811,14 @@ function v13ShowMenuAfterAuth(){
     v13RefreshProfileUI();
     void v13RefreshRewardInbox();
 
+    /*
+       Mantém um socket autenticado vivo no menu para o servidor
+       conseguir avisar se outro navegador tentar usar a conta.
+    */
+    if(v13Auth?.token){
+        void ensureSocketConnected();
+    }
+
 }
 
 
@@ -24211,6 +24850,21 @@ function v13ShowAuthGate(){
 function v13Logout(){
 
     try{
+        if(
+            socket
+            &&
+            socket.connected
+            &&
+            v13Auth?.token
+        ){
+            socket.emit(
+                "logoutSession"
+            );
+        }
+    }
+    catch{}
+
+    try{
         if(v13SupabaseClient){
             v13SupabaseClient.auth.signOut();
         }
@@ -24235,6 +24889,9 @@ function v13Logout(){
             socket.emit(
                 "leaveRoom"
             );
+
+            socket.disconnect();
+            socket = null;
 
         }
 
@@ -25254,6 +25911,378 @@ document.getElementById("rewardInboxOverlay")?.addEventListener("click",event=>{
     }
 });
 
+
+/* =========================================================
+   V13.15 - UMA CONTA POR NAVEGADOR
+========================================================= */
+
+let v13SessionTransferPollTimer =
+    null;
+
+let v13CurrentTransferRequestId =
+    null;
+
+
+function v13CloseSessionTransferModal(){
+
+    document.getElementById(
+        "sessionTransferOverlay"
+    )?.remove();
+
+}
+
+
+function v13ShowSessionTransferModal(
+    data
+){
+
+    if(
+        !data?.requestId
+        ||
+        !socket
+    ){
+        return;
+    }
+
+    v13CloseSessionTransferModal();
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+    overlay.id =
+        "sessionTransferOverlay";
+
+    overlay.className =
+        "session-transfer-overlay";
+
+    overlay.innerHTML = `
+        <div class="session-transfer-card">
+            <div class="session-transfer-icon">🖥️</div>
+
+            <h2 class="session-transfer-title">
+                OUTRO NAVEGADOR QUER ENTRAR
+            </h2>
+
+            <p class="session-transfer-text">
+                Sua conta WildSnake já está conectada aqui.
+                Outro navegador tentou entrar na mesma conta.
+                Só permita a troca se foi você.
+            </p>
+
+            <div class="session-transfer-actions">
+                <button
+                    class="session-transfer-deny"
+                    id="sessionTransferDeny"
+                    type="button"
+                >
+                    MANTER NESTE NAVEGADOR
+                </button>
+
+                <button
+                    class="session-transfer-approve"
+                    id="sessionTransferApprove"
+                    type="button"
+                >
+                    MUDAR DE NAVEGADOR
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(
+        overlay
+    );
+
+    document.getElementById(
+        "sessionTransferDeny"
+    ).onclick =
+    ()=>{
+
+        socket.emit(
+            "denySessionTransfer",
+            {
+                requestId:
+                    data.requestId
+            },
+            response=>{
+
+                if(response?.ok){
+                    v13CloseSessionTransferModal();
+
+                    toast?.(
+                        "Este navegador continua usando a conta."
+                    );
+                }
+
+            }
+        );
+
+    };
+
+    document.getElementById(
+        "sessionTransferApprove"
+    ).onclick =
+    ()=>{
+
+        const button =
+            document.getElementById(
+                "sessionTransferApprove"
+            );
+
+        if(button){
+            button.disabled =
+                true;
+
+            button.textContent =
+                "TRANSFERINDO...";
+        }
+
+        socket.emit(
+            "approveSessionTransfer",
+            {
+                requestId:
+                    data.requestId
+            },
+            response=>{
+
+                if(!response?.ok){
+                    if(button){
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "MUDAR DE NAVEGADOR";
+                    }
+
+                    toast?.(
+                        response?.error
+                        ||
+                        "Não foi possível transferir a conta."
+                    );
+                }
+
+            }
+        );
+
+    };
+
+}
+
+
+function v13ForceLocalSessionExit(
+    message
+){
+
+    if(v13SessionTransferPollTimer){
+        clearInterval(
+            v13SessionTransferPollTimer
+        );
+
+        v13SessionTransferPollTimer =
+            null;
+    }
+
+    v13CloseSessionTransferModal();
+
+    try{
+        localStorage.removeItem(
+            V13_AUTH_KEY
+        );
+    }
+    catch{}
+
+    v13Auth = {
+        mode:"none",
+        token:null,
+        account:null
+    };
+
+    window.wildsnakeRuntimeAuth =
+        v13Auth;
+
+    try{
+        if(socket){
+            socket.auth = {
+                token:null
+            };
+
+            socket.disconnect();
+            socket = null;
+        }
+    }
+    catch{}
+
+    gameRunning =
+        false;
+
+    try{
+        game?.classList.add(
+            "hidden"
+        );
+
+        menu?.classList.remove(
+            "hidden"
+        );
+    }
+    catch{}
+
+    v13ShowAuthGate();
+
+    v13SetAuthTab(
+        "login"
+    );
+
+    v13SetAuthMessage(
+        message
+        ||
+        "Sua conta foi aberta em outro navegador.",
+        "error"
+    );
+
+}
+
+
+async function v13WaitForSessionTransfer(
+    requestId
+){
+
+    if(!requestId){
+        return;
+    }
+
+    v13CurrentTransferRequestId =
+        requestId;
+
+    if(v13SessionTransferPollTimer){
+        clearInterval(
+            v13SessionTransferPollTimer
+        );
+    }
+
+    v13SetAuthMessage(
+        "Esta conta já está conectada. Aguarde o outro navegador autorizar a troca..."
+    );
+
+    let busy =
+        false;
+
+    const check =
+    async()=>{
+
+        if(busy){
+            return;
+        }
+
+        busy =
+            true;
+
+        try{
+
+            const {
+                data
+            } =
+                await v13FetchJson(
+                    "/api/account/transfer/status?requestId="
+                    +
+                    encodeURIComponent(
+                        requestId
+                    ),
+                    {
+                        method:"GET"
+                    }
+                );
+
+            if(
+                data?.status ===
+                "approved"
+            ){
+
+                clearInterval(
+                    v13SessionTransferPollTimer
+                );
+
+                v13SessionTransferPollTimer =
+                    null;
+
+                v13SetAuthMessage(
+                    "Troca autorizada ✓ Entrando neste navegador...",
+                    "ok"
+                );
+
+                await wait(
+                    450
+                );
+
+                document.getElementById(
+                    "authLoginButton"
+                )?.click();
+
+                return;
+            }
+
+            if(
+                data?.status ===
+                "denied"
+            ){
+
+                clearInterval(
+                    v13SessionTransferPollTimer
+                );
+
+                v13SessionTransferPollTimer =
+                    null;
+
+                v13SetAuthMessage(
+                    "O outro navegador recusou a troca.",
+                    "error"
+                );
+
+                return;
+            }
+
+            if(
+                data?.status ===
+                "expired"
+                ||
+                data?.ok ===
+                false
+            ){
+
+                clearInterval(
+                    v13SessionTransferPollTimer
+                );
+
+                v13SessionTransferPollTimer =
+                    null;
+
+                v13SetAuthMessage(
+                    "A solicitação expirou. Tente entrar novamente.",
+                    "error"
+                );
+
+            }
+
+        }
+        finally{
+            busy =
+                false;
+        }
+
+    };
+
+    await check();
+
+    v13SessionTransferPollTimer =
+        setInterval(
+            check,
+            1400
+        );
+
+}
+
+
 /* =========================================================
    V13 - LOGIN LOCAL
 ========================================================= */
@@ -25298,6 +26327,20 @@ async()=>{
     if(
         !data?.ok
     ){
+
+        if(
+            data?.code ===
+            "ACCOUNT_ALREADY_ACTIVE"
+            &&
+            data?.requestId
+        ){
+
+            await v13WaitForSessionTransfer(
+                data.requestId
+            );
+
+            return;
+        }
 
         v13SetAuthMessage(
             data?.error
@@ -25644,6 +26687,873 @@ async()=>{
    V13 - RESTORE AUTH
 ========================================================= */
 
+
+/* =========================================================
+   QR EXTERNO / SALA PENDENTE
+========================================================= */
+
+const V13_QR_PENDING_ROOM_KEY =
+    "wildsnakeQrPendingRoomV1";
+
+let v13QrAutoAccountCreated =
+    false;
+
+let v13QrInviteBusy =
+    false;
+
+
+function v13ReadRoomFromUrl(){
+
+    try{
+        const params =
+            new URLSearchParams(
+                location.search
+            );
+
+        const room =
+            normalizeWildRoomCode(
+                params.get("room")
+                ||
+                ""
+            );
+
+        if(
+            !/^WILD-[A-Z0-9]{4}$/.test(room)
+        ){
+            return null;
+        }
+
+        return {
+            code:room,
+            qr:
+                params.get("qr")==="1",
+            autoJoin:
+                params.get("autojoin")==="1"
+        };
+    }
+    catch{
+        return null;
+    }
+}
+
+
+function v13SavePendingQrRoom(
+    invite
+){
+
+    if(!invite?.code){
+        return;
+    }
+
+    try{
+        localStorage.setItem(
+            V13_QR_PENDING_ROOM_KEY,
+            JSON.stringify({
+                code:invite.code,
+                qr:!!invite.qr,
+                autoJoin:!!invite.autoJoin,
+                savedAt:Date.now()
+            })
+        );
+    }
+    catch{}
+}
+
+
+function v13GetPendingQrRoom(){
+
+    const fromUrl =
+        v13ReadRoomFromUrl();
+
+    if(fromUrl){
+        v13SavePendingQrRoom(
+            fromUrl
+        );
+
+        return fromUrl;
+    }
+
+    try{
+        const saved =
+            JSON.parse(
+                localStorage.getItem(
+                    V13_QR_PENDING_ROOM_KEY
+                )
+                ||
+                "null"
+            );
+
+        if(
+            saved
+            &&
+            /^WILD-[A-Z0-9]{4}$/.test(
+                String(
+                    saved.code
+                    ||
+                    ""
+                )
+            )
+            &&
+            Date.now()
+            -
+            Number(
+                saved.savedAt
+                ||
+                0
+            )
+            <
+            24*60*60*1000
+        ){
+            return saved;
+        }
+    }
+    catch{}
+
+    return null;
+}
+
+
+function v13ClearPendingQrRoom(){
+
+    try{
+        localStorage.removeItem(
+            V13_QR_PENDING_ROOM_KEY
+        );
+    }
+    catch{}
+
+}
+
+
+function v13CleanQrUrl(){
+
+    try{
+        const url =
+            new URL(
+                location.href
+            );
+
+        url.searchParams.delete(
+            "qr"
+        );
+
+        url.searchParams.delete(
+            "autojoin"
+        );
+
+        url.searchParams.delete(
+            "room"
+        );
+
+        history.replaceState(
+            null,
+            "",
+            url.pathname
+            +
+            (
+                url.search
+                ||
+                ""
+            )
+            +
+            (
+                url.hash
+                ||
+                ""
+            )
+        );
+    }
+    catch{}
+}
+
+
+async function v13CheckQrRoom(
+    code
+){
+
+    try{
+        const response =
+            await fetch(
+                "/api/private-room/invite/"
+                +
+                encodeURIComponent(
+                    code
+                ),
+                {
+                    cache:"no-store"
+                }
+            );
+
+        const data =
+            await response.json()
+                .catch(
+                    ()=>({})
+                );
+
+        return {
+            ok:
+                !!(
+                    response.ok
+                    &&
+                    data?.ok
+                    &&
+                    data?.exists
+                ),
+            data
+        };
+    }
+    catch{
+        return {
+            ok:false,
+            data:{
+                error:
+                    "Não foi possível conferir a sala."
+            }
+        };
+    }
+}
+
+
+async function v13CreateAutomaticQrAccount(){
+
+    const response =
+        await fetch(
+            "/api/account/qr-auto",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:"{}"
+            }
+        )
+        .catch(
+            ()=>null
+        );
+
+    if(!response){
+        return {
+            ok:false,
+            error:
+                "Servidor indisponível para criar sua conta."
+        };
+    }
+
+    const data =
+        await response.json()
+            .catch(
+                ()=>({})
+            );
+
+    if(
+        !response.ok
+        ||
+        !data?.ok
+        ||
+        !data?.token
+        ||
+        !data?.account
+    ){
+        return {
+            ok:false,
+            error:
+                data?.error
+                ||
+                "Não foi possível criar sua conta automática."
+        };
+    }
+
+    v13Auth = {
+        mode:"account",
+        token:data.token,
+        account:data.account
+    };
+
+    window.wildsnakeRuntimeAuth =
+        v13Auth;
+
+    v13SaveAuth();
+
+    v13ApplyServerAccount(
+        data.account
+    );
+
+    v13QrAutoAccountCreated =
+        !!data.autoCreated;
+
+    return {
+        ok:true,
+        account:data.account
+    };
+}
+
+
+function v13SetQrInviteStatus(
+    text,
+    isError=false
+){
+
+    const status =
+        document.getElementById(
+            "externalQrInviteStatus"
+        );
+
+    if(!status){
+        return;
+    }
+
+    status.textContent =
+        text
+        ||
+        "";
+
+    status.classList.toggle(
+        "error",
+        !!isError
+    );
+}
+
+
+function v13CloseQrInviteModal(){
+
+    document.getElementById(
+        "externalQrInviteModal"
+    )?.classList.add(
+        "hidden"
+    );
+}
+
+
+async function v13EnterPendingQrRoom(
+    code
+){
+
+    if(v13QrInviteBusy){
+        return false;
+    }
+
+    v13QrInviteBusy =
+        true;
+
+    v13SetQrInviteStatus(
+        "Conectando à sala..."
+    );
+
+    try{
+        openFriendsPage();
+
+        const ok =
+            await joinPrivateRoomByCode(
+                code
+            );
+
+        if(ok){
+            v13ClearPendingQrRoom();
+            v13CleanQrUrl();
+            v13CloseQrInviteModal();
+            return true;
+        }
+
+        v13SetQrInviteStatus(
+            "Não foi possível entrar. A sala pode ter sido encerrada.",
+            true
+        );
+
+        return false;
+    }
+    finally{
+        v13QrInviteBusy =
+            false;
+    }
+}
+
+
+async function v13ShowExternalQrInvite(
+    invite
+){
+
+    if(!invite?.code){
+        return;
+    }
+
+    const modal =
+        document.getElementById(
+            "externalQrInviteModal"
+        );
+
+    const codeLabel =
+        document.getElementById(
+            "externalQrInviteCode"
+        );
+
+    const roomName =
+        document.getElementById(
+            "externalQrInviteRoomName"
+        );
+
+    const autoNotice =
+        document.getElementById(
+            "externalQrAutoAccountNotice"
+        );
+
+    if(
+        !modal
+        ||
+        !codeLabel
+        ||
+        !roomName
+    ){
+        return;
+    }
+
+    codeLabel.textContent =
+        invite.code;
+
+    roomName.textContent =
+        "Conferindo sala...";
+
+    autoNotice?.classList.toggle(
+        "hidden",
+        !v13QrAutoAccountCreated
+    );
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    v13SetQrInviteStatus(
+        "Verificando o convite..."
+    );
+
+    const roomCheck =
+        await v13CheckQrRoom(
+            invite.code
+        );
+
+    if(!roomCheck.ok){
+        roomName.textContent =
+            "Sala indisponível";
+
+        v13SetQrInviteStatus(
+            roomCheck.data?.error
+            ||
+            "Esta sala não existe mais.",
+            true
+        );
+
+        document.getElementById(
+            "externalQrJoinButton"
+        ).disabled =
+            true;
+
+        document.getElementById(
+            "externalQrTutorialButton"
+        ).disabled =
+            false;
+
+        return;
+    }
+
+    roomName.textContent =
+        roomCheck.data?.name
+        ||
+        "Sala WildSnake";
+
+    v13SetQrInviteStatus(
+        "Convite válido ✓"
+    );
+
+    document.getElementById(
+        "externalQrJoinButton"
+    ).disabled =
+        false;
+
+    document.getElementById(
+        "externalQrTutorialButton"
+    ).disabled =
+        false;
+}
+
+
+
+function v13ShowQrDirectConnectScreen(
+    code,
+    statusText="Validando sua conta..."
+){
+
+    const screen =
+        document.getElementById(
+            "qrDirectConnectScreen"
+        );
+
+    const room =
+        document.getElementById(
+            "qrDirectConnectRoom"
+        );
+
+    const status =
+        document.getElementById(
+            "qrDirectConnectStatus"
+        );
+
+    const retry =
+        document.getElementById(
+            "qrDirectConnectRetry"
+        );
+
+    const spinner =
+        document.getElementById(
+            "qrDirectConnectSpinner"
+        );
+
+    if(room){
+        room.textContent =
+            code
+            ||
+            "WILD-----";
+    }
+
+    if(status){
+        status.textContent =
+            statusText;
+
+        status.classList.remove(
+            "error"
+        );
+    }
+
+    retry?.classList.remove(
+        "show"
+    );
+
+    if(spinner){
+        spinner.style.display =
+            "block";
+    }
+
+    screen?.classList.remove(
+        "hidden"
+    );
+}
+
+
+function v13HideQrDirectConnectScreen(){
+
+    document.getElementById(
+        "qrDirectConnectScreen"
+    )?.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function v13SetQrDirectConnectError(
+    text
+){
+
+    const status =
+        document.getElementById(
+            "qrDirectConnectStatus"
+        );
+
+    const retry =
+        document.getElementById(
+            "qrDirectConnectRetry"
+        );
+
+    const spinner =
+        document.getElementById(
+            "qrDirectConnectSpinner"
+        );
+
+    if(status){
+        status.textContent =
+            text
+            ||
+            "Não foi possível entrar na sala.";
+
+        status.classList.add(
+            "error"
+        );
+    }
+
+    if(spinner){
+        spinner.style.display =
+            "none";
+    }
+
+    retry?.classList.add(
+        "show"
+    );
+}
+
+
+async function v13ConnectExistingAccountDirectly(
+    invite
+){
+
+    if(!invite?.code){
+        return false;
+    }
+
+    v13ShowQrDirectConnectScreen(
+        invite.code,
+        "Validando sua conta..."
+    );
+
+    const roomCheck =
+        await v13CheckQrRoom(
+            invite.code
+        );
+
+    if(!roomCheck.ok){
+
+        v13SetQrDirectConnectError(
+            roomCheck.data?.error
+            ||
+            "Essa sala não está mais disponível."
+        );
+
+        return false;
+    }
+
+    const status =
+        document.getElementById(
+            "qrDirectConnectStatus"
+        );
+
+    if(status){
+        status.textContent =
+            "Conta encontrada ✓ Conectando à sala...";
+    }
+
+    /*
+       Pequeno intervalo para a pessoa enxergar o feedback
+       de que a conta foi reconhecida antes de abrir o lobby.
+    */
+    await wait(
+        500
+    );
+
+    const ok =
+        await v13EnterPendingQrRoom(
+            invite.code
+        );
+
+    if(ok){
+        v13HideQrDirectConnectScreen();
+        return true;
+    }
+
+    v13SetQrDirectConnectError(
+        "Não foi possível conectar à sala. Ela pode ter sido encerrada ou estar cheia."
+    );
+
+    return false;
+}
+
+
+document.getElementById(
+    "qrDirectConnectRetry"
+)?.addEventListener(
+    "click",
+    async()=>{
+
+        const invite =
+            v13GetPendingQrRoom();
+
+        if(invite?.code){
+            await v13ConnectExistingAccountDirectly(
+                invite
+            );
+        }
+
+    }
+);
+
+
+async function v13HandleQrInviteAfterAuth(){
+
+    const invite =
+        v13GetPendingQrRoom();
+
+    if(
+        !invite
+        ||
+        !v13Auth?.token
+    ){
+        return;
+    }
+
+    /*
+       1) Voltou do tutorial:
+          entra direto na sala.
+
+       2) A conta JÁ EXISTIA neste navegador:
+          mostra apenas "Conectando à sala..." e entra direto.
+
+       3) A conta foi criada automaticamente porque a pessoa
+          chegou pelo QR sem cadastro:
+          mostra o modal ENTRAR NA SALA / VER TUTORIAL + BÔNUS.
+    */
+    if(invite.autoJoin){
+
+        await v13ConnectExistingAccountDirectly(
+            invite
+        );
+
+        return;
+    }
+
+    if(!v13QrAutoAccountCreated){
+
+        await v13ConnectExistingAccountDirectly(
+            invite
+        );
+
+        return;
+    }
+
+    await v13ShowExternalQrInvite(
+        invite
+    );
+}
+
+
+document.getElementById(
+    "externalQrJoinButton"
+)?.addEventListener(
+    "click",
+    async()=>{
+
+        const invite =
+            v13GetPendingQrRoom();
+
+        if(!invite?.code){
+            return;
+        }
+
+        /*
+           Se este modal apareceu para uma conta nova que ainda
+           tinha o tutorial disponível, ENTRAR NA SALA significa
+           pular o tutorial definitivamente.
+
+           Isso é gravado no servidor ANTES de entrar na sala:
+           tutorialStatus = "skipped"
+           tutorialBonusClaimed = false
+        */
+        if(v13QrAutoAccountCreated){
+
+            const button =
+                document.getElementById(
+                    "externalQrJoinButton"
+                );
+
+            const tutorialButton =
+                document.getElementById(
+                    "externalQrTutorialButton"
+                );
+
+            button.disabled = true;
+
+            if(tutorialButton){
+                tutorialButton.disabled = true;
+            }
+
+            v13SetQrInviteStatus(
+                "Salvando sua escolha..."
+            );
+
+            const skipResult =
+                await v13FetchJson(
+                    "/api/tutorial/skip",
+                    {
+                        method:"POST",
+                        body:{source:"external-qr"}
+                    }
+                );
+
+            if(!skipResult?.data?.ok){
+
+                button.disabled = false;
+
+                if(tutorialButton){
+                    tutorialButton.disabled = false;
+                }
+
+                v13SetQrInviteStatus(
+                    skipResult?.data?.error
+                    ||
+                    "Não foi possível salvar sua escolha. Tente novamente.",
+                    true
+                );
+
+                return;
+            }
+
+            if(
+                skipResult.data.account
+                &&
+                v13Auth?.account
+            ){
+                v13ApplyServerAccount(
+                    skipResult.data.account
+                );
+
+                v13SaveAuth();
+            }
+        }
+
+        await v13EnterPendingQrRoom(
+            invite.code
+        );
+
+    }
+);
+
+
+document.getElementById(
+    "externalQrTutorialButton"
+)?.addEventListener(
+    "click",
+    ()=>{
+
+        const invite =
+            v13GetPendingQrRoom();
+
+        if(!invite?.code){
+            return;
+        }
+
+        v13SavePendingQrRoom({
+            ...invite,
+            autoJoin:true
+        });
+
+        const url =
+            new URL(
+                "/tutorial.html",
+                location.origin
+            );
+
+        url.searchParams.set(
+            "room",
+            invite.code
+        );
+
+        url.searchParams.set(
+            "return",
+            "private-room"
+        );
+
+        location.href =
+            url.toString();
+
+    }
+);
+
+
 async function v13RestoreSession(){
 
     v13LoadAuth();
@@ -25707,6 +27617,17 @@ async function v13RestoreSession(){
             v13SaveAuth();
 
             if(data.account.tutorialRequired){
+
+                /*
+                   Convite aberto pela câmera/QR:
+                   não força o tutorial. O modal deixa o jogador escolher
+                   entre entrar direto ou fazer o tutorial + bônus.
+                */
+                if(v13GetPendingQrRoom()){
+                    v13ShowMenuAfterAuth();
+                    return;
+                }
+
                 if(await v13ConvertGuestPendingRewardAfterAuth()){
                     return;
                 }
@@ -25752,6 +27673,28 @@ async function v13RestoreSession(){
 
     v13Auth={mode:"none",token:null,account:null};
     v13SaveAuth();
+
+    const qrInvite =
+        v13GetPendingQrRoom();
+
+    if(qrInvite){
+
+        const created =
+            await v13CreateAutomaticQrAccount();
+
+        if(created.ok){
+            v13ShowMenuAfterAuth();
+            return;
+        }
+
+        v13SetAuthMessage(
+            created.error
+            ||
+            "Não foi possível criar a conta automática.",
+            "error"
+        );
+    }
+
     v13ShowAuthGate();
 }
 
@@ -31211,10 +33154,54 @@ updateServerFooter();
 
     await v13RefreshRewardInbox();
 
+    await v13HandleQrInviteAfterAuth();
+
 })();
 
 
 </script>
+
+
+
+<!-- QR EXTERNO: conta já existente -->
+<div
+    id="qrDirectConnectScreen"
+    class="qr-direct-connect-screen hidden"
+>
+    <div class="qr-direct-connect-card">
+        <div class="qr-direct-connect-spinner" id="qrDirectConnectSpinner"></div>
+
+        <div class="qr-direct-connect-logo">
+            Wild<span>Snake</span>
+        </div>
+
+        <div class="qr-direct-connect-title">
+            CONECTANDO À SALA
+        </div>
+
+        <div
+            class="qr-direct-connect-room"
+            id="qrDirectConnectRoom"
+        >
+            WILD-----
+        </div>
+
+        <div
+            class="qr-direct-connect-status"
+            id="qrDirectConnectStatus"
+        >
+            Validando sua conta...
+        </div>
+
+        <button
+            class="qr-direct-connect-retry"
+            id="qrDirectConnectRetry"
+            type="button"
+        >
+            TENTAR NOVAMENTE
+        </button>
+    </div>
+</div>
 
 </body>
 </html>
