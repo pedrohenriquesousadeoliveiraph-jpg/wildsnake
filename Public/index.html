@@ -1883,6 +1883,132 @@ body.mobile-mode .connection-status{
     cursor:not-allowed;
 }
 
+/* =========================================================
+   QR CODE - SALA PRIVADA
+========================================================= */
+
+.room-qr-box{
+    margin:12px 0 14px;
+    padding:16px;
+    border:1px solid rgba(53,230,155,.20);
+    border-radius:16px;
+    background:rgba(53,230,155,.045);
+    text-align:center;
+}
+
+.room-qr-box small{
+    display:block;
+    margin-bottom:10px;
+    color:#8da19a;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+#privateRoomQr{
+    width:190px;
+    min-height:190px;
+    margin:0 auto;
+    padding:10px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:white;
+}
+
+#privateRoomQr img,
+#privateRoomQr canvas{
+    display:block;
+    max-width:100%;
+    height:auto!important;
+}
+
+.room-qr-hint{
+    margin-top:10px;
+    color:#75878e;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.qr-scan-button{
+    width:100%;
+    min-height:46px;
+    margin-top:9px;
+    border:1px solid rgba(56,168,255,.30);
+    border-radius:12px;
+    background:rgba(56,168,255,.09);
+    color:#a9dcff;
+    font-weight:1000;
+}
+
+.qr-scanner-modal{
+    position:fixed;
+    inset:0;
+    z-index:12000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(0,0,0,.84);
+    backdrop-filter:blur(16px);
+}
+
+.qr-scanner-card{
+    width:min(520px,96vw);
+    max-height:94dvh;
+    overflow:auto;
+    padding:20px;
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:22px;
+    background:linear-gradient(145deg,#10191f,#060b0f);
+    box-shadow:0 35px 110px rgba(0,0,0,.75);
+}
+
+.qr-scanner-title{
+    margin-bottom:6px;
+    text-align:center;
+    font-size:23px;
+    font-weight:1000;
+}
+
+.qr-scanner-text{
+    margin-bottom:14px;
+    color:#89979f;
+    text-align:center;
+    font-size:11px;
+    line-height:1.5;
+}
+
+#privateQrReader{
+    width:100%;
+    overflow:hidden;
+    border-radius:16px;
+    background:#020507;
+}
+
+#privateQrReader video{
+    border-radius:14px;
+}
+
+.qr-scanner-status{
+    min-height:18px;
+    margin:12px 0 0;
+    color:#9bacb4;
+    text-align:center;
+    font-size:10px;
+}
+
+.qr-scanner-close{
+    width:100%;
+    min-height:46px;
+    margin-top:12px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#111a20;
+    color:#e1e9ed;
+    font-weight:1000;
+}
+
 @media(max-width:620px){
     .room-choice-grid{
         grid-template-columns:1fr;
@@ -2682,6 +2808,10 @@ body.mobile-mode .connection-status{
 
     overflow-x:hidden;
 
+    overscroll-behavior-y:contain;
+
+    -webkit-overflow-scrolling:touch;
+
 
     padding:
 
@@ -2797,6 +2927,8 @@ body.mobile-mode .connection-status{
 
     min-height:calc(100vh - 38px);
 
+    max-height:none;
+
 
     margin:0 auto;
 
@@ -2810,7 +2942,7 @@ body.mobile-mode .connection-status{
         40px;
 
 
-    overflow:hidden;
+    overflow:visible;
 
 
     border:
@@ -6420,6 +6552,8 @@ body.mobile-mode .skin-grid{
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 
 <body>
@@ -7584,6 +7718,13 @@ body.mobile-mode .skin-grid{
                 >
                     ENTRAR NA SALA
                 </button>
+                <button
+                    class="qr-scan-button"
+                    id="scanPrivateRoomQrButton"
+                    type="button"
+                >
+                    📷 ESCANEAR QR CODE DO SERVIDOR
+                </button>
             </div>
 
         </div>
@@ -7611,6 +7752,15 @@ body.mobile-mode .skin-grid{
         <div class="room-code-box">
             <small>CÓDIGO DA SALA</small>
             <strong id="lobbyRoomCode">WILD-----</strong>
+        </div>
+
+        <div class="room-qr-box">
+            <small>QR CODE DESTA SALA</small>
+            <div id="privateRoomQr"></div>
+            <div class="room-qr-hint">
+                Seu amigo pode abrir “JOGAR COM AMIGOS” e tocar em
+                “ESCANEAR QR CODE DO SERVIDOR”.
+            </div>
         </div>
 
         <div class="lobby-options-summary">
@@ -7652,6 +7802,38 @@ body.mobile-mode .skin-grid{
 </div>
 
 </section>
+
+
+<!-- MODAL ESCANEAR QR DA SALA -->
+<div
+    id="privateQrScannerModal"
+    class="qr-scanner-modal hidden"
+>
+    <div class="qr-scanner-card">
+        <div class="qr-scanner-title">📷 ESCANEAR QR DA SALA</div>
+        <div class="qr-scanner-text">
+            Permita o acesso à câmera e aponte para o QR Code exibido
+            pelo dono da sala.
+        </div>
+
+        <div id="privateQrReader"></div>
+
+        <div
+            id="privateQrScannerStatus"
+            class="qr-scanner-status"
+        >
+            Preparando câmera...
+        </div>
+
+        <button
+            id="closePrivateQrScannerButton"
+            class="qr-scanner-close"
+            type="button"
+        >
+            FECHAR CÂMERA
+        </button>
+    </div>
+</div>
 
 <!-- MODAL CRIAR SALA -->
 
@@ -14609,6 +14791,109 @@ function bindSocketEvents(){
 
 }
 
+function normalizeWildRoomCode(
+    value
+){
+
+    const raw =
+        String(
+            value
+            ||
+            ""
+        )
+        .trim()
+        .toUpperCase();
+
+    const direct =
+        raw.match(
+            /WILD-[A-Z0-9]{4}/
+        );
+
+    if(direct){
+        return direct[0];
+    }
+
+    try{
+        const url =
+            new URL(
+                String(value || ""),
+                location.origin
+            );
+
+        const queryCode =
+            String(
+                url.searchParams.get("room")
+                ||
+                ""
+            )
+            .trim()
+            .toUpperCase();
+
+        if(/^WILD-[A-Z0-9]{4}$/.test(queryCode)){
+            return queryCode;
+        }
+    }
+    catch{}
+
+    const compact =
+        raw
+        .replace(/^WILD-?/,"")
+        .replace(/[^A-Z0-9]/g,"")
+        .slice(0,4);
+
+    return compact.length===4
+        ?
+        `WILD-${compact}`
+        :
+        "";
+}
+
+
+function renderPrivateRoomQr(
+    code
+){
+
+    const box =
+        document.getElementById(
+            "privateRoomQr"
+        );
+
+    if(!box){
+        return;
+    }
+
+    box.innerHTML =
+        "";
+
+    const normalized =
+        normalizeWildRoomCode(
+            code
+        );
+
+    if(!normalized){
+        return;
+    }
+
+    if(typeof QRCode === "undefined"){
+        box.textContent =
+            normalized;
+        return;
+    }
+
+    new QRCode(
+        box,
+        {
+            text:normalized,
+            width:170,
+            height:170,
+            colorDark:"#07110d",
+            colorLight:"#ffffff",
+            correctLevel:QRCode.CorrectLevel.H
+        }
+    );
+}
+
+
 function showPrivateLobby(
     code
 ){
@@ -14629,6 +14914,10 @@ function showPrivateLobby(
         "lobbyRoomCode"
     ).textContent =
         code;
+
+    renderPrivateRoomQr(
+        code
+    );
 
     document.getElementById(
         "privateRoomMessage"
@@ -14835,6 +15124,8 @@ document.getElementById(
     "closeFriends"
 ).onclick =
 async()=>{
+
+    await stopPrivateQrScanner();
 
     if(entryInProgress){
         return;
@@ -15248,10 +15539,16 @@ async()=>{
 
 };
 
-document.getElementById(
-    "joinPrivateRoomButton"
-).onclick =
-async()=>{
+let privateQrScanner =
+    null;
+
+let privateQrScannerBusy =
+    false;
+
+
+async function joinPrivateRoomByCode(
+    rawCode
+){
 
     ensureAudio();
 
@@ -15260,21 +15557,25 @@ async()=>{
             "privateRoomMessage"
         );
 
-    let code =
-        document.getElementById(
-            "privateRoomCode"
-        ).value
-        .trim()
-        .toUpperCase();
-
-    if(code && !code.startsWith("WILD-")){
-        code = "WILD-" + code.replace(/^WILD-?/,"");
-    }
+    const code =
+        normalizeWildRoomCode(
+            rawCode
+        );
 
     if(!/^WILD-[A-Z0-9]{4}$/.test(code)){
         message.textContent =
-            "Digite um código no formato WILD-XXXX.";
-        return;
+            "Digite ou escaneie um código no formato WILD-XXXX.";
+        return false;
+    }
+
+    const input =
+        document.getElementById(
+            "privateRoomCode"
+        );
+
+    if(input){
+        input.value =
+            code;
     }
 
     message.textContent =
@@ -15286,51 +15587,281 @@ async()=>{
     if(!connected){
         message.textContent =
             "Servidor indisponível.";
-        return;
+        return false;
     }
 
-    socket.emit(
-        "joinPrivateRoom",
-        {
-            code,
-            name:getPlayerName(),
-            skinId:account.equippedSkin
-        },
-        response=>{
+    return await new Promise(
+        resolve=>{
 
-            if(!response?.ok){
-                message.textContent =
-                    response?.error
-                    ||
-                    "Não foi possível entrar na sala.";
-                return;
-            }
+            socket.emit(
+                "joinPrivateRoom",
+                {
+                    code,
+                    name:getPlayerName(),
+                    skinId:account.equippedSkin
+                },
+                response=>{
 
-            onlineRoomId =
-                response.code;
+                    if(!response?.ok){
+                        message.textContent =
+                            response?.error
+                            ||
+                            "Não foi possível entrar na sala.";
 
-            if(response.lobby){
-                currentLobbyState =
-                    response.lobby;
-                renderPrivateLobby(
-                    response.lobby
-                );
-            }
+                        resolve(
+                            false
+                        );
 
-            if(response.started && response.arena){
-                onlinePlayerId =
-                    response.arena.player.id;
-                onlineRoomId =
-                    response.arena.roomId;
-                startOnlineArena(
-                    response.arena.player
-                );
-            }
+                        return;
+                    }
+
+                    onlineRoomId =
+                        response.code;
+
+                    if(response.lobby){
+                        currentLobbyState =
+                            response.lobby;
+
+                        renderPrivateLobby(
+                            response.lobby
+                        );
+                    }
+
+                    if(response.started && response.arena){
+                        onlinePlayerId =
+                            response.arena.player.id;
+
+                        onlineRoomId =
+                            response.arena.roomId;
+
+                        startOnlineArena(
+                            response.arena.player
+                        );
+                    }
+
+                    resolve(
+                        true
+                    );
+
+                }
+            );
 
         }
     );
+}
+
+
+async function stopPrivateQrScanner(){
+
+    const scanner =
+        privateQrScanner;
+
+    privateQrScanner =
+        null;
+
+    privateQrScannerBusy =
+        false;
+
+    if(scanner){
+        try{
+            await scanner.stop();
+        }
+        catch{}
+
+        try{
+            await scanner.clear();
+        }
+        catch{}
+    }
+
+    const modal =
+        document.getElementById(
+            "privateQrScannerModal"
+        );
+
+    if(modal){
+        modal.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+async function openPrivateQrScanner(){
+
+    ensureAudio();
+
+    const modal =
+        document.getElementById(
+            "privateQrScannerModal"
+        );
+
+    const status =
+        document.getElementById(
+            "privateQrScannerStatus"
+        );
+
+    if(!modal || !status){
+        return;
+    }
+
+    if(
+        !navigator.mediaDevices
+        ||
+        !navigator.mediaDevices.getUserMedia
+    ){
+        status.textContent =
+            "Este navegador não oferece acesso à câmera.";
+        modal.classList.remove("hidden");
+        return;
+    }
+
+    if(typeof Html5Qrcode === "undefined"){
+        status.textContent =
+            "O leitor de QR não carregou. Atualize a página.";
+        modal.classList.remove("hidden");
+        return;
+    }
+
+    await stopPrivateQrScanner();
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    status.textContent =
+        "Abrindo câmera...";
+
+    privateQrScannerBusy =
+        false;
+
+    privateQrScanner =
+        new Html5Qrcode(
+            "privateQrReader"
+        );
+
+    const onDecoded =
+        async decodedText=>{
+
+            if(privateQrScannerBusy){
+                return;
+            }
+
+            const code =
+                normalizeWildRoomCode(
+                    decodedText
+                );
+
+            if(!code){
+                status.textContent =
+                    "QR lido, mas ele não contém um código WildSnake válido.";
+                return;
+            }
+
+            privateQrScannerBusy =
+                true;
+
+            status.textContent =
+                `Sala ${code} encontrada. Entrando...`;
+
+            await stopPrivateQrScanner();
+
+            const ok =
+                await joinPrivateRoomByCode(
+                    code
+                );
+
+            if(!ok){
+                privateQrScannerBusy =
+                    false;
+            }
+        };
+
+    try{
+
+        await privateQrScanner.start(
+            {
+                facingMode:"environment"
+            },
+            {
+                fps:10,
+                qrbox:{
+                    width:240,
+                    height:240
+                },
+                aspectRatio:1
+            },
+            onDecoded,
+            ()=>{}
+        );
+
+        status.textContent =
+            "Aponte a câmera para o QR Code da sala.";
+
+    }
+    catch(error){
+
+        console.error(
+            "Falha ao abrir leitor QR:",
+            error
+        );
+
+        status.textContent =
+            location.protocol!=="https:"
+            &&
+            location.hostname!=="localhost"
+            ?
+            "A câmera exige HTTPS. Abra o WildSnake pelo endereço https://."
+            :
+            "Não foi possível abrir a câmera. Verifique a permissão do navegador.";
+
+        try{
+            await privateQrScanner?.clear();
+        }
+        catch{}
+
+        privateQrScanner =
+            null;
+    }
+}
+
+
+document.getElementById(
+    "joinPrivateRoomButton"
+).onclick =
+async()=>{
+
+    const code =
+        document.getElementById(
+            "privateRoomCode"
+        ).value;
+
+    await joinPrivateRoomByCode(
+        code
+    );
 
 };
+
+
+document.getElementById(
+    "scanPrivateRoomQrButton"
+).onclick =
+async()=>{
+
+    await openPrivateQrScanner();
+
+};
+
+
+document.getElementById(
+    "closePrivateQrScannerButton"
+).onclick =
+async()=>{
+
+    await stopPrivateQrScanner();
+
+};
+
 
 document.getElementById(
     "privateRoomCode"
