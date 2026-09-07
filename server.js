@@ -149,6 +149,212 @@ const MIN_PASSWORD_LENGTH =
 const sessions =
   new Map();
 
+/*
+   V13.15 - UMA CONTA = UM NAVEGADOR ATIVO
+   ---------------------------------------------------------
+   activeAccountSessions:
+     accountId -> token + sockets atualmente vinculados.
+
+   pendingSessionTransfers:
+     pedido criado quando um segundo navegador tenta entrar.
+
+   revokedSessionTokens:
+     tokens invalidados durante troca de navegador/logout.
+*/
+const activeAccountSessions =
+  new Map();
+
+const pendingSessionTransfers =
+  new Map();
+
+const revokedSessionTokens =
+  new Set();
+
+const accountReleaseTimers =
+  new Map();
+
+const SESSION_TRANSFER_TTL_MS =
+  2 * 60 * 1000;
+
+const SESSION_DISCONNECT_GRACE_MS =
+  12 * 1000;
+
+
+function cleanupSessionTransfers(){
+  const now = Date.now();
+
+  for(const [requestId, request] of pendingSessionTransfers){
+    if(!request || now > Number(request.expiresAt || 0)){
+      pendingSessionTransfers.delete(requestId);
+    }
+  }
+}
+
+
+function getActiveAccountSession(accountId){
+  const key = String(accountId || '');
+  if(!key) return null;
+  return activeAccountSessions.get(key) || null;
+}
+
+
+function activateAccountSession(accountId, token){
+  const key = String(accountId || '');
+  const value = String(token || '');
+
+  if(!key || !value) return null;
+
+  const previous = activeAccountSessions.get(key);
+
+  if(previous && previous.token === value){
+    previous.lastSeenAt = Date.now();
+    return previous;
+  }
+
+  const record = {
+    accountId:key,
+    token:value,
+    socketIds:new Set(),
+    createdAt:Date.now(),
+    lastSeenAt:Date.now()
+  };
+
+  activeAccountSessions.set(key, record);
+
+  const timer = accountReleaseTimers.get(key);
+  if(timer){
+    clearTimeout(timer);
+    accountReleaseTimers.delete(key);
+  }
+
+  return record;
+}
+
+
+function notifyActiveSessionTransfer(accountId, request){
+  const active = getActiveAccountSession(accountId);
+  if(!active) return;
+
+  for(const socketId of active.socketIds){
+    const target = io.sockets.sockets.get(socketId);
+
+    if(target){
+      target.emit('sessionTransferRequested', {
+        requestId:request.requestId,
+        createdAt:request.createdAt,
+        expiresAt:request.expiresAt,
+        message:'Outro navegador está tentando entrar nesta conta.',
+        version:GAME_VERSION
+      });
+    }
+  }
+}
+
+
+function createSessionTransferRequest(accountId){
+  cleanupSessionTransfers();
+
+  const key = String(accountId || '');
+
+  for(const request of pendingSessionTransfers.values()){
+    if(
+      request.accountId === key
+      &&
+      request.status === 'pending'
+      &&
+      Date.now() <= request.expiresAt
+    ){
+      notifyActiveSessionTransfer(key, request);
+      return request;
+    }
+  }
+
+  const requestId = crypto.randomUUID();
+
+  const request = {
+    requestId,
+    accountId:key,
+    status:'pending',
+    createdAt:Date.now(),
+    expiresAt:Date.now() + SESSION_TRANSFER_TTL_MS,
+    approvedAt:null,
+    deniedAt:null
+  };
+
+  pendingSessionTransfers.set(requestId, request);
+  notifyActiveSessionTransfer(key, request);
+
+  return request;
+}
+
+
+function revokeAccountSession(accountId, reason='replaced'){
+  const key = String(accountId || '');
+  const active = activeAccountSessions.get(key);
+
+  if(!active) return;
+
+  revokedSessionTokens.add(active.token);
+  sessions.delete(active.token);
+
+  for(const socketId of [...active.socketIds]){
+    const target = io.sockets.sockets.get(socketId);
+
+    if(target){
+      target.emit('sessionReplaced', {
+        reason,
+        message:
+          reason === 'transfer'
+            ? 'Sua conta foi transferida para outro navegador.'
+            : 'Sua sessão foi encerrada.',
+        version:GAME_VERSION
+      });
+
+      setTimeout(()=>{
+        try{
+          target.disconnect(true);
+        }catch{}
+      },250);
+    }
+  }
+
+  activeAccountSessions.delete(key);
+
+  const timer = accountReleaseTimers.get(key);
+  if(timer){
+    clearTimeout(timer);
+    accountReleaseTimers.delete(key);
+  }
+}
+
+
+function scheduleAccountSessionRelease(accountId, token){
+  const key = String(accountId || '');
+  if(!key) return;
+
+  const oldTimer = accountReleaseTimers.get(key);
+  if(oldTimer) clearTimeout(oldTimer);
+
+  const timer = setTimeout(()=>{
+    const active = activeAccountSessions.get(key);
+
+    if(
+      active
+      &&
+      active.token === token
+      &&
+      active.socketIds.size === 0
+    ){
+      activeAccountSessions.delete(key);
+    }
+
+    accountReleaseTimers.delete(key);
+  },SESSION_DISCONNECT_GRACE_MS);
+
+  accountReleaseTimers.set(key,timer);
+}
+
+
 const rateBuckets =
   new Map();
 
@@ -1563,6 +1769,10 @@ function sessionFromToken(token) {
   const value = String(token || '').trim();
   if (!value) return null;
 
+  if(revokedSessionTokens.has(value)){
+    return null;
+  }
+
   const cached = sessions.get(value);
 
   if (cached) {
@@ -1727,6 +1937,25 @@ async function loadSecureGameState(accountId) {
   };
 }
 
+
+function tutorialStatusForAccount(account) {
+  if (!account) return 'pending';
+
+  if (String(account.reward_state || '').toLowerCase() === 'skipped') {
+    return 'skipped';
+  }
+
+  if (account.tutorial_completed) {
+    return 'completed';
+  }
+
+  return 'pending';
+}
+
+function tutorialIsRequired(account) {
+  return tutorialStatusForAccount(account) === 'pending';
+}
+
 function secureAccountView(state) {
   if (!state?.account) return null;
   const { account, wallet, ownedSkins } = state;
@@ -1739,8 +1968,12 @@ function secureAccountView(state) {
     provider: account.provider || 'local',
     email: account.google_email || null,
     googleLinked: !!account.google_user_id,
-    tutorialCompleted: !!account.tutorial_completed,
-    tutorialRequired: !account.tutorial_completed,
+    tutorialCompleted: tutorialStatusForAccount(account) === 'completed',
+    tutorialRequired: tutorialIsRequired(account),
+    tutorialStatus: tutorialStatusForAccount(account),
+    tutorialBonusClaimed:
+      tutorialStatusForAccount(account) === 'completed'
+      && String(account.reward_state || '').toLowerCase() !== 'skipped',
     rewardState: account.reward_state || 'none',
     equippedSkin: account.equipped_skin || 'basic',
     coins: Number(wallet?.coins || 0),
@@ -1794,6 +2027,7 @@ async function createSecureLocalAccount({ username, password, displayName }) {
     await ensureSecureAccountCompanions(accountId);
     const state = await loadSecureGameState(accountId);
     const token = createSession(accountId, 'player');
+    activateAccountSession(accountId, token);
 
     return {
       ok: true,
@@ -1813,6 +2047,59 @@ async function createSecureLocalAccount({ username, password, displayName }) {
     throw error;
   }
 }
+
+
+async function createQrGuestAccount() {
+  if (!secureDbReady()) {
+    return {
+      ok:false,
+      status:503,
+      code:'SECURE_DB_NOT_READY',
+      error:'O servidor de contas ainda não está pronto.'
+    };
+  }
+
+  const suffix = crypto.randomBytes(4).toString('hex');
+  const username = await uniqueUsername(`qr_${suffix}`);
+  const password = crypto.randomBytes(24).toString('base64url');
+  const displayName = `Player ${crypto.randomInt(1000, 10000)}`;
+
+  const result = await createSecureLocalAccount({
+    username,
+    password,
+    displayName
+  });
+
+  if (!result?.ok) {
+    return result;
+  }
+
+  try {
+    await dbUpdate(
+      SECURE_DB_TABLES.accounts,
+      { id:`eq.${result.account?.id}` },
+      { provider:'qr_guest' }
+    );
+
+    const state = await loadSecureGameState(result.account?.id);
+
+    return {
+      ...result,
+      autoCreated:true,
+      recoverableByGoogle:true,
+      account:secureAccountView(state)
+    };
+  } catch (error) {
+    console.error('qr guest provider update:', error?.message || error);
+
+    return {
+      ...result,
+      autoCreated:true,
+      recoverableByGoogle:true
+    };
+  }
+}
+
 
 async function loginSecureLocalAccount({ username, password }) {
   const normalized = cleanUsername(username);
@@ -1871,6 +2158,23 @@ async function loginSecureLocalAccount({ username, password }) {
     return { ok: false, status: 401, error: 'Usuário ou senha inválidos.' };
   }
 
+  const currentActiveSession =
+    getActiveAccountSession(account.id);
+
+  if(currentActiveSession){
+    const transfer =
+      createSessionTransferRequest(account.id);
+
+    return {
+      ok:false,
+      status:409,
+      code:'ACCOUNT_ALREADY_ACTIVE',
+      requestId:transfer.requestId,
+      expiresAt:transfer.expiresAt,
+      error:'Esta conta já está conectada em outro navegador. Enviamos uma solicitação para o navegador que está usando a conta.'
+    };
+  }
+
   await dbUpdate(
     SECURE_DB_TABLES.accounts,
     { id: `eq.${account.id}` },
@@ -1879,13 +2183,14 @@ async function loginSecureLocalAccount({ username, password }) {
 
   const state = await loadSecureGameState(account.id);
   const token = createSession(account.id, account.role || 'player');
+  activateAccountSession(account.id, token);
 
   return {
     ok: true,
     status: 200,
     token,
     isNew: false,
-    tutorialRequired: !state.account.tutorial_completed,
+    tutorialRequired: tutorialIsRequired(state.account),
     account: secureAccountView(state)
   };
 }
@@ -1939,14 +2244,33 @@ async function resolveGoogleGameAccount(user, intent = 'login') {
   }
 
   const state = await loadSecureGameState(account.id);
+
+  const currentActiveSession =
+    getActiveAccountSession(account.id);
+
+  if(currentActiveSession){
+    const transfer =
+      createSessionTransferRequest(account.id);
+
+    return {
+      ok:false,
+      status:409,
+      code:'ACCOUNT_ALREADY_ACTIVE',
+      requestId:transfer.requestId,
+      expiresAt:transfer.expiresAt,
+      error:'Esta conta já está conectada em outro navegador.'
+    };
+  }
+
   const token = createSession(account.id, account.role || 'player');
+  activateAccountSession(account.id, token);
 
   return {
     ok: true,
     status: 200,
     token,
     isNew,
-    tutorialRequired: !state.account.tutorial_completed,
+    tutorialRequired: tutorialIsRequired(state.account),
     account: secureAccountView(state)
   };
 }
@@ -2018,7 +2342,16 @@ async function selectTutorialReward(accountId, cardIndex) {
   const state = await loadSecureGameState(accountId);
   if (!state) return { ok: false, status: 404, error: 'Conta não encontrada.' };
 
-  if (state.account.tutorial_completed) {
+  if (tutorialStatusForAccount(state.account) === 'skipped') {
+    return {
+      ok: false,
+      status: 409,
+      code: 'TUTORIAL_SKIPPED',
+      error: 'Este tutorial foi pulado nesta conta e não pode mais gerar bônus.'
+    };
+  }
+
+  if (tutorialStatusForAccount(state.account) === 'completed') {
     return {
       ok: false,
       status: 409,
@@ -4421,6 +4754,26 @@ io.use(async (socket, next) => {
     socket.data.gameAccount = null;
     socket.data.ownedSkins = ['basic'];
 
+    if(session){
+      const active =
+        getActiveAccountSession(session.accountId);
+
+      if(active && active.token !== token){
+        return next(
+          new Error(
+            'Esta conta já está conectada em outro navegador.'
+          )
+        );
+      }
+
+      if(!active){
+        activateAccountSession(
+          session.accountId,
+          token
+        );
+      }
+    }
+
     if (session && secureDbReady()) {
       const state = await loadSecureGameState(session.accountId);
       if (!state) return next(new Error('Sessão WildSnake inválida.'));
@@ -4439,8 +4792,136 @@ io.on('connection', socket => {
   const player = createHuman(socket);
   players.set(socket.id, player);
 
+  if(player.accountId && socket.data?.gameSession?.token){
+    const active =
+      activateAccountSession(
+        player.accountId,
+        socket.data.gameSession.token
+      );
+
+    active?.socketIds.add(socket.id);
+    if(active) active.lastSeenAt = Date.now();
+
+    cleanupSessionTransfers();
+
+    for(const request of pendingSessionTransfers.values()){
+      if(
+        request.accountId === String(player.accountId)
+        &&
+        request.status === 'pending'
+      ){
+        socket.emit('sessionTransferRequested', {
+          requestId:request.requestId,
+          createdAt:request.createdAt,
+          expiresAt:request.expiresAt,
+          message:'Outro navegador está tentando entrar nesta conta.',
+          version:GAME_VERSION
+        });
+      }
+    }
+  }
+
   console.log(`✅ conectado ${socket.id}`);
   socket.emit('serverStatus', buildServerStatusPayload());
+
+  socket.on('approveSessionTransfer', (data = {}, ack) => {
+    const session = socket.data?.gameSession;
+
+    if(!session){
+      return safeAck(ack,{
+        ok:false,
+        error:'Sessão inválida.'
+      });
+    }
+
+    const requestId =
+      String(data.requestId || '').trim();
+
+    const request =
+      pendingSessionTransfers.get(requestId);
+
+    if(
+      !request
+      ||
+      request.status !== 'pending'
+      ||
+      request.accountId !== String(session.accountId)
+      ||
+      Date.now() > request.expiresAt
+    ){
+      return safeAck(ack,{
+        ok:false,
+        error:'Solicitação expirada ou inválida.'
+      });
+    }
+
+    request.status = 'approved';
+    request.approvedAt = Date.now();
+
+    safeAck(ack,{
+      ok:true,
+      requestId,
+      version:GAME_VERSION
+    });
+
+    revokeAccountSession(
+      session.accountId,
+      'transfer'
+    );
+  });
+
+  socket.on('denySessionTransfer', (data = {}, ack) => {
+    const session = socket.data?.gameSession;
+
+    if(!session){
+      return safeAck(ack,{ok:false,error:'Sessão inválida.'});
+    }
+
+    const requestId =
+      String(data.requestId || '').trim();
+
+    const request =
+      pendingSessionTransfers.get(requestId);
+
+    if(
+      !request
+      ||
+      request.accountId !== String(session.accountId)
+      ||
+      request.status !== 'pending'
+    ){
+      return safeAck(ack,{
+        ok:false,
+        error:'Solicitação inválida.'
+      });
+    }
+
+    request.status = 'denied';
+    request.deniedAt = Date.now();
+
+    safeAck(ack,{
+      ok:true,
+      requestId,
+      version:GAME_VERSION
+    });
+  });
+
+  socket.on('logoutSession', (_data, ack) => {
+    const session = socket.data?.gameSession;
+
+    if(session){
+      const active =
+        getActiveAccountSession(session.accountId);
+
+      if(active && active.token === session.token){
+        revokedSessionTokens.add(session.token);
+        sessions.delete(session.token);
+        activeAccountSessions.delete(String(session.accountId));
+      }
+    }
+
+    safeAck(ack,{ok:true,version:GAME_VERSION});
+  });
 
   /* -------------------------
      PUBLIC JOIN
@@ -4965,6 +5446,29 @@ io.on('connection', socket => {
   socket.on('disconnect', reason => {
     detachPlayerFromRoom(player);
     players.delete(player.id);
+
+    const session =
+      socket.data?.gameSession;
+
+    if(session?.accountId){
+      const active =
+        getActiveAccountSession(
+          session.accountId
+        );
+
+      if(active && active.token === session.token){
+        active.socketIds.delete(socket.id);
+        active.lastSeenAt = Date.now();
+
+        if(active.socketIds.size === 0){
+          scheduleAccountSessionRelease(
+            session.accountId,
+            session.token
+          );
+        }
+      }
+    }
+
     console.log(`❌ saiu ${socket.id}: ${reason}`);
   });
 });
@@ -5037,6 +5541,95 @@ app.get('/api/public-config', (_req, res) => {
   });
 });
 
+
+app.post('/api/account/qr-auto', async (req, res) => {
+  const key = `qr-auto:${req.ip}`;
+
+  if (!rateLimit(key, { windowMs:60_000, max:5 })) {
+    return res.status(429).json({
+      ok:false,
+      error:'Muitas contas automáticas foram solicitadas. Aguarde um minuto.'
+    });
+  }
+
+  /*
+     Se o navegador já possui uma sessão válida, reutiliza a conta.
+     Isso impede criar contas novas desnecessariamente ao ler vários QR Codes.
+  */
+  const existingSession = sessionFromRequest(req);
+
+  if (existingSession) {
+    try {
+      const state = await loadSecureGameState(existingSession.accountId);
+
+      if (state) {
+        return res.json({
+          ok:true,
+          reused:true,
+          autoCreated:false,
+          token:existingSession.token,
+          account:secureAccountView(state)
+        });
+      }
+    } catch (error) {
+      console.error('qr auto existing session:', error?.message || error);
+    }
+  }
+
+  try {
+    const result = await createQrGuestAccount();
+
+    return res
+      .status(result.status || (result.ok ? 200 : 400))
+      .json(result);
+  } catch (error) {
+    console.error('qr auto account:', error);
+
+    return res
+      .status(error.status === 503 ? 503 : 500)
+      .json({
+        ok:false,
+        error:secureErrorMessage(error)
+      });
+  }
+});
+
+
+app.get('/api/private-room/invite/:code', (req, res) => {
+  const code = String(req.params.code || '').trim().toUpperCase();
+
+  if (!/^WILD-[A-Z0-9]{4}$/.test(code)) {
+    return res.status(400).json({
+      ok:false,
+      exists:false,
+      error:'Código de sala inválido.'
+    });
+  }
+
+  const room = privateRooms.get(code);
+
+  if (!room) {
+    return res.status(404).json({
+      ok:false,
+      exists:false,
+      code,
+      error:'Esta sala não existe mais.'
+    });
+  }
+
+  return res.json({
+    ok:true,
+    exists:true,
+    code,
+    name:room.name || 'Sala WildSnake',
+    started:!!room.started,
+    players:room.players?.size || 0,
+    maxPlayers:room.maxPlayers || 50,
+    version:GAME_VERSION
+  });
+});
+
+
 app.post('/api/account/register', async (req, res) => {
   const key = `register:${req.ip}`;
   if (!rateLimit(key, { windowMs:60_000, max:6 })) {
@@ -5071,6 +5664,33 @@ app.post('/api/account/login', async (req, res) => {
       error:secureErrorMessage(error)
     });
   }
+});
+
+
+app.get('/api/account/transfer/status', (req, res) => {
+  cleanupSessionTransfers();
+
+  const requestId =
+    String(req.query.requestId || '').trim();
+
+  const request =
+    pendingSessionTransfers.get(requestId);
+
+  if(!request){
+    return res.status(404).json({
+      ok:false,
+      status:'expired',
+      error:'Solicitação não encontrada ou expirada.'
+    });
+  }
+
+  return res.json({
+    ok:true,
+    requestId,
+    status:request.status,
+    expiresAt:request.expiresAt,
+    version:GAME_VERSION
+  });
 });
 
 /* =========================================================
@@ -5311,13 +5931,91 @@ app.get('/api/tutorial/status', async (req, res) => {
     if (!state) return res.status(404).json({ ok:false, error:'Conta não encontrada.' });
     return res.json({
       ok:true,
-      tutorialCompleted:!!state.account.tutorial_completed,
+      tutorialCompleted:tutorialStatusForAccount(state.account) === 'completed',
+      tutorialRequired:tutorialIsRequired(state.account),
+      tutorialStatus:tutorialStatusForAccount(state.account),
+      tutorialBonusClaimed:
+        tutorialStatusForAccount(state.account) === 'completed'
+        && String(state.account.reward_state || '').toLowerCase() !== 'skipped',
       rewardState:state.account.reward_state,
       reward:state.account.reward_payload,
       googleLinked:!!state.account.google_user_id,
       odds:tutorialOddsPublicView()
     });
   } catch (error) {
+    return res.status(500).json({ ok:false, error:secureErrorMessage(error) });
+  }
+});
+
+
+/*
+   Pular o tutorial é uma decisão permanente para esta conta.
+   O servidor grava reward_state='skipped' e tutorial_completed=true.
+   Assim:
+   - o tutorial não volta a aparecer;
+   - nenhuma recompensa de tutorial pode ser obtida depois;
+   - não dependemos de localStorage para esta regra.
+*/
+app.post('/api/tutorial/skip', async (req, res) => {
+  const session = sessionFromRequest(req);
+  if (!session) {
+    return res.status(401).json({ ok:false, error:'Sessão obrigatória.' });
+  }
+
+  const key = `tutorial-skip:${session.accountId}`;
+  if (!rateLimit(key, { windowMs:10_000, max:4 })) {
+    return res.status(429).json({ ok:false, error:'Aguarde antes de tentar novamente.' });
+  }
+
+  try {
+    const state = await loadSecureGameState(session.accountId);
+    if (!state?.account) {
+      return res.status(404).json({ ok:false, error:'Conta não encontrada.' });
+    }
+
+    const currentStatus = tutorialStatusForAccount(state.account);
+
+    if (currentStatus === 'completed') {
+      return res.json({
+        ok:true,
+        tutorialStatus:'completed',
+        tutorialBonusClaimed:true,
+        alreadyFinished:true,
+        account:secureAccountView(state)
+      });
+    }
+
+    if (currentStatus === 'skipped') {
+      return res.json({
+        ok:true,
+        tutorialStatus:'skipped',
+        tutorialBonusClaimed:false,
+        alreadySkipped:true,
+        account:secureAccountView(state)
+      });
+    }
+
+    await dbUpdate(
+      SECURE_DB_TABLES.accounts,
+      { id:`eq.${session.accountId}` },
+      {
+        tutorial_completed:true,
+        tutorial_completed_at:new Date().toISOString(),
+        reward_state:'skipped',
+        reward_payload:null
+      }
+    );
+
+    const updated = await loadSecureGameState(session.accountId);
+
+    return res.json({
+      ok:true,
+      tutorialStatus:'skipped',
+      tutorialBonusClaimed:false,
+      account:secureAccountView(updated)
+    });
+  } catch (error) {
+    console.error('tutorial skip:', error?.message || error);
     return res.status(500).json({ ok:false, error:secureErrorMessage(error) });
   }
 });
@@ -5329,8 +6027,22 @@ app.post('/api/tutorial/start', async (req, res) => {
   try {
     const state = await loadSecureGameState(session.accountId);
     if (!state) return res.status(404).json({ ok:false, error:'Conta não encontrada.' });
-    if (state.account.tutorial_completed) {
-      return res.status(409).json({ ok:false, code:'TUTORIAL_ALREADY_COMPLETED', error:'Tutorial já concluído.' });
+    const tutorialStatus = tutorialStatusForAccount(state.account);
+
+    if (tutorialStatus === 'skipped') {
+      return res.status(409).json({
+        ok:false,
+        code:'TUTORIAL_SKIPPED',
+        error:'Este tutorial foi pulado nesta conta e o bônus não está mais disponível.'
+      });
+    }
+
+    if (tutorialStatus === 'completed') {
+      return res.status(409).json({
+        ok:false,
+        code:'TUTORIAL_ALREADY_COMPLETED',
+        error:'Tutorial já concluído.'
+      });
     }
 
     if (!state.account.tutorial_started_at) {
@@ -5392,6 +6104,20 @@ app.post('/api/tutorial/reward/claim', async (req, res) => {
   }
 
   try {
+    const stateBeforeClaim = await loadSecureGameState(session.accountId);
+
+    if (!stateBeforeClaim?.account) {
+      return res.status(404).json({ ok:false, error:'Conta não encontrada.' });
+    }
+
+    if (tutorialStatusForAccount(stateBeforeClaim.account) === 'skipped') {
+      return res.status(409).json({
+        ok:false,
+        code:'TUTORIAL_SKIPPED',
+        error:'O tutorial foi pulado nesta conta. O bônus não pode mais ser resgatado.'
+      });
+    }
+
     const result = await dbRpc('ws_claim_tutorial_reward', {
       p_account_id:session.accountId
     });
