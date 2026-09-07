@@ -15705,21 +15705,29 @@ async function openPrivateQrScanner(){
         return;
     }
 
+    modal.classList.remove(
+        "hidden"
+    );
+
+    if(!window.isSecureContext){
+        status.textContent =
+            "A câmera só funciona em conexão segura HTTPS. Abra o WildSnake pelo link https://.";
+        return;
+    }
+
     if(
         !navigator.mediaDevices
         ||
-        !navigator.mediaDevices.getUserMedia
+        typeof navigator.mediaDevices.getUserMedia !== "function"
     ){
         status.textContent =
-            "Este navegador não oferece acesso à câmera.";
-        modal.classList.remove("hidden");
+            "Este navegador não disponibilizou acesso à câmera.";
         return;
     }
 
     if(typeof Html5Qrcode === "undefined"){
         status.textContent =
             "O leitor de QR não carregou. Atualize a página.";
-        modal.classList.remove("hidden");
         return;
     }
 
@@ -15730,7 +15738,99 @@ async function openPrivateQrScanner(){
     );
 
     status.textContent =
-        "Abrindo câmera...";
+        "Solicitando permissão para usar a câmera...";
+
+    /*
+       IMPORTANTE:
+       Pedimos a câmera diretamente pelo navegador ANTES de iniciar
+       o Html5Qrcode. Isso força o browser a exibir a janela
+       "Permitir câmera?" quando a permissão ainda não foi decidida.
+    */
+    let permissionStream =
+        null;
+
+    try{
+
+        permissionStream =
+            await navigator.mediaDevices.getUserMedia({
+                video:{
+                    facingMode:{
+                        ideal:"environment"
+                    }
+                },
+                audio:false
+            });
+
+        /*
+           A permissão já foi concedida. Soltamos esta captura temporária
+           para que o Html5Qrcode abra a câmera normalmente em seguida.
+        */
+        for(
+            const track
+            of
+            permissionStream.getTracks()
+        ){
+            track.stop();
+        }
+
+        permissionStream =
+            null;
+
+    }
+    catch(error){
+
+        console.error(
+            "Permissão da câmera falhou:",
+            error
+        );
+
+        const errorName =
+            String(
+                error?.name
+                ||
+                ""
+            );
+
+        if(
+            errorName === "NotAllowedError"
+            ||
+            errorName === "PermissionDeniedError"
+        ){
+            status.textContent =
+                "A câmera foi bloqueada pelo navegador. Toque no cadeado/ícone do site, permita Câmera e tente novamente.";
+        }
+        else if(
+            errorName === "NotFoundError"
+            ||
+            errorName === "DevicesNotFoundError"
+        ){
+            status.textContent =
+                "Nenhuma câmera foi encontrada neste aparelho.";
+        }
+        else if(
+            errorName === "NotReadableError"
+            ||
+            errorName === "TrackStartError"
+        ){
+            status.textContent =
+                "A câmera está ocupada por outro aplicativo. Feche outros apps que estejam usando a câmera e tente novamente.";
+        }
+        else if(
+            errorName === "SecurityError"
+        ){
+            status.textContent =
+                "O navegador bloqueou a câmera por segurança. Confirme que o WildSnake está aberto em HTTPS.";
+        }
+        else{
+            status.textContent =
+                "Não foi possível pedir acesso à câmera. Verifique a permissão da câmera nas configurações do navegador.";
+        }
+
+        return;
+    }
+
+    status.textContent =
+        "Permissão concedida ✓ Abrindo leitor de QR...";
 
     privateQrScannerBusy =
         false;
@@ -15796,24 +15896,32 @@ async function openPrivateQrScanner(){
         );
 
         status.textContent =
-            "Aponte a câmera para o QR Code da sala.";
+            "Câmera aberta ✓ Aponte para o QR Code da sala.";
 
     }
     catch(error){
 
         console.error(
-            "Falha ao abrir leitor QR:",
+            "Falha ao iniciar leitor QR:",
             error
         );
 
+        const errorText =
+            String(
+                error?.message
+                ||
+                error
+                ||
+                ""
+            );
+
         status.textContent =
-            location.protocol!=="https:"
-            &&
-            location.hostname!=="localhost"
-            ?
-            "A câmera exige HTTPS. Abra o WildSnake pelo endereço https://."
-            :
-            "Não foi possível abrir a câmera. Verifique a permissão do navegador.";
+            "A permissão foi concedida, mas o leitor não conseguiu iniciar a câmera. Feche outros apps que usam a câmera e tente novamente.";
+
+        console.error(
+            "Detalhe Html5Qrcode:",
+            errorText
+        );
 
         try{
             await privateQrScanner?.clear();
