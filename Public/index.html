@@ -1883,6 +1883,250 @@ body.mobile-mode .connection-status{
     cursor:not-allowed;
 }
 
+
+/* =========================================================
+   SALA DE AMIGOS — FUNDO ANIMADO + LAYOUT DESKTOP
+   Mantém o mobile no formato anterior e usa as mesmas
+   minhocas da animação de retorno/logout como ambientação.
+========================================================= */
+
+#friendsPage{
+    isolation:isolate;
+    overflow:hidden;
+    background:#020609;
+}
+
+.friends-ambient-bg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at 50% 42%,rgba(53,230,155,.11),transparent 34%),
+        radial-gradient(circle at 12% 18%,rgba(56,168,255,.08),transparent 28%),
+        radial-gradient(circle at 88% 76%,rgba(168,121,255,.08),transparent 30%),
+        linear-gradient(180deg,#06100d,#020507);
+}
+
+.friends-ambient-bg .loading-grid{
+    opacity:.16;
+}
+
+#friendsWormLayer{
+    opacity:.48;
+    filter:saturate(.88) brightness(.72);
+}
+
+#friendsPage > .page-card{
+    position:relative;
+    z-index:2;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active .small-card{
+    width:min(1120px,95vw);
+    max-height:88vh;
+    overflow:hidden;
+    padding:26px 28px 28px;
+    background:linear-gradient(145deg,rgba(15,23,29,.92),rgba(6,11,15,.89));
+    box-shadow:
+        0 40px 110px rgba(0,0,0,.72),
+        inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 270px;
+    grid-template-areas:
+        "head actions"
+        "code actions"
+        "qr actions"
+        "summary actions"
+        "players actions"
+        "message actions";
+    column-gap:28px;
+    row-gap:10px;
+    align-items:start;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-head{
+    grid-area:head;
+    margin:0;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-code-box{
+    grid-area:code;
+    margin:4px 0 0;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-box{
+    grid-area:qr;
+    display:grid;
+    grid-template-columns:210px minmax(0,1fr);
+    grid-template-areas:
+        "label label"
+        "qr hint";
+    align-items:center;
+    gap:10px 18px;
+    margin:0;
+    padding:14px 16px;
+    text-align:left;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-box > small{
+    grid-area:label;
+    margin:0;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateRoomQr{
+    grid-area:qr;
+    width:190px;
+    min-height:190px;
+    margin:0;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-hint{
+    grid-area:hint;
+    margin:0;
+    max-width:420px;
+    font-size:10px;
+    line-height:1.55;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-options-summary{
+    grid-area:summary;
+    justify-content:flex-start;
+    margin:0;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-list{
+    grid-area:players;
+    max-height:170px;
+    overflow:auto;
+    margin:0;
+    padding-right:4px;
+    scrollbar-width:thin;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby #lobbyMessage{
+    grid-area:message;
+    margin:0;
+    text-align:left;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions{
+    grid-area:actions;
+    position:relative;
+    align-self:stretch;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:12px;
+    min-height:100%;
+    padding:24px 0 24px 28px;
+    border-left:1px solid rgba(255,255,255,.08);
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions::before{
+    content:"PRONTO PARA JOGAR?";
+    display:block;
+    margin-bottom:5px;
+    color:#7e8c94;
+    font-size:10px;
+    font-weight:1000;
+    letter-spacing:1.5px;
+    text-align:center;
+}
+
+body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions button{
+    width:100%;
+    min-height:58px;
+    font-size:13px;
+    box-shadow:0 12px 28px rgba(0,0,0,.20);
+}
+
+body.pc-mode #friendsPage.friends-lobby-active .back-button{
+    margin:0 0 16px;
+}
+
+@media(max-width:820px){
+    body.pc-mode #friendsPage.friends-lobby-active .small-card{
+        width:min(760px,94vw);
+        max-height:91vh;
+        overflow:auto;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby{
+        display:block;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-box{
+        display:block;
+        text-align:center;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateRoomQr{
+        margin:0 auto;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-hint{
+        margin-top:10px;
+        max-width:none;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-options-summary{
+        justify-content:center;
+        margin:0 0 10px;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-list{
+        max-height:none;
+        overflow:visible;
+        margin:14px 0;
+        padding-right:0;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby #lobbyMessage{
+        margin-top:10px;
+        text-align:center;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        min-height:0;
+        padding:0;
+        border-left:0;
+    }
+
+    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions::before{
+        display:none;
+    }
+}
+
+/* Mobile: visual preservado; apenas rolagem mais confiável. */
+body.mobile-mode #friendsPage{
+    align-items:flex-start;
+    overflow-x:hidden;
+    overflow-y:auto;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-top:max(10px,env(safe-area-inset-top));
+    padding-bottom:max(18px,env(safe-area-inset-bottom));
+}
+
+body.mobile-mode #friendsPage .page-card{
+    flex:0 0 auto;
+    margin:0 auto;
+    overflow:visible;
+    max-height:none;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+}
+
+body.mobile-mode #friendsWormLayer{
+    opacity:.24;
+}
+
 /* =========================================================
    QR CODE - SALA PRIVADA
 ========================================================= */
@@ -2746,6 +2990,12 @@ body.mobile-mode .connection-status{
 
 
 #shopPage{
+
+    display:block;
+
+    align-items:initial;
+
+    justify-content:initial;
 
 
     --shop-bg:
@@ -6550,6 +6800,151 @@ body.mobile-mode .skin-grid{
     }
 }
 
+
+/* =========================================================
+   WILDSHOP V2 - CATEGORIAS / OFERTAS / LIMITADAS
+========================================================= */
+#shopPage{scroll-behavior:smooth}
+
+#shopPage .shop-page-card{
+    background:
+        radial-gradient(circle at 10% 0%,rgba(53,230,155,.10),transparent 28%),
+        radial-gradient(circle at 90% 4%,rgba(130,83,255,.11),transparent 30%),
+        linear-gradient(180deg,#101a20 0%,#071015 48%,#04090c 100%);
+}
+
+.wildshop-hero{
+    position:relative;z-index:2;
+    display:grid;
+    grid-template-columns:minmax(0,1.4fr) minmax(220px,.6fr);
+    gap:14px;margin:8px 0 18px;padding:20px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);border-radius:22px;
+    background:
+        radial-gradient(circle at 88% 20%,rgba(255,211,90,.14),transparent 28%),
+        linear-gradient(135deg,rgba(53,230,155,.10),rgba(101,72,255,.10) 55%,rgba(255,211,90,.05));
+    box-shadow:0 18px 50px rgba(0,0,0,.26);
+}
+.wildshop-hero::after{
+    content:"";position:absolute;width:220px;height:220px;right:-70px;top:-95px;
+    border-radius:50%;background:rgba(255,255,255,.035);pointer-events:none;
+}
+.wildshop-hero-kicker{color:#61efb3;font-size:9px;font-weight:1000;letter-spacing:1.6px}
+.wildshop-hero h2{margin:6px 0 7px;font-size:clamp(24px,4vw,40px);line-height:.98;font-weight:1000;letter-spacing:-1.4px}
+.wildshop-hero p{max-width:650px;margin:0;color:#90a1aa;font-size:10px;line-height:1.6}
+.wildshop-hero-badge{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:110px;padding:14px;border:1px solid rgba(255,211,90,.18);
+    border-radius:18px;background:rgba(255,211,90,.055);text-align:center;
+}
+.wildshop-hero-badge strong{color:#ffd35a;font-size:26px;font-weight:1000}
+.wildshop-hero-badge span{margin-top:3px;color:#a99c72;font-size:8px;font-weight:900;letter-spacing:1px}
+
+.shop-rarity-tabs{
+    position:relative;
+    top:auto;
+    z-index:5;
+    display:flex;
+    gap:8px;
+    margin:0 0 18px;
+    padding:7px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:16px;
+    background:rgba(5,11,14,.96);
+    box-shadow:0 12px 35px rgba(0,0,0,.28);
+    backdrop-filter:blur(16px);
+}
+.shop-rarity-tabs::-webkit-scrollbar{display:none}
+.shop-rarity-tab{
+    flex:0 0 auto;min-width:92px;height:41px;padding:0 13px;border:1px solid rgba(255,255,255,.07);
+    border-radius:11px;background:#10191f;color:#87969f;font-size:9px;font-weight:1000;cursor:pointer;
+    transition:.18s ease;
+}
+.shop-rarity-tab:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.15);color:#e7eff2}
+.shop-rarity-tab.active{
+    border-color:rgba(53,230,155,.34);background:linear-gradient(180deg,rgba(53,230,155,.20),rgba(53,230,155,.08));
+    color:#78f5bd;box-shadow:0 0 22px rgba(53,230,155,.08)
+}
+.shop-rarity-tab[data-rarity="rare"].active{border-color:rgba(64,177,255,.36);background:rgba(64,177,255,.12);color:#82d2ff}
+.shop-rarity-tab[data-rarity="epic"].active{border-color:rgba(177,112,255,.38);background:rgba(177,112,255,.12);color:#d0a6ff}
+.shop-rarity-tab[data-rarity="legendary"].active{border-color:rgba(255,200,74,.38);background:rgba(255,200,74,.11);color:#ffdc76}
+.shop-rarity-tab[data-rarity="mythic"].active{border-color:rgba(255,87,220,.34);background:rgba(255,87,220,.10);color:#ff9aeb}
+
+.shop-category-header{
+    position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:5px 0 12px
+}
+.shop-category-header h2{margin:0;font-size:20px;font-weight:1000}
+.shop-category-header p{margin:4px 0 0;color:#73838c;font-size:9px}
+.shop-category-count{
+    flex:0 0 auto;padding:7px 10px;border:1px solid rgba(255,255,255,.07);border-radius:999px;
+    background:rgba(255,255,255,.025);color:#8fa0a8;font-size:8px;font-weight:1000
+}
+#shopGrid{margin-bottom:24px}
+
+.shop-limited-section{
+    position:relative;z-index:2;margin-top:30px;padding-top:24px;border-top:1px solid rgba(255,211,90,.14)
+}
+.shop-limited-section::before{
+    content:"";position:absolute;top:-1px;left:0;width:min(280px,70%);height:1px;background:linear-gradient(90deg,#ffd35a,transparent)
+}
+.shop-limited-head{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;margin-bottom:14px;padding:17px;
+    border:1px solid rgba(255,211,90,.14);border-radius:18px;
+    background:radial-gradient(circle at 90% 20%,rgba(255,211,90,.10),transparent 32%),rgba(255,211,90,.035)
+}
+.shop-limited-kicker{color:#ffd35a;font-size:8px;font-weight:1000;letter-spacing:1.4px}
+.shop-limited-head h2{margin:4px 0 5px;color:#fff1b4;font-size:22px;font-weight:1000}
+.shop-limited-head p{margin:0;max-width:620px;color:#93896d;font-size:9px;line-height:1.55}
+.shop-limited-clock{
+    min-width:170px;padding:12px 14px;border:1px solid rgba(255,211,90,.18);border-radius:14px;
+    background:#15130d;text-align:center
+}
+.shop-limited-clock small{display:block;margin-bottom:4px;color:#91835c;font-size:7px;font-weight:1000;letter-spacing:1px}
+.shop-limited-clock strong{color:#ffd35a;font-size:18px;font-weight:1000;font-variant-numeric:tabular-nums}
+
+#limitedShopGrid .skin-card{
+    border-color:rgba(255,211,90,.16);
+    background:radial-gradient(circle at 82% 12%,rgba(255,211,90,.10),transparent 36%),linear-gradient(180deg,rgba(28,24,13,.97),rgba(10,13,15,.99))
+}
+.limited-card-banner{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 0;padding:7px 9px;
+    border:1px solid rgba(255,211,90,.11);border-radius:9px;background:rgba(255,211,90,.045);
+    color:#a99d75;font-size:7px;font-weight:1000
+}
+.limited-card-banner strong{color:#ffd35a}
+.shop-no-results{
+    grid-column:1/-1;padding:28px 18px;border:1px dashed rgba(255,255,255,.09);border-radius:16px;
+    color:#74838b;text-align:center;font-size:10px
+}
+
+@media(max-width:760px){
+    .wildshop-hero{grid-template-columns:1fr}
+    .wildshop-hero-badge{min-height:82px}
+    .shop-limited-head{grid-template-columns:1fr}
+    .shop-limited-clock{min-width:0}
+    .shop-rarity-tabs{top:auto}
+}
+@media(max-width:520px){
+    .shop-rarity-tab{min-width:82px;height:39px;padding:0 10px}
+    .shop-category-header{align-items:center}
+    .shop-category-header h2{font-size:17px}
+    .shop-limited-head h2{font-size:19px}
+}
+
+
+/* CORREÇÃO DESKTOP: a loja não pode ser centralizada verticalmente
+   como os outros overlays, pois seu conteúdo é maior que a viewport. */
+#shopPage.overlay-page{
+    display:block;
+    align-items:initial;
+    justify-content:initial;
+}
+
+#shopPage .shop-page-card{
+    transform:none!important;
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -7554,41 +7949,59 @@ body.mobile-mode .skin-grid{
         </div> 
  
  
-        <!-- ================================================= 
-             TÍTULO DA COLEÇÃO 
-        ================================================== --> 
+
+        <div class="wildshop-hero">
+            <div>
+                <div class="wildshop-hero-kicker">WILDSHOP • NOVA COLEÇÃO</div>
+                <h2>ESCOLHA SEU <span style="color:#35e69b">ESTILO</span></h2>
+                <p>
+                    Navegue pelas raridades, encontre suas skins favoritas e acompanhe
+                    as edições limitadas antes que desapareçam da loja.
+                </p>
+            </div>
+            <div class="wildshop-hero-badge">
+                <strong>✦</strong>
+                <span>COLEÇÃO WILDSNAKE</span>
+            </div>
+        </div>
+
+        <div class="shop-rarity-tabs" id="shopRarityTabs">
+            <button class="shop-rarity-tab active" data-rarity="all" type="button">TODAS</button>
+            <button class="shop-rarity-tab" data-rarity="common" type="button">COMUM</button>
+            <button class="shop-rarity-tab" data-rarity="rare" type="button">RARA</button>
+            <button class="shop-rarity-tab" data-rarity="epic" type="button">ÉPICA</button>
+            <button class="shop-rarity-tab" data-rarity="legendary" type="button">LENDÁRIA</button>
+            <button class="shop-rarity-tab" data-rarity="mythic" type="button">MÍTICA</button>
+        </div>
+
+        <div class="shop-category-header">
+            <div>
+                <h2 id="shopCategoryTitle">Todas as skins</h2>
+                <p id="shopCategorySubtitle">Explore toda a coleção disponível.</p>
+            </div>
+            <div class="shop-category-count" id="shopCategoryCount">0 SKINS</div>
+        </div>
+
+        <div class="skin-grid" id="shopGrid"></div>
+
+        <section class="shop-limited-section" id="shopLimitedSection">
+            <div class="shop-limited-head">
+                <div>
+                    <div class="shop-limited-kicker">⏳ EDIÇÃO LIMITADA</div>
+                    <h2>SKINS QUE NÃO VOLTAM</h2>
+                    <p>
+                        Quando o cronômetro chegar a zero, estas ofertas deixam a loja.
+                        O pagamento com dinheiro real será conectado depois.
+                    </p>
+                </div>
+                <div class="shop-limited-clock">
+                    <small>TERMINA EM</small>
+                    <strong id="shopLimitedCountdown">10d 11h 00m</strong>
+                </div>
+            </div>
+            <div class="skin-grid" id="limitedShopGrid"></div>
+        </section>
  
-        <div class="shop-section-header"> 
- 
-            <div> 
- 
-                <span class="shop-section-label"> 
-                    COLEÇÃO 
-                </span> 
- 
-                <h2> 
-                    Escolha sua skin 
-                </h2> 
- 
-            </div> 
- 
- 
-            <div class="shop-section-detail"> 
-                ✦ VISUAIS EXCLUSIVOS 
-            </div> 
- 
-        </div> 
- 
- 
-        <!-- ================================================= 
-             GRID DAS SKINS 
-             SEU JS CONTINUA INSERINDO OS CARDS AQUI 
-        ================================================== --> 
- 
-        <div 
-            class="skin-grid" 
-            id="shopGrid" 
-        ></div> 
  
  
     </div> 
@@ -7668,6 +8081,14 @@ body.mobile-mode .skin-grid{
     id="friendsPage"
     class="overlay-page hidden"
 >
+
+<div class="friends-ambient-bg" aria-hidden="true">
+    <div class="loading-grid"></div>
+    <div
+        class="loading-worm-layer"
+        id="friendsWormLayer"
+    ></div>
+</div>
 
 <div class="page-card small-card">
 
@@ -8084,26 +8505,6 @@ body.mobile-mode .skin-grid{
         id="stick"
     ></div>
 
-</div>
-
-<!-- V13.13 - CAIXINHA / CORREIO DENTRO DA PARTIDA -->
-<div class="game-mailbox">
-<button id="rewardInboxButton" class="reward-inbox-button" type="button" aria-label="Abrir caixinha de recompensa">
-    🎁 <span id="rewardInboxBadge" class="reward-inbox-badge" aria-hidden="true">1</span>
-</button>
-
-<div id="rewardInboxOverlay" class="reward-inbox-overlay" aria-hidden="true">
-    <div class="reward-inbox-card">
-        <div class="reward-inbox-icon">🎁</div>
-        <h2 id="rewardInboxTitle">SUA CAIXINHA</h2>
-        <p id="rewardInboxText">Existe uma recompensa aguardando você.</p>
-        <div id="rewardInboxWarning" class="reward-inbox-warning"></div>
-        <div class="reward-inbox-actions">
-            <button id="rewardInboxPrimary" class="reward-inbox-primary" type="button">ABRIR RECOMPENSA</button>
-            <button id="rewardInboxSecondary" class="reward-inbox-secondary" type="button">FECHAR</button>
-        </div>
-    </div>
-</div>
 </div>
 
 </section>
@@ -11001,227 +11402,212 @@ function drawSkinPreview(canvas,id){
    SHOP CARD
 ========================================================= */
 
+const SHOP_RARITY_META = {
+    all:{title:"Todas as skins",subtitle:"Explore toda a coleção disponível."},
+    common:{title:"Skins comuns",subtitle:"Visuais clássicos para começar sua coleção."},
+    rare:{title:"Skins raras",subtitle:"Visuais diferentes e mais difíceis de encontrar."},
+    epic:{title:"Skins épicas",subtitle:"Aparências marcantes para se destacar na arena."},
+    legendary:{title:"Skins lendárias",subtitle:"Algumas das skins mais especiais do WildSnake."},
+    mythic:{title:"Skins míticas",subtitle:"Visuais extremamente raros da coleção."}
+};
+
+let activeShopRarity = "all";
+const LIMITED_OFFER_STORAGE_KEY = "wildsnakeLimitedOfferEndV1";
+const LIMITED_OFFER_DURATION = (10*24*60*60*1000) + (11*60*60*1000);
+let limitedOfferEnd = 0;
+let limitedShopTimer = null;
+
+function getLimitedOfferEnd(){
+    let saved = 0;
+    try{
+        saved = Number(localStorage.getItem(LIMITED_OFFER_STORAGE_KEY)) || 0;
+    }catch{}
+
+    if(!saved || !Number.isFinite(saved)){
+        saved = Date.now() + LIMITED_OFFER_DURATION;
+        try{
+            localStorage.setItem(LIMITED_OFFER_STORAGE_KEY,String(saved));
+        }catch{}
+    }
+    return saved;
+}
+
+function formatLimitedCountdown(ms){
+    if(ms<=0) return "ENCERRADO";
+    const totalMinutes = Math.floor(ms/60000);
+    const days = Math.floor(totalMinutes/1440);
+    const hours = Math.floor((totalMinutes%1440)/60);
+    const minutes = totalMinutes%60;
+    return `${days}d ${String(hours).padStart(2,"0")}h ${String(minutes).padStart(2,"0")}m`;
+}
+
+function updateLimitedShopCountdown(){
+    const label = document.getElementById("shopLimitedCountdown");
+    if(!label) return;
+
+    const remaining = limitedOfferEnd-Date.now();
+    label.textContent = formatLimitedCountdown(remaining);
+
+    if(remaining<=0){
+        document.querySelectorAll("#limitedShopGrid .skin-action").forEach(button=>{
+            if(!button.classList.contains("equipped") && !button.classList.contains("equip")){
+                button.disabled = true;
+                button.textContent = "OFERTA ENCERRADA";
+            }
+        });
+    }
+}
+
+function startLimitedShopTimer(){
+    limitedOfferEnd = getLimitedOfferEnd();
+    if(limitedShopTimer) clearInterval(limitedShopTimer);
+    updateLimitedShopCountdown();
+    limitedShopTimer = setInterval(updateLimitedShopCountdown,15000);
+}
+
 function createShopCard(skin){
+    const owned = isOwned(skin.id);
+    const equipped = account.equippedSkin===skin.id;
+    const card = document.createElement("div");
 
-    const owned =
-        isOwned(
-            skin.id
-        );
+    card.className = "skin-card"+(equipped?" equipped":"");
+    card.dataset.rarity = skin.rarity;
+    card.dataset.skinId = skin.id;
 
-    const equipped =
-        account.equippedSkin
-        ===
-        skin.id;
+    let priceText = "GRÁTIS";
+    let priceClass = "owned";
 
-    const card =
-        document.createElement(
-            "div"
-        );
-
-    card.className =
-        "skin-card"
-        +
-        (
-            equipped
-            ?
-            " equipped"
-            :
-            ""
-        );
-
-    let priceText =
-        "GRÁTIS";
-
-    let priceClass =
-        "owned";
-
-    if(
-        skin.currency==="coin"
-    ){
-
-        priceText =
-            "🪙 "
-            +
-            formatNumber(
-                skin.price
-            )
-            +
-            " WildCoins";
-
-        priceClass =
-            "coin";
-
+    if(skin.currency==="coin"){
+        priceText = "🪙 "+formatNumber(skin.price)+" WildCoins";
+        priceClass = "coin";
     }
 
-    if(
-        skin.currency==="gem"
-    ){
-
-        priceText =
-            "💎 "
-            +
-            formatNumber(
-                skin.price
-            )
-            +
-            " WildGems";
-
-        priceClass =
-            "gem";
-
+    if(skin.currency==="gem"){
+        priceText = "💎 "+formatNumber(skin.price)+" WildGems";
+        priceClass = "gem";
     }
 
-    let action =
-        "COMPRAR";
+    let action = "COMPRAR";
+    let actionClass = skin.currency==="gem" ? "buy-gem" : "buy-coin";
 
-    let actionClass =
-        skin.currency==="gem"
-        ?
-        "buy-gem"
-        :
-        "buy-coin";
-
-    if(
-        owned
-    ){
-
-        action =
-            equipped
-            ?
-            "EQUIPADA ✓"
-            :
-            "EQUIPAR";
-
-        actionClass =
-            equipped
-            ?
-            "equipped"
-            :
-            "equip";
-
+    if(owned){
+        action = equipped ? "EQUIPADA ✓" : "EQUIPAR";
+        actionClass = equipped ? "equipped" : "equip";
     }
+
+    const limitedExtra = skin.limited ? `
+        <div class="limited-card-banner">
+            <span>⏳ NÃO VOLTA APÓS O FIM</span>
+            <strong>LIMITADA</strong>
+        </div>
+    ` : "";
 
     card.innerHTML = `
-
-        <span
-            class="rarity ${skin.rarity}"
-        >
-            ${skin.rarity.toUpperCase()}
+        <span class="rarity ${skin.rarity}">
+            ${skin.limited ? "LIMITADA" : skin.rarity.toUpperCase()}
         </span>
 
-        <canvas
-            class="skin-preview"
-            width="500"
-            height="210"
-        ></canvas>
+        <canvas class="skin-preview" width="500" height="210"></canvas>
 
         <div class="skin-info">
+            <h3>${skin.name}</h3>
+            <p>${skin.description}</p>
 
-            <h3>
-                ${skin.name}
-            </h3>
+            ${limitedExtra}
 
-            <p>
-                ${skin.description}
-            </p>
-
-            <div
-                class="skin-price ${
-                    owned
-                    ?
-                    "owned"
-                    :
-                    priceClass
-                }"
-            >
-
-                ${
-                    owned
-                    ?
-                    "ADQUIRIDA ✓"
-                    :
-                    priceText
-                }
-
+            <div class="skin-price ${owned ? "owned" : priceClass}">
+                ${owned ? "ADQUIRIDA ✓" : priceText}
             </div>
 
-            <button
-                class="skin-action ${actionClass}"
-            >
+            <button class="skin-action ${actionClass}">
                 ${action}
             </button>
-
         </div>
     `;
 
-    card.querySelector(
-        ".skin-action"
-    ).onclick =
-    ()=>{
+    const actionButton = card.querySelector(".skin-action");
 
-        if(
-            equipped
-        ){
+    actionButton.onclick = ()=>{
+        if(equipped) return;
+
+        if(owned){
+            equipSkin(skin.id);
             return;
         }
 
-        if(
-            owned
-        ){
-
-            equipSkin(
-                skin.id
-            );
-
-        }
-        else{
-
-            buySkin(
-                skin.id
-            );
-
+        if(skin.limited && Date.now()>=limitedOfferEnd){
+            toast("⏳ Esta oferta limitada já terminou.");
+            return;
         }
 
+        buySkin(skin.id);
     };
 
-    drawSkinPreview(
-        card.querySelector(
-            "canvas"
-        ),
-        skin.id
-    );
-
+    drawSkinPreview(card.querySelector("canvas"),skin.id);
     return card;
+}
 
+function applyShopRarityFilter(rarity){
+    activeShopRarity = SHOP_RARITY_META[rarity] ? rarity : "all";
+
+    const normalSkins = Object.values(SKINS).filter(skin=>!skin.limited);
+    const visible = activeShopRarity==="all"
+        ? normalSkins
+        : normalSkins.filter(skin=>skin.rarity===activeShopRarity);
+
+    const grid = document.getElementById("shopGrid");
+    grid.innerHTML = "";
+
+    visible.forEach(skin=>grid.appendChild(createShopCard(skin)));
+
+    if(visible.length===0){
+        const empty = document.createElement("div");
+        empty.className = "shop-no-results";
+        empty.textContent = "Ainda não existem skins nesta raridade.";
+        grid.appendChild(empty);
+    }
+
+    const meta = SHOP_RARITY_META[activeShopRarity];
+    document.getElementById("shopCategoryTitle").textContent = meta.title;
+    document.getElementById("shopCategorySubtitle").textContent = meta.subtitle;
+    document.getElementById("shopCategoryCount").textContent =
+        visible.length+(visible.length===1?" SKIN":" SKINS");
+
+    document.querySelectorAll(".shop-rarity-tab").forEach(button=>{
+        button.classList.toggle("active",button.dataset.rarity===activeShopRarity);
+    });
+}
+
+function renderLimitedShop(){
+    const grid = document.getElementById("limitedShopGrid");
+    if(!grid) return;
+
+    grid.innerHTML = "";
+    const limitedSkins = Object.values(SKINS).filter(skin=>!!skin.limited);
+
+    limitedSkins.forEach(skin=>grid.appendChild(createShopCard(skin)));
+
+    if(limitedSkins.length===0){
+        const empty = document.createElement("div");
+        empty.className = "shop-no-results";
+        empty.textContent = "Nenhuma skin limitada disponível no momento.";
+        grid.appendChild(empty);
+    }
 }
 
 function renderShop(){
-
     updateAccountUI();
-
-    const grid =
-        document.getElementById(
-            "shopGrid"
-        );
-
-    grid.innerHTML =
-        "";
-
-    Object.values(
-        SKINS
-    ).forEach(
-        skin=>{
-
-            grid.appendChild(
-                createShopCard(
-                    skin
-                )
-            );
-
-        }
-    );
-
+    limitedOfferEnd = getLimitedOfferEnd();
+    applyShopRarityFilter(activeShopRarity);
+    renderLimitedShop();
+    startLimitedShopTimer();
 }
+
+document.querySelectorAll(".shop-rarity-tab").forEach(button=>{
+    button.addEventListener("click",()=>{
+        applyShopRarityFilter(button.dataset.rarity);
+    });
+});
 
 /* =========================================================
    MINHAS SKINS
@@ -11373,12 +11759,34 @@ document.getElementById(
 ).onclick =
 ()=>{
 
+    const shopPage =
+        document.getElementById(
+            "shopPage"
+        );
+
     renderShop();
 
-    document.getElementById(
-        "shopPage"
-    ).classList.remove(
+    shopPage.classList.remove(
         "hidden"
+    );
+
+    /*
+       Sempre abre a WildShop no início.
+       Usamos dois frames para garantir que o navegador
+       já calculou toda a altura dos cards antes de zerar.
+    */
+    shopPage.scrollTop = 0;
+
+    requestAnimationFrame(
+        ()=>{
+            shopPage.scrollTop = 0;
+
+            requestAnimationFrame(
+                ()=>{
+                    shopPage.scrollTop = 0;
+                }
+            );
+        }
     );
 
 };
@@ -11393,6 +11801,11 @@ document.getElementById(
     ).classList.add(
         "hidden"
     );
+
+    if(limitedShopTimer){
+        clearInterval(limitedShopTimer);
+        limitedShopTimer = null;
+    }
 
 };
 
@@ -12530,6 +12943,77 @@ function buildReturnSwirlWorms(){
 
         worm.style.zIndex =
             String(1 + (i%3));
+
+        layer.appendChild(
+            worm
+        );
+
+    }
+
+}
+
+
+function buildFriendsAmbientWorms(){
+
+    const layer =
+        document.getElementById(
+            "friendsWormLayer"
+        );
+
+    if(!layer){
+        return;
+    }
+
+    if(layer.childElementCount){
+        return;
+    }
+
+    const count =
+        quality==="low"
+        ?
+        4
+        :
+        quality==="medium"
+        ?
+        6
+        :
+        quality==="high"
+        ?
+        8
+        :
+        9;
+
+    for(
+        let i=0;
+        i<count;
+        i++
+    ){
+
+        const progress =
+            count<=1
+            ?
+            .5
+            :
+            i/(count-1);
+
+        const worm =
+            createLoadingWorm({
+                color:LOADING_COLORS[i%LOADING_COLORS.length],
+                top:8 + progress*84,
+                duration:rand(6.6,11.2),
+                delay:rand(-10,-.4),
+                direction:i%2===0 ? "right" : "left",
+                segments:Math.floor(rand(8,13)),
+                waveOffset:rand(-.55,0),
+                waveSpeed:rand(.50,.82)
+            });
+
+        worm.classList.add(
+            "return-flow-worm"
+        );
+
+        worm.style.opacity =
+            String(.46 + (i%3)*.08);
 
         layer.appendChild(
             worm
@@ -14898,6 +15382,17 @@ function showPrivateLobby(
     code
 ){
 
+    const friendsPage =
+        document.getElementById(
+            "friendsPage"
+        );
+
+    friendsPage?.classList.add(
+        "friends-lobby-active"
+    );
+
+    buildFriendsAmbientWorms();
+
     document.getElementById(
         "privateRoomSetup"
     ).classList.add(
@@ -15086,6 +15581,17 @@ function escapeHtml(
 }
 
 function openFriendsPage(){
+
+    const friendsPage =
+        document.getElementById(
+            "friendsPage"
+        );
+
+    friendsPage?.classList.remove(
+        "friends-lobby-active"
+    );
+
+    buildFriendsAmbientWorms();
 
     document.getElementById(
         "privateRoomSetup"
