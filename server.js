@@ -36,7 +36,7 @@ app.use((req, res, next) => {
   res.set('X-Frame-Options', 'DENY');
   res.set('Referrer-Policy', 'no-referrer');
   res.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-  res.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  res.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=(), usb=()');
   res.set(
     'Content-Security-Policy',
     "default-src 'self'; " +
