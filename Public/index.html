@@ -1883,250 +1883,6 @@ body.mobile-mode .connection-status{
     cursor:not-allowed;
 }
 
-
-/* =========================================================
-   SALA DE AMIGOS — FUNDO ANIMADO + LAYOUT DESKTOP
-   Mantém o mobile no formato anterior e usa as mesmas
-   minhocas da animação de retorno/logout como ambientação.
-========================================================= */
-
-#friendsPage{
-    isolation:isolate;
-    overflow:hidden;
-    background:#020609;
-}
-
-.friends-ambient-bg{
-    position:absolute;
-    inset:0;
-    z-index:0;
-    overflow:hidden;
-    pointer-events:none;
-    background:
-        radial-gradient(circle at 50% 42%,rgba(53,230,155,.11),transparent 34%),
-        radial-gradient(circle at 12% 18%,rgba(56,168,255,.08),transparent 28%),
-        radial-gradient(circle at 88% 76%,rgba(168,121,255,.08),transparent 30%),
-        linear-gradient(180deg,#06100d,#020507);
-}
-
-.friends-ambient-bg .loading-grid{
-    opacity:.16;
-}
-
-#friendsWormLayer{
-    opacity:.48;
-    filter:saturate(.88) brightness(.72);
-}
-
-#friendsPage > .page-card{
-    position:relative;
-    z-index:2;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active .small-card{
-    width:min(1120px,95vw);
-    max-height:88vh;
-    overflow:hidden;
-    padding:26px 28px 28px;
-    background:linear-gradient(145deg,rgba(15,23,29,.92),rgba(6,11,15,.89));
-    box-shadow:
-        0 40px 110px rgba(0,0,0,.72),
-        inset 0 1px 0 rgba(255,255,255,.03);
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) 270px;
-    grid-template-areas:
-        "head actions"
-        "code actions"
-        "qr actions"
-        "summary actions"
-        "players actions"
-        "message actions";
-    column-gap:28px;
-    row-gap:10px;
-    align-items:start;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-head{
-    grid-area:head;
-    margin:0;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-code-box{
-    grid-area:code;
-    margin:4px 0 0;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-box{
-    grid-area:qr;
-    display:grid;
-    grid-template-columns:210px minmax(0,1fr);
-    grid-template-areas:
-        "label label"
-        "qr hint";
-    align-items:center;
-    gap:10px 18px;
-    margin:0;
-    padding:14px 16px;
-    text-align:left;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-box > small{
-    grid-area:label;
-    margin:0;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateRoomQr{
-    grid-area:qr;
-    width:190px;
-    min-height:190px;
-    margin:0;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-hint{
-    grid-area:hint;
-    margin:0;
-    max-width:420px;
-    font-size:10px;
-    line-height:1.55;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-options-summary{
-    grid-area:summary;
-    justify-content:flex-start;
-    margin:0;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-list{
-    grid-area:players;
-    max-height:170px;
-    overflow:auto;
-    margin:0;
-    padding-right:4px;
-    scrollbar-width:thin;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby #lobbyMessage{
-    grid-area:message;
-    margin:0;
-    text-align:left;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions{
-    grid-area:actions;
-    position:relative;
-    align-self:stretch;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:12px;
-    min-height:100%;
-    padding:24px 0 24px 28px;
-    border-left:1px solid rgba(255,255,255,.08);
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions::before{
-    content:"PRONTO PARA JOGAR?";
-    display:block;
-    margin-bottom:5px;
-    color:#7e8c94;
-    font-size:10px;
-    font-weight:1000;
-    letter-spacing:1.5px;
-    text-align:center;
-}
-
-body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions button{
-    width:100%;
-    min-height:58px;
-    font-size:13px;
-    box-shadow:0 12px 28px rgba(0,0,0,.20);
-}
-
-body.pc-mode #friendsPage.friends-lobby-active .back-button{
-    margin:0 0 16px;
-}
-
-@media(max-width:820px){
-    body.pc-mode #friendsPage.friends-lobby-active .small-card{
-        width:min(760px,94vw);
-        max-height:91vh;
-        overflow:auto;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby{
-        display:block;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-box{
-        display:block;
-        text-align:center;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateRoomQr{
-        margin:0 auto;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .room-qr-hint{
-        margin-top:10px;
-        max-width:none;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-options-summary{
-        justify-content:center;
-        margin:0 0 10px;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-list{
-        max-height:none;
-        overflow:visible;
-        margin:14px 0;
-        padding-right:0;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby #lobbyMessage{
-        margin-top:10px;
-        text-align:center;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        min-height:0;
-        padding:0;
-        border-left:0;
-    }
-
-    body.pc-mode #friendsPage.friends-lobby-active #privateLobby .lobby-actions::before{
-        display:none;
-    }
-}
-
-/* Mobile: visual preservado; apenas rolagem mais confiável. */
-body.mobile-mode #friendsPage{
-    align-items:flex-start;
-    overflow-x:hidden;
-    overflow-y:auto;
-    overscroll-behavior-y:contain;
-    -webkit-overflow-scrolling:touch;
-    padding-top:max(10px,env(safe-area-inset-top));
-    padding-bottom:max(18px,env(safe-area-inset-bottom));
-}
-
-body.mobile-mode #friendsPage .page-card{
-    flex:0 0 auto;
-    margin:0 auto;
-    overflow:visible;
-    max-height:none;
-    padding-bottom:calc(24px + env(safe-area-inset-bottom));
-}
-
-body.mobile-mode #friendsWormLayer{
-    opacity:.24;
-}
-
 /* =========================================================
    QR CODE - SALA PRIVADA
 ========================================================= */
@@ -6945,6 +6701,616 @@ body.mobile-mode .skin-grid{
     transform:none!important;
 }
 
+
+
+/* =========================================================
+   WILDSNAKE - LOBBY PRIVADO DESKTOP V2
+========================================================= */
+
+#friendsPage.lobby-open{
+    padding:0;
+    overflow:hidden;
+    background:#020708;
+}
+
+#friendsPage.lobby-open > .page-card{
+    position:relative;
+    width:100%;
+    max-width:none;
+    height:100dvh;
+    max-height:none;
+    min-height:100dvh;
+    margin:0;
+    padding:26px 32px;
+    overflow:hidden;
+    border:0;
+    border-radius:0;
+    background:
+        radial-gradient(circle at 50% 42%,rgba(0,77,49,.12),transparent 34%),
+        linear-gradient(180deg,#02090a,#010506);
+    box-shadow:none;
+}
+
+#friendsPage.lobby-open .back-button{
+    position:relative;
+    z-index:30;
+    min-width:138px;
+    min-height:50px;
+    margin:0 0 22px;
+    padding:0 18px;
+    border:1px solid rgba(129,165,179,.25);
+    border-radius:15px;
+    background:rgba(8,17,22,.78);
+    backdrop-filter:blur(12px);
+    color:#cbd6db;
+    font-size:14px;
+    font-weight:900;
+}
+
+#privateLobby{
+    position:relative;
+    z-index:2;
+}
+
+#privateLobby.hidden{
+    display:none!important;
+}
+
+.private-lobby-shell{
+    position:relative;
+    z-index:10;
+    display:grid;
+    grid-template-columns:minmax(350px,420px) minmax(330px,380px);
+    justify-content:space-between;
+    gap:clamp(70px,14vw,220px);
+    width:100%;
+    min-height:calc(100dvh - 104px);
+}
+
+.private-lobby-left{
+    align-self:start;
+    min-width:0;
+}
+
+.private-lobby-right{
+    display:flex;
+    flex-direction:column;
+    align-self:stretch;
+    min-width:0;
+    padding-bottom:30px;
+}
+
+#privateLobby .lobby-head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:14px;
+    align-items:center;
+    margin:0 0 18px;
+}
+
+#privateLobby .lobby-room-name{
+    color:#f5f7f8;
+    font-size:clamp(21px,2vw,30px);
+    line-height:1.05;
+    font-weight:1000;
+    letter-spacing:-.8px;
+}
+
+#privateLobby .lobby-waiting{
+    margin:9px 0 0;
+    text-align:left;
+    color:#778990;
+    font-size:10px;
+}
+
+#privateLobby .lobby-online-count{
+    padding:8px 11px;
+    border:1px solid rgba(53,230,155,.28);
+    border-radius:999px;
+    background:rgba(53,230,155,.08);
+    color:#62edb0;
+    font-size:9px;
+    white-space:nowrap;
+}
+
+.private-lobby-info-card{
+    padding:13px;
+    border:1px solid rgba(116,151,164,.18);
+    border-radius:20px;
+    background:
+        linear-gradient(180deg,rgba(10,21,26,.78),rgba(4,12,14,.78));
+    box-shadow:0 24px 70px rgba(0,0,0,.30);
+    backdrop-filter:blur(13px);
+}
+
+#privateLobby .room-code-box{
+    margin:0 0 12px;
+    padding:17px 14px;
+    border:1px solid rgba(177,124,255,.32);
+    border-radius:15px;
+    background:
+        radial-gradient(circle at 82% 20%,rgba(168,121,255,.10),transparent 34%),
+        rgba(58,43,96,.13);
+}
+
+#privateLobby .room-code-box small{
+    display:block;
+    margin-bottom:7px;
+    color:#83919b;
+    font-size:9px;
+    letter-spacing:.8px;
+}
+
+#privateLobby .room-code-box strong{
+    display:block;
+    color:#d6b1ff;
+    font-size:clamp(23px,2.3vw,32px);
+    letter-spacing:1.6px;
+}
+
+#privateLobby .room-qr-box{
+    margin:0 0 12px;
+    padding:14px;
+    border:1px solid rgba(53,230,155,.23);
+    border-radius:16px;
+    background:rgba(7,36,27,.26);
+}
+
+#privateLobby #privateRoomQr{
+    width:184px;
+    min-height:184px;
+    padding:8px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+#privateLobby .room-qr-hint{
+    margin:10px auto 0;
+    max-width:300px;
+    font-size:8px;
+    line-height:1.55;
+}
+
+#privateLobby .lobby-options-summary{
+    margin:6px 0 0;
+}
+
+.private-lobby-message{
+    min-height:18px;
+    margin:9px 0 0!important;
+    text-align:left!important;
+    font-size:9px!important;
+}
+
+.private-lobby-players-panel{
+    flex:1;
+    min-height:390px;
+    padding:14px;
+    border:1px solid rgba(111,150,164,.26);
+    border-radius:18px;
+    background:
+        linear-gradient(180deg,rgba(5,14,18,.80),rgba(4,11,14,.72));
+    box-shadow:0 25px 80px rgba(0,0,0,.28);
+    backdrop-filter:blur(14px);
+}
+
+.private-lobby-panel-title{
+    margin:2px 3px 12px;
+    color:#dfe8eb;
+    font-size:11px;
+    font-weight:1000;
+    letter-spacing:.8px;
+}
+
+#privateLobby .lobby-list{
+    max-height:calc(100dvh - 330px);
+    overflow-y:auto;
+    padding-right:3px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(53,230,155,.35) rgba(255,255,255,.03);
+}
+
+#privateLobby .lobby-player{
+    margin-bottom:8px;
+    border:1px solid rgba(255,255,255,.055);
+    border-radius:12px;
+    background:rgba(255,255,255,.035);
+}
+
+#privateLobby .lobby-actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-top:18px;
+}
+
+#privateLobby .lobby-actions button{
+    min-height:58px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:1000;
+    letter-spacing:.25px;
+}
+
+#privateLobby .private-play-button{
+    order:1;
+    border:0;
+    background:
+        linear-gradient(180deg,#42efb1,#20c990);
+    color:#02110c;
+    box-shadow:
+        0 12px 35px rgba(22,220,149,.20),
+        inset 0 1px rgba(255,255,255,.24);
+}
+
+#privateLobby .private-play-button:disabled{
+    opacity:.38;
+    box-shadow:none;
+}
+
+#privateLobby .private-ready-button{
+    order:2;
+    border:1px solid rgba(53,230,155,.30);
+    background:rgba(8,25,23,.72);
+    color:#d8e4e3;
+}
+
+.private-lobby-bg{
+    position:fixed;
+    z-index:0;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at 50% 42%,rgba(0,117,70,.12),transparent 28%),
+        radial-gradient(circle at 77% 76%,rgba(28,87,147,.09),transparent 22%),
+        #010708;
+}
+
+.private-lobby-logo{
+    position:absolute;
+    left:50%;
+    top:48%;
+    transform:translate(-50%,-50%) rotate(-2deg);
+    opacity:.17;
+    text-align:center;
+    filter:drop-shadow(0 0 28px rgba(53,230,155,.20));
+}
+
+.private-lobby-logo-main{
+    color:#0eb471;
+    font-size:clamp(65px,9vw,142px);
+    line-height:.8;
+    font-weight:1000;
+    letter-spacing:-8px;
+    white-space:nowrap;
+}
+
+.private-lobby-logo-main span{
+    color:#22d68c;
+}
+
+.private-lobby-logo-sub{
+    margin-top:18px;
+    color:#23ca88;
+    font-size:clamp(8px,1vw,15px);
+    font-weight:1000;
+    letter-spacing:6px;
+}
+
+.lobby-glow{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(55px);
+    opacity:.12;
+    animation:lobbyGlowPulse 5s ease-in-out infinite alternate;
+}
+
+.lobby-glow-a{
+    width:330px;height:330px;left:22%;top:18%;
+    background:#00ec91;
+}
+
+.lobby-glow-b{
+    width:310px;height:310px;right:17%;bottom:8%;
+    background:#315eff;
+    animation-delay:-2s;
+}
+
+.lobby-glow-c{
+    width:250px;height:250px;left:43%;bottom:4%;
+    background:#a048ff;
+    animation-delay:-3.3s;
+}
+
+@keyframes lobbyGlowPulse{
+    from{transform:scale(.86);opacity:.06}
+    to{transform:scale(1.17);opacity:.15}
+}
+
+.lobby-particle{
+    position:absolute;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#36efa7;
+    box-shadow:0 0 13px currentColor;
+    animation:lobbyParticleFloat 7s ease-in-out infinite alternate;
+}
+
+.p1{left:34%;top:12%;color:#35e69b}
+.p2{left:47%;top:22%;color:#ffd84d;animation-delay:-2s}
+.p3{left:62%;top:14%;color:#a978ff;animation-delay:-4s}
+.p4{left:72%;top:39%;color:#42b9ff;animation-delay:-1s}
+.p5{left:54%;top:70%;color:#35e69b;animation-delay:-3s}
+.p6{left:43%;top:82%;color:#ffd84d;animation-delay:-5s}
+.p7{left:84%;top:63%;color:#f44ccc;animation-delay:-2.5s}
+.p8{left:29%;top:60%;color:#6f56ff;animation-delay:-1.5s}
+.p9{left:91%;top:23%;color:#35e69b;animation-delay:-3.5s}
+.p10{left:57%;top:50%;color:#35e69b;animation-delay:-6s}
+
+@keyframes lobbyParticleFloat{
+    from{transform:translate3d(-5px,-9px,0) scale(.7);opacity:.32}
+    to{transform:translate3d(12px,16px,0) scale(1.35);opacity:1}
+}
+
+.lobby-worm{
+    --worm:#35e69b;
+    position:absolute;
+    display:flex;
+    align-items:center;
+    gap:-2px;
+    width:max-content;
+    filter:
+        drop-shadow(0 0 7px var(--worm))
+        drop-shadow(0 0 18px color-mix(in srgb,var(--worm),transparent 55%));
+    opacity:.72;
+    will-change:transform;
+}
+
+.lobby-worm i{
+    display:block;
+    width:30px;
+    height:30px;
+    margin-left:-7px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 35% 28%,rgba(255,255,255,.28),transparent 20%),
+        var(--worm);
+    box-shadow:inset -5px -5px 10px rgba(0,0,0,.13);
+}
+
+.lobby-worm b{
+    position:relative;
+    display:block;
+    width:35px;
+    height:35px;
+    margin-left:-7px;
+    border-radius:50%;
+    background:var(--worm);
+}
+
+.lobby-worm b::before,
+.lobby-worm b::after{
+    content:"";
+    position:absolute;
+    top:9px;
+    width:9px;
+    height:11px;
+    border-radius:50%;
+    background:#eefcff;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,.16);
+}
+
+.lobby-worm b::before{left:7px}
+.lobby-worm b::after{right:7px}
+
+.lobby-worm-green{
+    --worm:#29e893;
+    left:48%;
+    top:7%;
+    transform:rotate(29deg);
+    animation:lobbyWormGreen 12s ease-in-out infinite alternate;
+}
+
+.lobby-worm-purple{
+    --worm:#8c4be9;
+    left:25%;
+    top:31%;
+    transform:rotate(-14deg) scale(.83);
+    animation:lobbyWormPurple 15s ease-in-out infinite alternate;
+}
+
+.lobby-worm-blue{
+    --worm:#2997ef;
+    left:55%;
+    bottom:12%;
+    transform:rotate(36deg) scale(.88);
+    animation:lobbyWormBlue 13s ease-in-out infinite alternate;
+}
+
+.lobby-worm-yellow{
+    --worm:#e4c528;
+    left:20%;
+    bottom:4%;
+    transform:rotate(-18deg) scale(.70);
+    opacity:.48;
+    animation:lobbyWormYellow 17s ease-in-out infinite alternate;
+}
+
+.lobby-worm-pink{
+    --worm:#ee4ca0;
+    right:16%;
+    top:58%;
+    transform:rotate(15deg) scale(.68);
+    opacity:.54;
+    animation:lobbyWormPink 14s ease-in-out infinite alternate;
+}
+
+@keyframes lobbyWormGreen{
+    0%{transform:translate(-25px,-15px) rotate(25deg) scale(1)}
+    45%{transform:translate(70px,18px) rotate(38deg) scale(1.04)}
+    100%{transform:translate(18px,75px) rotate(18deg) scale(.96)}
+}
+
+@keyframes lobbyWormPurple{
+    0%{transform:translate(-50px,5px) rotate(-12deg) scale(.78)}
+    55%{transform:translate(45px,-30px) rotate(6deg) scale(.88)}
+    100%{transform:translate(85px,50px) rotate(19deg) scale(.80)}
+}
+
+@keyframes lobbyWormBlue{
+    0%{transform:translate(-20px,35px) rotate(36deg) scale(.82)}
+    50%{transform:translate(65px,-25px) rotate(51deg) scale(.93)}
+    100%{transform:translate(105px,-70px) rotate(28deg) scale(.85)}
+}
+
+@keyframes lobbyWormYellow{
+    0%{transform:translate(-35px,20px) rotate(-18deg) scale(.65)}
+    100%{transform:translate(90px,-30px) rotate(-4deg) scale(.76)}
+}
+
+@keyframes lobbyWormPink{
+    0%{transform:translate(15px,-20px) rotate(14deg) scale(.62)}
+    100%{transform:translate(-90px,60px) rotate(30deg) scale(.74)}
+}
+
+
+/* =========================================================
+   MOBILE: mantém o layout antigo em coluna e melhora o scroll
+========================================================= */
+@media(max-width:760px){
+
+    #friendsPage.lobby-open{
+        display:block;
+        overflow-y:auto;
+        overflow-x:hidden;
+        padding:12px;
+        overscroll-behavior-y:contain;
+        -webkit-overflow-scrolling:touch;
+        background:#020708;
+    }
+
+    #friendsPage.lobby-open > .page-card{
+        width:min(100%,560px);
+        height:auto;
+        min-height:calc(100dvh - 24px);
+        max-height:none;
+        margin:0 auto;
+        padding:14px 12px 28px;
+        overflow:visible;
+        border:1px solid rgba(255,255,255,.08);
+        border-radius:20px;
+        background:rgba(7,14,18,.96);
+    }
+
+    #friendsPage.lobby-open .back-button{
+        position:relative;
+        width:auto;
+        min-width:0;
+        min-height:42px;
+        margin-bottom:16px;
+        font-size:12px;
+    }
+
+    .private-lobby-bg{
+        display:none;
+    }
+
+    .private-lobby-shell{
+        display:block;
+        min-height:0;
+    }
+
+    .private-lobby-right{
+        display:block;
+        padding-bottom:0;
+    }
+
+    #privateLobby .lobby-head{
+        margin-bottom:10px;
+    }
+
+    #privateLobby .lobby-room-name{
+        font-size:21px;
+    }
+
+    .private-lobby-info-card{
+        padding:0;
+        border:0;
+        background:transparent;
+        box-shadow:none;
+        backdrop-filter:none;
+    }
+
+    #privateLobby .room-code-box{
+        margin-bottom:12px;
+    }
+
+    #privateLobby .room-qr-box{
+        margin-bottom:12px;
+    }
+
+    #privateLobby #privateRoomQr{
+        width:190px;
+        min-height:190px;
+    }
+
+    .private-lobby-players-panel{
+        min-height:0;
+        margin-top:12px;
+        padding:0;
+        border:0;
+        background:transparent;
+        box-shadow:none;
+        backdrop-filter:none;
+    }
+
+    .private-lobby-panel-title{
+        display:none;
+    }
+
+    #privateLobby .lobby-list{
+        max-height:none;
+        overflow:visible;
+        padding:0;
+    }
+
+    #privateLobby .lobby-actions{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:9px;
+        margin-top:12px;
+        padding-bottom:10px;
+    }
+
+    #privateLobby .lobby-actions button{
+        min-height:48px;
+        font-size:11px;
+    }
+
+    #privateLobby .private-ready-button{
+        order:1;
+    }
+
+    #privateLobby .private-play-button{
+        order:2;
+    }
+
+    .private-lobby-message{
+        text-align:center!important;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    .private-lobby-bg *,
+    .lobby-glow,
+    .lobby-particle,
+    .lobby-worm{
+        animation:none!important;
+    }
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -8082,14 +8448,6 @@ body.mobile-mode .skin-grid{
     class="overlay-page hidden"
 >
 
-<div class="friends-ambient-bg" aria-hidden="true">
-    <div class="loading-grid"></div>
-    <div
-        class="loading-worm-layer"
-        id="friendsWormLayer"
-    ></div>
-</div>
-
 <div class="page-card small-card">
 
     <button
@@ -8162,59 +8520,166 @@ body.mobile-mode .skin-grid{
         class="hidden"
     >
 
-        <div class="lobby-head">
-            <div>
-                <div class="lobby-room-name" id="lobbyRoomName">Sala WildSnake</div>
-                <div class="lobby-waiting">Aguardando jogadores entrarem na sala...</div>
+        <!-- FUNDO ANIMADO DO LOBBY (DESKTOP) -->
+        <div class="private-lobby-bg" aria-hidden="true">
+
+            <div class="private-lobby-logo">
+                <div class="private-lobby-logo-main">
+                    Wild<span>Snake</span>
+                </div>
+                <div class="private-lobby-logo-sub">
+                    CONECTE • JOGUE • DOMINE
+                </div>
             </div>
-            <div class="lobby-online-count" id="lobbyOnlineCount">1 ONLINE</div>
-        </div>
 
-        <div class="room-code-box">
-            <small>CÓDIGO DA SALA</small>
-            <strong id="lobbyRoomCode">WILD-----</strong>
-        </div>
+            <div class="lobby-glow lobby-glow-a"></div>
+            <div class="lobby-glow lobby-glow-b"></div>
+            <div class="lobby-glow lobby-glow-c"></div>
 
-        <div class="room-qr-box">
-            <small>QR CODE DESTA SALA</small>
-            <div id="privateRoomQr"></div>
-            <div class="room-qr-hint">
-                Seu amigo pode abrir “JOGAR COM AMIGOS” e tocar em
-                “ESCANEAR QR CODE DO SERVIDOR”.
+            <div class="lobby-particle p1"></div>
+            <div class="lobby-particle p2"></div>
+            <div class="lobby-particle p3"></div>
+            <div class="lobby-particle p4"></div>
+            <div class="lobby-particle p5"></div>
+            <div class="lobby-particle p6"></div>
+            <div class="lobby-particle p7"></div>
+            <div class="lobby-particle p8"></div>
+            <div class="lobby-particle p9"></div>
+            <div class="lobby-particle p10"></div>
+
+            <div class="lobby-worm lobby-worm-green">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <b></b>
             </div>
+
+            <div class="lobby-worm lobby-worm-purple">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <b></b>
+            </div>
+
+            <div class="lobby-worm lobby-worm-blue">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <b></b>
+            </div>
+
+            <div class="lobby-worm lobby-worm-yellow">
+                <i></i><i></i><i></i><i></i><i></i><i></i>
+                <b></b>
+            </div>
+
+            <div class="lobby-worm lobby-worm-pink">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <b></b>
+            </div>
+
         </div>
 
-        <div class="lobby-options-summary">
-            <span class="lobby-option-chip" id="lobbyBotsChip">🤖 Bots: não</span>
-            <span class="lobby-option-chip" id="lobbyReadyChip">✅ 0 prontos</span>
-        </div>
+        <div class="private-lobby-shell">
 
-        <div
-            class="lobby-list"
-            id="lobbyPlayers"
-        ></div>
+            <!-- COLUNA ESQUERDA -->
+            <div class="private-lobby-left">
 
-        <div
-            class="room-message"
-            id="lobbyMessage"
-        ></div>
+                <div class="lobby-head">
+                    <div>
+                        <div
+                            class="lobby-room-name"
+                            id="lobbyRoomName"
+                        >
+                            Sala WildSnake
+                        </div>
 
-        <div class="lobby-actions">
+                        <div class="lobby-waiting">
+                            Aguardando jogadores entrarem na sala...
+                        </div>
+                    </div>
 
-            <button
-                class="room-secondary"
-                id="toggleReadyButton"
-            >
-                MARCAR PRONTO
-            </button>
+                    <div
+                        class="lobby-online-count"
+                        id="lobbyOnlineCount"
+                    >
+                        1 ONLINE
+                    </div>
+                </div>
 
-            <button
-                class="room-primary"
-                id="startPrivateGameButton"
-                disabled
-            >
-                INICIAR PARTIDA
-            </button>
+                <div class="private-lobby-info-card">
+
+                    <div class="room-code-box">
+                        <small>CÓDIGO DA SALA</small>
+                        <strong id="lobbyRoomCode">WILD-----</strong>
+                    </div>
+
+                    <div class="room-qr-box">
+                        <small>QR CODE DESTA SALA</small>
+
+                        <div id="privateRoomQr"></div>
+
+                        <div class="room-qr-hint">
+                            Seu amigo pode abrir “JOGAR COM AMIGOS” e tocar em
+                            “ESCANEAR QR CODE DO SERVIDOR”.
+                        </div>
+                    </div>
+
+                    <div class="lobby-options-summary">
+                        <span
+                            class="lobby-option-chip"
+                            id="lobbyBotsChip"
+                        >
+                            🤖 Bots: não
+                        </span>
+
+                        <span
+                            class="lobby-option-chip"
+                            id="lobbyReadyChip"
+                        >
+                            ✅ 0 prontos
+                        </span>
+                    </div>
+
+                </div>
+
+                <div
+                    class="room-message private-lobby-message"
+                    id="lobbyMessage"
+                ></div>
+
+            </div>
+
+            <!-- COLUNA DIREITA -->
+            <div class="private-lobby-right">
+
+                <div class="private-lobby-players-panel">
+
+                    <div class="private-lobby-panel-title">
+                        👑 JOGADORES
+                    </div>
+
+                    <div
+                        class="lobby-list"
+                        id="lobbyPlayers"
+                    ></div>
+
+                </div>
+
+                <div class="lobby-actions">
+
+                    <button
+                        class="room-primary private-play-button"
+                        id="startPrivateGameButton"
+                        disabled
+                    >
+                        ▶ JOGAR
+                    </button>
+
+                    <button
+                        class="room-secondary private-ready-button"
+                        id="toggleReadyButton"
+                    >
+                        ☑ MARCAR COMO PRONTO
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -12952,77 +13417,6 @@ function buildReturnSwirlWorms(){
 
 }
 
-
-function buildFriendsAmbientWorms(){
-
-    const layer =
-        document.getElementById(
-            "friendsWormLayer"
-        );
-
-    if(!layer){
-        return;
-    }
-
-    if(layer.childElementCount){
-        return;
-    }
-
-    const count =
-        quality==="low"
-        ?
-        4
-        :
-        quality==="medium"
-        ?
-        6
-        :
-        quality==="high"
-        ?
-        8
-        :
-        9;
-
-    for(
-        let i=0;
-        i<count;
-        i++
-    ){
-
-        const progress =
-            count<=1
-            ?
-            .5
-            :
-            i/(count-1);
-
-        const worm =
-            createLoadingWorm({
-                color:LOADING_COLORS[i%LOADING_COLORS.length],
-                top:8 + progress*84,
-                duration:rand(6.6,11.2),
-                delay:rand(-10,-.4),
-                direction:i%2===0 ? "right" : "left",
-                segments:Math.floor(rand(8,13)),
-                waveOffset:rand(-.55,0),
-                waveSpeed:rand(.50,.82)
-            });
-
-        worm.classList.add(
-            "return-flow-worm"
-        );
-
-        worm.style.opacity =
-            String(.46 + (i%3)*.08);
-
-        layer.appendChild(
-            worm
-        );
-
-    }
-
-}
-
 function createTransitionOrb(){
 
     let orb =
@@ -15382,16 +15776,11 @@ function showPrivateLobby(
     code
 ){
 
-    const friendsPage =
-        document.getElementById(
-            "friendsPage"
-        );
-
-    friendsPage?.classList.add(
-        "friends-lobby-active"
+    document.getElementById(
+        "friendsPage"
+    ).classList.add(
+        "lobby-open"
     );
-
-    buildFriendsAmbientWorms();
 
     document.getElementById(
         "privateRoomSetup"
@@ -15518,12 +15907,33 @@ function renderPrivateLobby(
             "toggleReadyButton"
         );
 
+    const isMobileLobby =
+        window.matchMedia(
+            "(max-width: 760px)"
+        ).matches
+        ||
+        document.body.classList.contains(
+            "mobile-mode"
+        );
+
     readyButton.textContent =
         me?.ready
         ?
-        "REMOVER PRONTO"
+        (
+            isMobileLobby
+            ?
+            "REMOVER PRONTO"
+            :
+            "☑ REMOVER PRONTO"
+        )
         :
-        "MARCAR PRONTO";
+        (
+            isMobileLobby
+            ?
+            "MARCAR PRONTO"
+            :
+            "☑ MARCAR COMO PRONTO"
+        );
 
     const startButton =
         document.getElementById(
@@ -15536,6 +15946,21 @@ function renderPrivateLobby(
         "block"
         :
         "none";
+
+    startButton.textContent =
+        (
+            window.matchMedia(
+                "(max-width: 760px)"
+            ).matches
+            ||
+            document.body.classList.contains(
+                "mobile-mode"
+            )
+        )
+        ?
+        "INICIAR PARTIDA"
+        :
+        "▶ JOGAR";
 
     startButton.disabled =
         !state.canStart;
@@ -15582,16 +16007,11 @@ function escapeHtml(
 
 function openFriendsPage(){
 
-    const friendsPage =
-        document.getElementById(
-            "friendsPage"
-        );
-
-    friendsPage?.classList.remove(
-        "friends-lobby-active"
+    document.getElementById(
+        "friendsPage"
+    ).classList.remove(
+        "lobby-open"
     );
-
-    buildFriendsAmbientWorms();
 
     document.getElementById(
         "privateRoomSetup"
@@ -15839,6 +16259,12 @@ async()=>{
                     "friendsPage"
                 ).classList.add(
                     "hidden"
+                );
+
+                document.getElementById(
+                    "friendsPage"
+                ).classList.remove(
+                    "lobby-open"
                 );
 
                 onlinePlayerId =
