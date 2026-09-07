@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
 >
-<title>WILDSNAKE — Premium Snake Arena • v13.10.3</title>
+<title>WILDSNAKE — Premium Snake Arena • v13.10.4</title>
 
 <style>
 *{
@@ -6492,7 +6492,7 @@ body.mobile-mode .skin-grid{
             </div>
 
             <div class="auth-build">
-                WildSnake v13.10.3 • conexão protegida
+                WildSnake v13.10.4 • conexão protegida
             </div>
 
         </aside>
@@ -7150,7 +7150,7 @@ body.mobile-mode .skin-grid{
 
         <div class="profile-meta-item">
             <small>SERVIDOR / VERSÃO</small>
-            <strong id="profileServerVersion">— • v13.10.3</strong>
+            <strong id="profileServerVersion">— • v13.10.4</strong>
         </div>
 
     </div>
@@ -8863,7 +8863,7 @@ let onlineRoomId =
 
 let currentPublicServerId = null;
 let currentPublicServerName = "—";
-let gameVersion = "v13.10.3";
+let gameVersion = "v13.10.4";
 let publicSoloActive = false;
 let publicMigrationActive = false;
 let pendingPublicSoloData = null;
@@ -12058,7 +12058,7 @@ function buildReturnSwirlWorms(){
     }
 
     /*
-        HOTFIX v13.10.3
+        HOTFIX v13.10.4
         ----------------
         A versão anterior colocava todas as minhocas no centro e
         aplicava uma órbita com transform no mesmo elemento que já
@@ -21884,7 +21884,7 @@ requestAnimationFrame(
 ========================================================= */
 
 const V13_VERSION =
-    "v13.10.3";
+    "v13.10.4";
 
 const V13_AUTH_KEY =
     "wildsnakeAuthV13";
@@ -22504,7 +22504,7 @@ let WILDSNAKE_SUPABASE_URL =
     "https://hwalhozxgkxydpddvfwa.supabase.co";
 
 let WILDSNAKE_SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_65QQYotFg907vEru8E5J1w_k1VMqTnE";
+    "";
 
 let v13SupabaseClient = null;
 let v13LatestSupabaseSession = null;
@@ -22789,6 +22789,20 @@ async function v13HandleGoogleSession(session,intent="login"){
     }
 
     if(!data?.ok){
+        if(data?.code === "GOOGLE_SESSION_INVALID"){
+            try{
+                await v13SupabaseClient?.auth.signOut({scope:"local"});
+            }catch{}
+            try{
+                localStorage.removeItem("wildsnakeGoogleIntentV13");
+            }catch{}
+            v13SetAuthMessage(
+                "A sessão do Google expirou ou pertence a outro projeto. Clique em ENTRAR COM GOOGLE novamente.",
+                "error"
+            );
+            return false;
+        }
+
         v13SetAuthMessage(
             data?.error || `Falha no login Google${response ? ` (HTTP ${response.status})` : ""}.`,
             "error"
@@ -23462,6 +23476,21 @@ document.getElementById(
     };
 
     v13SaveAuth();
+
+    /*
+       Convidado também passa pelo tutorial na primeira entrada.
+       Como não existe conta autenticada, o tutorial funciona em modo
+       de treinamento e NÃO concede recompensa de economia.
+    */
+    const guestTutorialCompleted =
+        localStorage.getItem(
+            "wildsnakeGuestTutorialCompletedV13"
+        ) === "1";
+
+    if(!guestTutorialCompleted){
+        void v13GoToTutorial();
+        return;
+    }
 
     v13ShowMenuAfterAuth();
 
