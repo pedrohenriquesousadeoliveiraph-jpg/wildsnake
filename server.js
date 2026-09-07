@@ -112,10 +112,10 @@ const PORT =
   );
 
 const GAME_VERSION =
-  'v13.10.3';
+  'v13.10.4';
 
 const BUILD =
-  'wildsnake-v13.10.3-server-food-based-rewards';
+  'wildsnake-v13.10.4-google-guest-tutorial-hotfix';
 
 const WORLD_RADIUS =
   4200;
@@ -1721,47 +1721,119 @@ async function verifySupabaseUser(
 
   if(
     !token
-    ||
-    !SUPABASE_PUBLISHABLE_KEY
   ){
 
     return null;
 
   }
 
-  const response =
-    await fetch(
-      `${SUPABASE_URL}/auth/v1/user`,
-      {
-        headers:{
-          apikey:
-            SUPABASE_PUBLISHABLE_KEY,
-
-          Authorization:
-            `Bearer ${token}`
-        }
-      }
+  const apiKeys =
+    [
+      SUPABASE_ADMIN_KEY,
+      SUPABASE_PUBLISHABLE_KEY
+    ]
+    .filter(
+      (
+        value,
+        index,
+        array
+      ) =>
+        value
+        &&
+        value.length >
+        12
+        &&
+        array.indexOf(
+          value
+        )
+        ===
+        index
     );
 
   if(
-    !response.ok
+    !apiKeys.length
   ){
+
+    console.error(
+      'Google auth: nenhuma API key Supabase configurada no servidor.'
+    );
 
     return null;
 
   }
 
-  const user =
-    await response.json()
-      .catch(
-        ()=>null
+  for(
+    const apiKey
+    of
+    apiKeys
+  ){
+
+    try{
+
+      const response =
+        await fetch(
+          `${SUPABASE_URL}/auth/v1/user`,
+          {
+            headers:{
+              apikey:
+                apiKey,
+
+              Authorization:
+                `Bearer ${token}`
+            }
+          }
+        );
+
+      if(
+        response.ok
+      ){
+
+        const user =
+          await response.json()
+            .catch(
+              ()=>null
+            );
+
+        if(
+          user?.id
+        ){
+
+          return user;
+
+        }
+
+      }
+      else{
+
+        const detail =
+          await response.text()
+            .catch(
+              ()=>''
+            );
+
+        console.warn(
+          `Google auth verify falhou HTTP ${response.status}: ${String(detail).slice(0,180)}`
+        );
+
+      }
+
+    }
+    catch(
+      error
+    ){
+
+      console.warn(
+        'Google auth verify erro:',
+        error?.message
+        ||
+        error
       );
 
-  return user?.id
-    ?
-    user
-    :
-    null;
+    }
+
+  }
+
+  return null;
 
 }
 
@@ -3647,19 +3719,7 @@ async function secureSkinForAccount(
 
 
 /* =========================================================
-   V13.10.3 - RECOMPENSA POR COMIDAS AUTORITATIVA NO SERVIDOR
-
-   REGRA:
-   3 comidas = 1 WildCoin
-
-   exemplos:
-   3 comidas = 1 moeda
-   30 comidas = 10 moedas
-   300 comidas = 100 moedas
-   600 comidas = 200 moedas
-   900 comidas = 300 moedas
-
-   O ranking NÃO altera a recompensa.
+   RECOMPENSA POR COMIDAS
 ========================================================= */
 
 const MATCH_FOODS_PER_COIN =
@@ -3921,12 +3981,6 @@ function applyServerXpProgress(
     levelUps +=
       1;
 
-    /*
-       WildCoins NÃO são dadas por subir de nível.
-       WildCoins vêm apenas de comidas.
-
-       WildGems de marco de nível continuam separados.
-    */
     if(
       level % 10 ===
       0
@@ -4541,7 +4595,7 @@ function socketEventAllowed(
 
 
 /* =========================================================
-   V13 - PERFIL DE DESEMPENHO / REDE ADAPTATIVA
+   PERFORMANCE
 ========================================================= */
 
 const NETWORK_PROFILES = {
@@ -4776,7 +4830,7 @@ function applyClientPerformanceProfile(
 
 
 /* =========================================================
-   V13 - MÉTRICAS
+   MÉTRICAS
 ========================================================= */
 
 const runtimeMetrics = {
@@ -8319,10 +8373,6 @@ function eatFood(
       snake.score +=
         food.value;
 
-      /*
-         ESSA É A CONTAGEM USADA
-         PARA O SISTEMA DE MOEDAS.
-      */
       snake.foodEaten =
         (
           snake.foodEaten || 0
@@ -8572,6 +8622,8 @@ function updateRoom(
     return;
 
   }
+
+  runtimeMetrics.physicsTicks++;
 
   for(
     const snake
@@ -9560,10 +9612,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       PUBLIC JOIN
-    ===================================================== */
-
     socket.on(
       'joinPublicGame',
       async(
@@ -9683,10 +9731,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       ALTERNATIVE SERVER
-    ===================================================== */
-
     socket.on(
       'findAlternativeServer',
       (
@@ -9767,10 +9811,6 @@ io.on(
       }
     );
 
-
-    /* =====================================================
-       SWITCH SERVER
-    ===================================================== */
 
     socket.on(
       'switchPublicServer',
@@ -9870,10 +9910,6 @@ io.on(
       }
     );
 
-
-    /* =====================================================
-       SOLO
-    ===================================================== */
 
     socket.on(
       'publicSoloAction',
@@ -10011,10 +10047,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       RESUME PUBLIC
-    ===================================================== */
-
     socket.on(
       'resumePublicMatch',
       (
@@ -10137,10 +10169,6 @@ io.on(
       }
     );
 
-
-    /* =====================================================
-       CREATE PRIVATE ROOM
-    ===================================================== */
 
     socket.on(
       'createPrivateRoom',
@@ -10296,10 +10324,6 @@ io.on(
       }
     );
 
-
-    /* =====================================================
-       JOIN PRIVATE ROOM
-    ===================================================== */
 
     socket.on(
       'joinPrivateRoom',
@@ -10506,10 +10530,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       READY
-    ===================================================== */
-
     socket.on(
       'toggleReady',
       (
@@ -10594,10 +10614,6 @@ io.on(
       }
     );
 
-
-    /* =====================================================
-       START PRIVATE
-    ===================================================== */
 
     socket.on(
       'startPrivateGame',
@@ -10823,10 +10839,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       RESPAWN
-    ===================================================== */
-
     socket.on(
       'respawn',
       (
@@ -10967,10 +10979,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       INPUT
-    ===================================================== */
-
     socket.on(
       'input',
       data=>{
@@ -11044,10 +11052,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       PING
-    ===================================================== */
-
     socket.on(
       'clientPing',
       sentAt=>{
@@ -11073,10 +11077,6 @@ io.on(
       }
     );
 
-
-    /* =====================================================
-       REFRESH IDENTITY
-    ===================================================== */
 
     socket.on(
       'refreshIdentity',
@@ -11219,10 +11219,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       RETURN PRIVATE LOBBY
-    ===================================================== */
-
     socket.on(
       'returnPrivateLobby',
       (
@@ -11324,10 +11320,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       LEAVE ROOM
-    ===================================================== */
-
     socket.on(
       'leaveRoom',
       (
@@ -11370,10 +11362,6 @@ io.on(
     );
 
 
-    /* =====================================================
-       DISCONNECT
-    ===================================================== */
-
     socket.on(
       'disconnect',
       reason=>{
@@ -11411,8 +11399,6 @@ const DT =
 
 setInterval(
   ()=>{
-
-    runtimeMetrics.physicsTicks++;
 
     for(
       const room
@@ -11839,6 +11825,7 @@ app.post(
           )
           .json({
             ok:false,
+            code:'GOOGLE_SESSION_INVALID',
             error:'Sessão Google/Supabase inválida.'
           });
 
@@ -13212,7 +13199,7 @@ app.post(
 
 
 /* =========================================================
-   SMTP OPCIONAL PARA RELATÓRIOS
+   SMTP
 ========================================================= */
 
 const SMTP_USER =
@@ -13703,7 +13690,7 @@ async function sendBugReportEmail(
 
 
 /* =========================================================
-   RELATÓRIO DE BUG
+   BUG REPORT
 ========================================================= */
 
 app.post(
@@ -13804,9 +13791,7 @@ app.post(
 
       userAgent:
         String(
-          req.headers[
-            'user-agent'
-          ]
+          req.headers['user-agent']
           ||
           ''
         )
@@ -13900,7 +13885,7 @@ app.post(
 
 
 /* =========================================================
-   RUNTIME / DEBUG
+   RUNTIME
 ========================================================= */
 
 app.get(
@@ -14036,7 +14021,7 @@ app.get(
 
 
 /* =========================================================
-   ROOT / GAME CLIENT
+   ROOT
 ========================================================= */
 
 app.get(
@@ -14088,7 +14073,7 @@ app.get(
 
 
 /* =========================================================
-   STATIC / CACHE
+   STATIC
 ========================================================= */
 
 app.use(
@@ -14131,7 +14116,7 @@ app.use(
 
 
 /* =========================================================
-   SERVER ERRORS
+   ERRORS
 ========================================================= */
 
 httpServer.on(
