@@ -1321,6 +1321,51 @@ body.firstKill #gameCanvas{
 }
 
 
+
+/* =========================================================
+   V13.11 - MÃO REAL DO TUTORIAL
+   Usa exatamente a imagem enviada pelo usuário.
+========================================================= */
+
+.hand{
+    width:150px;
+    height:144px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:visible;
+}
+
+.hand .finger,
+.hand .palm,
+.hand::before{
+    display:none!important;
+}
+
+.tutorialHandImage{
+    width:146px;
+    height:140px;
+    object-fit:cover;
+    object-position:center;
+    border-radius:24px;
+    display:block;
+    box-shadow:
+        0 18px 44px rgba(0,0,0,.32),
+        0 0 0 1px rgba(255,255,255,.10);
+    user-select:none;
+    -webkit-user-drag:none;
+    pointer-events:none;
+}
+
+/* pulso acompanha a ponta do dedo da imagem */
+.hand::after{
+    left:65px!important;
+    top:-2px!important;
+    width:34px!important;
+    height:34px!important;
+    z-index:5!important;
+}
+
 /* =========================================================
    JOYSTICK REAL
 ========================================================= */
@@ -1680,7 +1725,7 @@ body.firstKill #gameCanvas{
 
 
 /* =========================================================
-   WILDSNAKE v13.10.4 - RECOMPENSA SEGURA / ROLETA / CAIXA
+   WILDSNAKE v13.14.0 - RECOMPENSA SEGURA / ROLETA / CAIXA
 ========================================================= */
 #secureGate{
     z-index:1000;
@@ -1972,6 +2017,123 @@ body.firstKill #gameCanvas{
     }
 }
 
+
+/* =========================================================
+   V13.14 - TUTORIAL PROFISSIONAL
+========================================================= */
+#objective{
+    min-width:min(430px,88vw);
+    padding:13px 18px 12px;
+    border-radius:18px;
+    background:
+        linear-gradient(145deg,rgba(7,18,25,.91),rgba(2,8,14,.88));
+    border:1px solid rgba(105,255,170,.18);
+    box-shadow:0 18px 52px rgba(0,0,0,.30);
+}
+
+#objective small{
+    color:#75ffc0;
+}
+
+#objective strong{
+    font-size:12px;
+    letter-spacing:.2px;
+}
+
+#objectiveHint{
+    display:block;
+    margin-top:7px;
+    color:rgba(255,255,255,.46);
+    font-size:9px;
+    line-height:1.35;
+}
+
+.tutorialObjectiveBar{
+    width:100%;
+    height:4px;
+    margin-top:9px;
+    overflow:hidden;
+    border-radius:999px;
+    background:rgba(255,255,255,.07);
+}
+
+#tutorialObjectiveProgress{
+    width:0%;
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg,#69ff9c,#38dcff);
+    transition:width .35s ease;
+}
+
+#cutscene{
+    bottom:7vh;
+}
+
+#cutscene.show{
+    pointer-events:auto;
+}
+
+#cutscene::after{
+    content:"CLIQUE OU TOQUE PARA CONTINUAR";
+    display:block;
+    width:max-content;
+    max-width:90vw;
+    margin:15px auto 0;
+    padding:7px 11px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:999px;
+    background:rgba(3,9,16,.52);
+    color:rgba(255,255,255,.40);
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1.4px;
+}
+
+.tutorialCoach{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    z-index:45;
+    max-width:min(620px,88vw);
+    padding:10px 16px;
+    transform:translate(-50%,18px);
+    border:1px solid rgba(105,255,170,.17);
+    border-radius:14px;
+    background:rgba(3,10,15,.80);
+    backdrop-filter:blur(12px);
+    color:#cfe0e5;
+    font-size:10px;
+    font-weight:800;
+    line-height:1.45;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s ease;
+    box-shadow:0 16px 45px rgba(0,0,0,.28);
+}
+
+.tutorialCoach.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+.tutorialCoach strong{
+    color:#79ffc1;
+}
+
+@media(max-width:620px){
+    #objective{
+        top:12px;
+        min-width:calc(100vw - 24px);
+    }
+    #objectiveHint{
+        display:none;
+    }
+    #cutscene{
+        bottom:5vh;
+    }
+}
+
 </style>
 </head>
 
@@ -2073,17 +2235,28 @@ body.firstKill #gameCanvas{
 
 <div id="objective">
 
-    <small>
-        OBJETIVO
+    <small id="objectiveLabel">
+        TREINAMENTO • 1/4
     </small>
 
     <strong id="objectiveText">
-        Elimine 1 adversária
+        Conheça sua minhoca
     </strong>
+
+    <div class="tutorialObjectiveBar" aria-hidden="true">
+        <div id="tutorialObjectiveProgress"></div>
+    </div>
+
+    <span id="objectiveHint">
+        Complete cada etapa para liberar sua recompensa.
+    </span>
 
 </div>
 
 
+
+
+<div id="tutorialCoach" class="tutorialCoach" aria-live="polite"></div>
 
 <!-- ======================================================
      SEGURANÇA / VALIDAÇÃO DA CONTA
@@ -2489,11 +2662,7 @@ body.firstKill #gameCanvas{
 
 
                 <div class="hand">
-
-                    <div class="finger"></div>
-
-                    <div class="palm"></div>
-
+                    <img class="tutorialHandImage" alt="Mão mostrando o movimento do controle" src="data:image/png;base64,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">
                 </div>
 
             </div>
@@ -3763,6 +3932,31 @@ class Snake{
         this.spawnGraceUntil =
             0;
 
+        /* V13.14 - personalidade e memória da IA */
+        this.aiSkill =
+            options.aiSkill ??
+            random(.58,.88);
+
+        this.aiAggression =
+            options.aiAggression ??
+            random(.30,.72);
+
+        this.aiFoodBias =
+            options.aiFoodBias ??
+            random(.45,.78);
+
+        this.aiThinkTimer =
+            0;
+
+        this.aiStrafe =
+            Math.random()<.5 ? -1 : 1;
+
+        this.aiLastDanger =
+            0;
+
+        this.aiTargetFood =
+            null;
+
 
         this.body =
             [];
@@ -3941,31 +4135,28 @@ class Snake{
 
 
     followLockedFood(source){
+        const food=this.lockFoodTarget(source);
 
-        const food =
-            this.lockFoodTarget(
-                source
-            );
-
-
-        if(
-            !food
-        ){
-
+        if(!food){
             return;
         }
 
+        /*
+           Mira um pouco além da comida para a cobra não ficar
+           fazendo zigue-zague quando chega perto do alvo.
+        */
+        const dx=food.x-this.x;
+        const dy=food.y-this.y;
+        const d=Math.hypot(dx,dy)||1;
+        const lead=Math.min(18,d*.12);
 
-        this.targetAngle =
-            Math.atan2(
+        const targetX=food.x+(dx/d)*lead;
+        const targetY=food.y+(dy/d)*lead;
 
-                food.y-
-                this.y,
-
-                food.x-
-                this.x
-
-            );
+        this.targetAngle=Math.atan2(
+            targetY-this.y,
+            targetX-this.x
+        );
     }
 
 
@@ -4222,6 +4413,221 @@ class Snake{
     }
 
 
+    assessBodyDanger(){
+        if(this.player){
+            return null;
+        }
+
+        const lookAhead=
+            55+
+            this.speed*18;
+
+        const futureX=
+            this.x+
+            Math.cos(this.angle)*lookAhead;
+
+        const futureY=
+            this.y+
+            Math.sin(this.angle)*lookAhead;
+
+        let best=null;
+        let bestDistance=Infinity;
+
+        snakes.forEach(other=>{
+            if(other===this || other.dead){
+                return;
+            }
+
+            for(let i=5;i<other.body.length;i+=4){
+                const point=other.body[i];
+                const d=dist(futureX,futureY,point.x,point.y);
+
+                if(d<bestDistance){
+                    bestDistance=d;
+                    best={
+                        other,
+                        point,
+                        distance:d
+                    };
+                }
+            }
+        });
+
+        if(best && best.distance<95){
+            return best;
+        }
+
+        return null;
+    }
+
+
+    choosePracticeFood(){
+        let best=null;
+        let bestScore=-Infinity;
+
+        foods.forEach(food=>{
+            if(
+                food.dead ||
+                (
+                    food.source!=="practice" &&
+                    food.source!=="enemyDrop"
+                )
+            ){
+                return;
+            }
+
+            const d=dist(this.x,this.y,food.x,food.y);
+            const centerPenalty=
+                Math.abs(food.x-width*.5)+
+                Math.abs(food.y-height*.5);
+
+            const score=
+                900/(d+50) -
+                centerPenalty*.0005 +
+                (food.big ? .9 : 0);
+
+            if(score>bestScore){
+                bestScore=score;
+                best=food;
+            }
+        });
+
+        return best;
+    }
+
+
+    practiceAI(){
+        if(!player || player.dead){
+            this.wander();
+            return;
+        }
+
+        this.aiThinkTimer--;
+
+        const danger=this.assessBodyDanger();
+
+        /*
+           Segurança tem prioridade: IA prevê a posição futura da cabeça
+           e desvia antes de encostar em um corpo.
+        */
+        if(danger){
+            const away=Math.atan2(
+                this.y-danger.point.y,
+                this.x-danger.point.x
+            );
+
+            const side=
+                away+
+                this.aiStrafe*
+                (.48+.30*this.aiSkill);
+
+            this.targetAngle=
+                side;
+
+            this.aiLastDanger=performance.now();
+            return;
+        }
+
+        if(this.aiThinkTimer>0){
+            return;
+        }
+
+        this.aiThinkTimer=Math.floor(
+            10+
+            (1-this.aiSkill)*20+
+            random(0,8)
+        );
+
+        const playerDistance=
+            dist(this.x,this.y,player.x,player.y);
+
+        const playerAheadX=
+            player.x+
+            Math.cos(player.angle)*
+            (85+65*this.aiSkill);
+
+        const playerAheadY=
+            player.y+
+            Math.sin(player.angle)*
+            (85+65*this.aiSkill);
+
+        const food=this.choosePracticeFood();
+
+        /*
+           Muito perto da cabeça do jogador: não joga a vida fora.
+           Escapa em curva lateral, como um jogador humano faria.
+        */
+        if(playerDistance<120){
+            const away=Math.atan2(
+                this.y-player.y,
+                this.x-player.x
+            );
+
+            this.aiStrafe*=
+                Math.random()<.18 ? -1 : 1;
+
+            this.targetAngle=
+                away+
+                this.aiStrafe*
+                (.55+.25*this.aiSkill);
+            return;
+        }
+
+        /*
+           Bots mais agressivos tentam interceptar a rota prevista
+           do jogador, mas nunca em 100% das decisões.
+        */
+        if(
+            playerDistance<380 &&
+            Math.random()<
+                this.aiAggression*
+                (.55+.25*this.aiSkill)
+        ){
+            this.targetAngle=
+                Math.atan2(
+                    playerAheadY-this.y,
+                    playerAheadX-this.x
+                )+
+                random(
+                    -.22*(1-this.aiSkill),
+                    .22*(1-this.aiSkill)
+                );
+            return;
+        }
+
+        if(
+            food &&
+            Math.random()<
+                this.aiFoodBias
+        ){
+            this.aiTargetFood=food;
+            this.targetAngle=
+                Math.atan2(
+                    food.y-this.y,
+                    food.x-this.x
+                );
+            return;
+        }
+
+        /*
+           Movimento de patrulha com intenção, não rotação aleatória pura.
+        */
+        const centerAngle=
+            Math.atan2(
+                height*.5-this.y,
+                width*.5-this.x
+            );
+
+        this.targetAngle +=
+            angleDifference(
+                centerAngle+
+                this.aiStrafe*random(.18,.55),
+                this.targetAngle
+            )*
+            random(.18,.38);
+    }
+
+
     updateController(){
 
         /* =================================================
@@ -4394,8 +4800,7 @@ class Snake{
             this.controller ===
             "practice"
         ){
-
-            this.wander();
+            this.practiceAI();
         }
 
 
@@ -4421,7 +4826,9 @@ class Snake{
 
 
         let turnRate =
-            .055;
+            this.player
+            ? .075
+            : .060 + (this.aiSkill||.5)*.025;
 
 
         if(
@@ -4430,12 +4837,22 @@ class Snake{
                 this.controller ===
                 "eatTutorial" ||
                 this.controller ===
-                "eatEnemy"
+                "eatEnemy" ||
+                this.controller ===
+                "waypoint"
             )
         ){
 
             turnRate =
-                .125;
+                .145;
+        }
+
+
+        if(
+            this.controller ===
+            "tutorialCrash"
+        ){
+            turnRate=.11;
         }
 
 
@@ -4636,6 +5053,17 @@ class Snake{
 
 
                         updateHUD();
+
+                        if(state===STATE.PRACTICE){
+                            updatePracticeObjective();
+
+                            if(foodsCollected===1){
+                                showCoach(
+                                    "<strong>BOA.</strong> Energia aumenta seu tamanho e deixa seu corpo mais perigoso.",
+                                    2200
+                                );
+                            }
+                        }
                     }
                 }
             }
@@ -5110,7 +5538,7 @@ function createPlayer(){
 
             angle:0,
 
-            speed:2.75,
+            speed:2.45,
 
             radius:11,
 
@@ -5329,11 +5757,17 @@ function killBot(bot){
 
 
         updateHUD();
+        updatePracticeObjective();
+
+        showCoach(
+            "<strong>PERFEITO!</strong> Você fez o adversário colidir com seu corpo.",
+            1800
+        );
 
 
         setTimeout(
             firstKillCelebration,
-            350
+            650
         );
     }
 }
@@ -5347,59 +5781,40 @@ async function showMessage(
     tag,
     title,
     description,
-    duration=5200
+    duration=3000
 ){
+    const box=document.getElementById("cutscene");
+    const tagNode=document.getElementById("cutsceneTag");
+    const titleNode=document.getElementById("cutsceneTitle");
+    const descriptionNode=document.getElementById("cutsceneDescription");
 
-    const box =
-        document.getElementById(
-            "cutscene"
-        );
+    tagNode.textContent=tag;
+    titleNode.textContent=title;
+    descriptionNode.textContent=description;
 
+    box.classList.add("show");
 
-    document
-    .getElementById(
-        "cutsceneTag"
-    )
-    .textContent =
-        tag;
+    await new Promise(resolve=>{
+        let finished=false;
 
+        const finish=()=>{
+            if(finished) return;
+            finished=true;
+            box.removeEventListener("pointerdown",finish);
+            clearTimeout(timer);
+            resolve();
+        };
 
-    document
-    .getElementById(
-        "cutsceneTitle"
-    )
-    .textContent =
-        title;
+        const timer=setTimeout(finish,Math.min(duration,3400));
+        box.addEventListener("pointerdown",finish,{once:true});
+    });
 
-
-    document
-    .getElementById(
-        "cutsceneDescription"
-    )
-    .textContent =
-        description;
-
-
-    box.classList.add(
-        "show"
-    );
-
-
-    await sleep(
-        duration
-    );
-
-
-    box.classList.remove(
-        "show"
-    );
-
-
-    await sleep(
-        650
-    );
+    box.classList.remove("show");
+    await sleep(220);
 }
 
+
+let tutorialStarted=false;
 
 /* =========================================================
    QUALITY
@@ -5460,8 +5875,10 @@ document
 
                 await runBoot();
 
-
-                startTutorial();
+                if(!tutorialStarted){
+                    tutorialStarted=true;
+                    startTutorial();
+                }
             }
         );
     }
@@ -5504,13 +5921,12 @@ async function runBoot(){
     const steps = [
 
         [0,0],
-        [400,13],
-        [850,28],
-        [1300,44],
-        [1750,61],
-        [2200,75],
-        [2700,89],
-        [3150,100]
+        [220,18],
+        [480,37],
+        [760,58],
+        [1050,77],
+        [1350,91],
+        [1650,100]
 
     ];
 
@@ -5540,7 +5956,7 @@ async function runBoot(){
 
 
     await sleep(
-        3650
+        2050
     );
 
 
@@ -5550,7 +5966,7 @@ async function runBoot(){
 
 
     await sleep(
-        500
+        220
     );
 }
 
@@ -5598,6 +6014,12 @@ async function startTutorial(){
 
     updateHUD();
 
+    showObjective(
+        "Conheça sua minhoca",
+        1,
+        "Observe como ela se move e cresce."
+    );
+
 
     /* =====================================================
        1. PLAYER ENTRA
@@ -5640,7 +6062,7 @@ async function startTutorial(){
 
         "Ela crescerá e ficará mais forte conforme avança pela arena.",
 
-        5500
+        3000
 
     );
 
@@ -5651,6 +6073,12 @@ async function startTutorial(){
 
     state =
         STATE.FOOD;
+
+    showObjective(
+        "Colete 5 energias",
+        2,
+        "A cobra seguirá as energias automaticamente nesta demonstração."
+    );
 
 
     const tutorialPositions = [
@@ -5724,7 +6152,7 @@ async function startTutorial(){
 
         "Sua minhoca precisa consumir essas energias para crescer e evoluir.",
 
-        5600
+        3000
 
     );
 
@@ -5807,6 +6235,12 @@ async function startTutorial(){
 
     state =
         STATE.ENEMY_ENTER;
+
+    showObjective(
+        "Aprenda a eliminar adversários",
+        3,
+        "A cabeça do adversário perde quando toca no corpo de outra cobra."
+    );
 
 
     tutorialEnemy =
@@ -5902,7 +6336,7 @@ async function startTutorial(){
 
         "Outras minhocas vão disputar espaço e energia com você.",
 
-        5700
+        3000
 
     );
 
@@ -5980,7 +6414,7 @@ async function startTutorial(){
 
 
     await sleep(
-        1800
+        650
     );
 
 
@@ -5996,7 +6430,7 @@ async function startTutorial(){
 
         "Faça a cabeça da adversária tocar no corpo da sua minhoca.",
 
-        5500
+        3000
 
     );
 
@@ -6018,7 +6452,7 @@ async function startTutorial(){
 
 
     await sleep(
-        2300
+        1300
     );
 
 
@@ -6081,7 +6515,7 @@ async function startTutorial(){
 
         "Quando derrotar uma adversária, aproveite a energia que ela deixa para trás.",
 
-        5900
+        3200
 
     );
 
@@ -6158,7 +6592,7 @@ async function startTutorial(){
 
         "Use o que aprendeu para coletar energia e eliminar uma adversária.",
 
-        5900
+        3200
 
     );
 
@@ -6175,7 +6609,7 @@ async function startTutorial(){
 
 
     await sleep(
-        3800
+        1600
     );
 
 
@@ -6272,8 +6706,26 @@ function spawnFiveBots(){
 
                     speed:
                         random(
-                            1.7,
-                            2
+                            1.58,
+                            1.90
+                        ),
+
+                    aiSkill:
+                        random(
+                            .58,
+                            .84
+                        ),
+
+                    aiAggression:
+                        random(
+                            .32,
+                            .68
+                        ),
+
+                    aiFoodBias:
+                        random(
+                            .48,
+                            .78
                         ),
 
                     radius:
@@ -6573,6 +7025,13 @@ function startPractice(){
     player.controller =
         "manual";
 
+    tutorialStage=4;
+
+    showCoach(
+        "<strong>SUA VEZ.</strong> Primeiro colete energia e observe como os bots mudam de direção.",
+        3200
+    );
+
 
     const grace =
         performance.now()+
@@ -6614,8 +7073,28 @@ function startPractice(){
 
 
     showObjective(
-        "Elimine 1 adversária"
+        "Prática: energia 0/3 • eliminação 0/1",
+        4,
+        "Sobreviva, cresça e force uma adversária a tocar no seu corpo."
     );
+
+    setTimeout(()=>{
+        if(state===STATE.PRACTICE && !firstKillDone){
+            showCoach(
+                "<strong>DICA:</strong> não persiga a cabeça. Cruze a rota do bot e use seu corpo como uma parede.",
+                3400
+            );
+        }
+    },6500);
+
+    setTimeout(()=>{
+        if(state===STATE.PRACTICE && !firstKillDone){
+            showCoach(
+                "<strong>ESTRATÉGIA:</strong> curvas largas são mais seguras. Deixe o adversário cometer o erro.",
+                3400
+            );
+        }
+    },12500);
 }
 
 
@@ -6623,23 +7102,61 @@ function startPractice(){
    OBJETIVO
 ========================================================= */
 
-function showObjective(text){
+let tutorialCoachTimer=null;
+let tutorialStage=1;
 
-    document
-    .getElementById(
-        "objectiveText"
-    )
-    .textContent =
-        text;
+function showObjective(text,stage=tutorialStage,hint=""){
+    tutorialStage=clamp(Number(stage)||1,1,4);
 
+    const label=document.getElementById("objectiveLabel");
+    const objectiveText=document.getElementById("objectiveText");
+    const progress=document.getElementById("tutorialObjectiveProgress");
+    const hintBox=document.getElementById("objectiveHint");
 
-    document
-    .getElementById(
-        "objective"
-    )
-    .classList
-    .add(
-        "show"
+    if(label){
+        label.textContent=`TREINAMENTO • ${tutorialStage}/4`;
+    }
+
+    if(objectiveText){
+        objectiveText.textContent=text;
+    }
+
+    if(progress){
+        progress.style.width=`${tutorialStage*25}%`;
+    }
+
+    if(hintBox){
+        hintBox.textContent=hint || "Complete a etapa para avançar.";
+    }
+
+    document.getElementById("objective")?.classList.add("show");
+}
+
+function showCoach(message,duration=2600){
+    const coach=document.getElementById("tutorialCoach");
+    if(!coach) return;
+
+    clearTimeout(tutorialCoachTimer);
+    coach.innerHTML=message;
+    coach.classList.add("show");
+
+    tutorialCoachTimer=setTimeout(()=>{
+        coach.classList.remove("show");
+    },duration);
+}
+
+function updatePracticeObjective(){
+    if(state!==STATE.PRACTICE) return;
+
+    const collected=Math.min(
+        3,
+        foodsCollected
+    );
+
+    showObjective(
+        `Prática: energia ${collected}/3 • eliminação ${Math.min(kills,1)}/1`,
+        4,
+        "Leia o movimento dos adversários e faça a cabeça deles tocar no seu corpo."
     );
 }
 
@@ -6997,7 +7514,15 @@ document
    LOADING FINAL - 8 SEGUNDOS
 ========================================================= */
 
+let finalLoadingStarted=false;
+
 function startFinalLoading(){
+
+    if(finalLoadingStarted || state===STATE.CARDS){
+        return;
+    }
+
+    finalLoadingStarted=true;
 
     state =
         STATE.LOADING;
@@ -7029,17 +7554,13 @@ function startFinalLoading(){
     const steps = [
 
         [0,0],
-        [600,8],
-        [1200,16],
-        [1900,27],
-        [2700,39],
-        [3500,51],
-        [4300,62],
-        [5100,73],
-        [5900,83],
-        [6700,91],
-        [7300,96],
-        [7900,100]
+        [250,12],
+        [500,28],
+        [800,46],
+        [1150,65],
+        [1500,82],
+        [1850,94],
+        [2200,100]
 
     ];
 
@@ -7076,20 +7597,21 @@ function startFinalLoading(){
             );
 
 
-            if(tutorialIsGuest()){
-                finishGuestTutorial();
-            }else{
-                showCards();
-            }
+            /*
+               Todo mundo escolhe uma carta.
+               Convidado escolhe a carta, mas o prêmio só é revelado
+               e creditado depois que criar/entrar em uma conta.
+            */
+            showCards();
 
         },
-        8300
+        2550
     );
 }
 
 
 /* =========================================================
-   V13.10 - RECOMPENSA SEGURA / CONTA / ROLETA
+   V13.11 - RECOMPENSA SEGURA / CONTA / ROLETA
 ========================================================= */
 const TUTORIAL_AUTH_KEY="wildsnakeAuthV13";
 const TUTORIAL_ACCOUNT_KEY="wildsnakeAccountV5";
@@ -7122,10 +7644,17 @@ function finishGuestTutorial(){
         font-family:Inter,Segoe UI,Arial,sans-serif;
     `;
     overlay.innerHTML=`
-        <div style="width:min(520px,92vw);text-align:center;padding:34px 26px;border:1px solid rgba(90,255,170,.22);border-radius:26px;background:linear-gradient(145deg,rgba(12,24,32,.98),rgba(3,8,13,.99));box-shadow:0 30px 100px rgba(0,0,0,.65)">
-            <div style="font-size:50px">🐍</div>
-            <h2 style="margin:12px 0 8px;font-size:28px">TREINAMENTO CONCLUÍDO</h2>
-            <p style="margin:0;color:#8fa4ae;font-size:12px;line-height:1.6">Você já pode jogar como convidado. Recompensas, WildCoins e skins ficam vinculadas somente a uma conta.</p>
+        <div style="width:min(540px,92vw);text-align:center;padding:34px 26px;border:1px solid rgba(90,255,170,.22);border-radius:26px;background:linear-gradient(145deg,rgba(12,24,32,.98),rgba(3,8,13,.99));box-shadow:0 30px 100px rgba(0,0,0,.65)">
+            <div style="font-size:50px">🎁</div>
+            <h2 style="margin:12px 0 8px;font-size:28px">SUA CARTA FOI GUARDADA</h2>
+            <p style="margin:0;color:#9aadb5;font-size:12px;line-height:1.7">
+                O treinamento foi concluído. Como você está jogando sem conta,
+                a recompensa ficou <strong style="color:#72ffad">reservada na sua caixinha</strong>.
+                Crie ou entre em uma conta para o servidor revelar e creditar o prêmio.
+            </p>
+            <div style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(255,190,65,.08);border:1px solid rgba(255,190,65,.20);color:#ffd47b;font-size:10px;line-height:1.55">
+                Jogar como convidado não libera WildCoins, WildGems ou skins diretamente.
+            </div>
             <button id="guestTutorialContinueV13" style="margin-top:22px;width:100%;min-height:50px;border:0;border-radius:14px;background:linear-gradient(#82ffd0,#35e69b);color:#03120d;font-weight:1000;cursor:pointer">ENTRAR NO WILDSNAKE</button>
         </div>`;
     document.body.appendChild(overlay);
@@ -7227,22 +7756,60 @@ async function tutorialFetch(url,options={}){
     }
 }
 
+let tutorialPublicConfig=null;
+
+function tutorialReadOAuthSessionFromUrl(){
+    try{
+        const hash=String(location.hash||"").replace(/^#/,"");
+        if(!hash) return null;
+        const params=new URLSearchParams(hash);
+        const accessToken=params.get("access_token");
+        if(!accessToken) return null;
+        return{
+            access_token:accessToken,
+            refresh_token:params.get("refresh_token")||null,
+            token_type:params.get("token_type")||"bearer",
+            expires_in:Number(params.get("expires_in")||0)||null
+        };
+    }catch{
+        return null;
+    }
+}
+
+function tutorialClearOAuthUrl(){
+    try{
+        history.replaceState(null,"",location.pathname+location.search);
+    }catch{}
+}
+
 async function tutorialInitSupabase(){
     if(tutorialSupabase) return true;
+
     try{
         const response=await fetch("/api/public-config",{cache:"no-store"});
         const data=await response.json();
+        tutorialPublicConfig=data||null;
         tutorialSupabaseUrl=data?.supabaseUrl||"";
         tutorialSupabasePublishableKey=data?.supabasePublishableKey||"";
-        if(!tutorialSupabaseUrl || !tutorialSupabasePublishableKey || !window.supabase?.createClient){
-            return false;
+
+        /*
+           A publishable deixou de ser obrigatória para abrir o Google.
+           Se ela existir, usamos o SDK. Se não existir, o tutorial usa
+           /api/auth/google/start e lê o access_token do retorno.
+        */
+        if(
+            tutorialSupabaseUrl &&
+            tutorialSupabasePublishableKey &&
+            window.supabase?.createClient
+        ){
+            tutorialSupabase=window.supabase.createClient(
+                tutorialSupabaseUrl,
+                tutorialSupabasePublishableKey,
+                {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
+            );
         }
-        tutorialSupabase=window.supabase.createClient(
-            tutorialSupabaseUrl,
-            tutorialSupabasePublishableKey,
-            {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
-        );
-        return true;
+
+        return !!data?.googleOAuthReady || !!tutorialSupabase;
     }catch{
         return false;
     }
@@ -7252,11 +7819,17 @@ async function tutorialCompleteGoogleLinkIfNeeded(){
     const intent=localStorage.getItem("wildsnakeGoogleIntentV13");
     if(intent!=="tutorial-link") return {handled:false,ok:true};
 
-    const ok=await tutorialInitSupabase();
-    if(!ok) return {handled:true,ok:false,error:"Google não pôde ser inicializado."};
+    await tutorialInitSupabase();
 
-    const {data}=await tutorialSupabase.auth.getSession();
-    const session=data?.session;
+    let session=tutorialReadOAuthSessionFromUrl();
+
+    if(!session?.access_token && tutorialSupabase){
+        try{
+            const {data}=await tutorialSupabase.auth.getSession();
+            session=data?.session||null;
+        }catch{}
+    }
+
     if(!session?.access_token){
         return {handled:true,ok:false,error:"O Google não devolveu uma sessão válida."};
     }
@@ -7277,6 +7850,7 @@ async function tutorialCompleteGoogleLinkIfNeeded(){
     tutorialPersistAccount(linked.account);
     localStorage.removeItem("wildsnakeGoogleIntentV13");
     localStorage.setItem("wildsnakeTutorialAfterLinkV13","1");
+    tutorialClearOAuthUrl();
     return {handled:true,ok:true};
 }
 
@@ -7567,25 +8141,31 @@ async function connectGoogleForRareReward(){
     status.textContent="Abrindo o Google...";
 
     const ok=await tutorialInitSupabase();
+
     if(!ok){
-        status.textContent="Google indisponível. Tente novamente.";
+        status.textContent="O backend seguro do Google ainda não está pronto.";
         return;
     }
 
     localStorage.setItem("wildsnakeGoogleIntentV13","tutorial-link");
     localStorage.setItem("wildsnakeTutorialAfterLinkV13","1");
 
-    const {error}=await tutorialSupabase.auth.signInWithOAuth({
-        provider:"google",
-        options:{
-            redirectTo:window.location.origin+"/tutorial.html",
-            queryParams:{access_type:"offline",prompt:"select_account"}
-        }
-    });
+    if(tutorialSupabase){
+        const {error}=await tutorialSupabase.auth.signInWithOAuth({
+            provider:"google",
+            options:{
+                redirectTo:window.location.origin+"/tutorial.html",
+                queryParams:{access_type:"offline",prompt:"select_account"}
+            }
+        });
 
-    if(error){
-        status.textContent=error.message||"Não foi possível abrir o Google.";
+        if(error){
+            status.textContent=error.message||"Não foi possível abrir o Google.";
+        }
+        return;
     }
+
+    location.href="/api/auth/google/start?return=%2Ftutorial.html";
 }
 
 async function startRewardLoading(reward){
@@ -7659,6 +8239,7 @@ async function claimSecureReward(){
 
     try{
         localStorage.removeItem("wildsnake_pending_reward");
+        localStorage.removeItem("wildsnakeGuestPendingCardV13");
         localStorage.removeItem("wildsnakeTutorialAfterLinkV13");
     }catch{}
 
@@ -7683,7 +8264,37 @@ function revealSelectedCard(card,reward){
 
 function showCards(){
     state=STATE.CARDS;
-    document.getElementById("cardsOverlay").classList.add("show");
+    selectedReward=false;
+    finalLoadingStarted=false;
+
+    [
+        "qualityOverlay",
+        "bootLoading",
+        "deviceOverlay",
+        "pcOverlay",
+        "mobileOverlay",
+        "killOverlay",
+        "finalLoading",
+        "rewardLoadingOverlay",
+        "skinRouletteOverlay",
+        "rareProtectOverlay",
+        "mailboxOverlay"
+    ].forEach(id=>{
+        document.getElementById(id)?.classList.remove("show");
+    });
+
+    document.body.classList.remove("firstKill");
+    worldPaused=true;
+
+    const overlay=document.getElementById("cardsOverlay");
+    overlay.classList.add("show");
+
+    const intro=overlay.querySelector(".modal > p");
+    if(intro){
+        intro.textContent=tutorialIsGuest()
+            ? "Escolha uma carta. Ela ficará guardada até você criar ou entrar em uma conta."
+            : "Escolha uma carta para ajudá-lo neste desafio.";
+    }
 
     document.querySelectorAll(".rewardCard").forEach((card,index)=>{
         card.classList.remove("flipped","rewardWin");
@@ -7695,6 +8306,38 @@ function showCards(){
         card.onclick=async()=>{
             if(selectedReward) return;
             selectedReward=true;
+
+            /*
+               Convidado escolhe a POSIÇÃO da carta, mas o prêmio real
+               ainda NÃO é sorteado no navegador. O servidor só gera a
+               recompensa quando houver uma conta autenticada.
+            */
+            if(tutorialIsGuest()){
+                try{
+                    localStorage.setItem(
+                        "wildsnakeGuestPendingCardV13",
+                        JSON.stringify({
+                            cardIndex:index,
+                            selectedAt:new Date().toISOString()
+                        })
+                    );
+                    localStorage.setItem(
+                        "wildsnakeGuestTutorialCompletedV13",
+                        "1"
+                    );
+                }catch{}
+
+                card.querySelector(".rewardIcon").textContent="🔒";
+                card.querySelector("h3").textContent="CARTA RESERVADA";
+                card.querySelector("p").textContent="Crie ou entre em uma conta para revelar o prêmio.";
+                card.querySelector(".odds").textContent="GUARDADA NA SUA CAIXINHA";
+                card.classList.add("flipped","rewardWin");
+
+                await sleep(1550);
+                overlay.classList.remove("show");
+                finishGuestTutorial();
+                return;
+            }
 
             const {data}=await tutorialFetch(
                 "/api/tutorial/reward/select",
@@ -7803,12 +8446,29 @@ async function tutorialSecureBootstrap(){
         return;
     }
 
-    await tutorialFetch("/api/tutorial/start",{method:"POST",body:JSON.stringify({})});
-    gate.classList.remove("show");
-
+    /*
+       Se a recompensa já foi gerada, não reinicia o treinamento:
+       retoma exatamente do ponto da recompensa.
+    */
     if(data.rewardState==="generated" && data.reward){
+        gate.classList.remove("show");
         await resumeSecureReward(data);
+        return;
     }
+
+    const started=await tutorialFetch(
+        "/api/tutorial/start",
+        {method:"POST",body:JSON.stringify({})}
+    );
+
+    if(!started.data?.ok){
+        gateText.textContent=started.data?.error||"NÃO FOI POSSÍVEL INICIAR O TREINAMENTO";
+        await sleep(1200);
+        location.href="/";
+        return;
+    }
+
+    gate.classList.remove("show");
 }
 
 document.getElementById("spinButton").addEventListener("click",spinRoulette);
@@ -7946,10 +8606,32 @@ function drawWorld(time){
    LOOP PRINCIPAL
 ========================================================= */
 
+const TUTORIAL_SIMULATION_HZ=60;
+const TUTORIAL_SIMULATION_STEP=1000/TUTORIAL_SIMULATION_HZ;
+let tutorialLastFrameTime=performance.now();
+let tutorialAccumulator=0;
+
 function animate(time){
 
-    updateCamera();
+    /*
+       A física NÃO depende mais do FPS/qualidade.
+       Ultra, High, Medium e Low agora mudam apenas o visual.
+       Em monitor 60/120/144/240 Hz a velocidade permanece igual.
+    */
+    const frameDelta=clamp(
+        time-tutorialLastFrameTime,
+        0,
+        80
+    );
 
+    tutorialLastFrameTime=time;
+    tutorialAccumulator+=frameDelta;
+
+    while(tutorialAccumulator>=TUTORIAL_SIMULATION_STEP){
+        updateCamera();
+        updateWorld();
+        tutorialAccumulator-=TUTORIAL_SIMULATION_STEP;
+    }
 
     drawSpace(
         time
@@ -8001,9 +8683,6 @@ function animate(time){
     );
 
 
-    updateWorld();
-
-
     drawWorld(
         time
     );
@@ -8016,6 +8695,17 @@ function animate(time){
         animate
     );
 }
+
+
+document.addEventListener(
+    "visibilitychange",
+    ()=>{
+        if(!document.hidden){
+            tutorialLastFrameTime=performance.now();
+            tutorialAccumulator=0;
+        }
+    }
+);
 
 
 /* =========================================================
