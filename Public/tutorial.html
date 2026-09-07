@@ -1680,7 +1680,7 @@ body.firstKill #gameCanvas{
 
 
 /* =========================================================
-   WILDSNAKE v13.10.1 - RECOMPENSA SEGURA / ROLETA / CAIXA
+   WILDSNAKE v13.10.4 - RECOMPENSA SEGURA / ROLETA / CAIXA
 ========================================================= */
 #secureGate{
     z-index:1000;
@@ -7076,7 +7076,11 @@ function startFinalLoading(){
             );
 
 
-            showCards();
+            if(tutorialIsGuest()){
+                finishGuestTutorial();
+            }else{
+                showCards();
+            }
 
         },
         8300
@@ -7100,6 +7104,35 @@ let roulettePreviewTimer=null;
 let rouletteCurrentSkin=null;
 let rouletteAnimationFrame=null;
 let rouletteSpinning=false;
+
+function tutorialIsGuest(){
+    return tutorialAuth?.mode === "guest" && !!tutorialAuth?.account;
+}
+
+function finishGuestTutorial(){
+    try{
+        localStorage.setItem("wildsnakeGuestTutorialCompletedV13","1");
+    }catch{}
+
+    const overlay=document.createElement("div");
+    overlay.id="guestTutorialCompleteV13";
+    overlay.style.cssText=`
+        position:fixed;inset:0;z-index:999999;background:rgba(1,4,9,.96);
+        display:flex;align-items:center;justify-content:center;padding:22px;color:white;
+        font-family:Inter,Segoe UI,Arial,sans-serif;
+    `;
+    overlay.innerHTML=`
+        <div style="width:min(520px,92vw);text-align:center;padding:34px 26px;border:1px solid rgba(90,255,170,.22);border-radius:26px;background:linear-gradient(145deg,rgba(12,24,32,.98),rgba(3,8,13,.99));box-shadow:0 30px 100px rgba(0,0,0,.65)">
+            <div style="font-size:50px">🐍</div>
+            <h2 style="margin:12px 0 8px;font-size:28px">TREINAMENTO CONCLUÍDO</h2>
+            <p style="margin:0;color:#8fa4ae;font-size:12px;line-height:1.6">Você já pode jogar como convidado. Recompensas, WildCoins e skins ficam vinculadas somente a uma conta.</p>
+            <button id="guestTutorialContinueV13" style="margin-top:22px;width:100%;min-height:50px;border:0;border-radius:14px;background:linear-gradient(#82ffd0,#35e69b);color:#03120d;font-weight:1000;cursor:pointer">ENTRAR NO WILDSNAKE</button>
+        </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector("#guestTutorialContinueV13").onclick=()=>{
+        location.href="/";
+    };
+}
 
 const TUTORIAL_SKINS=[
     {id:"fish",name:"Peixe Tropical",color:"#1bb9ff",rarity:"rare"},
@@ -7726,6 +7759,12 @@ async function tutorialSecureBootstrap(){
     tutorialLoadAuth();
     const gate=document.getElementById("secureGate");
     const gateText=document.getElementById("secureGateText");
+
+    if(tutorialIsGuest()){
+        gateText.textContent="CARREGANDO TREINAMENTO DE CONVIDADO";
+        gate.classList.remove("show");
+        return;
+    }
 
     if(!tutorialAuth.token){
         gateText.textContent="SESSÃO NÃO ENCONTRADA • VOLTANDO";
