@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
 >
-<title>WILDSNAKE — Premium Snake Arena • v13.10.4</title>
+<title>WILDSNAKE — Premium Snake Arena • v13.14.0</title>
 
 <style>
 *{
@@ -696,260 +696,6 @@ button{
     background:var(--green);
     color:#03120d;
 }
-
-
-/* =========================================================
-   MOBILE - ORIENTAÇÃO AUTOMÁTICA
-   Android: tenta fullscreen + landscape automaticamente.
-   iPhone/iPad: mostra instrução para girar manualmente.
-========================================================= */
-
-let wildMobileOrientationRequested = false;
-let wildAndroidOrientationLockFailed = false;
-
-function wildDetectMobileOS(){
-
-    const ua =
-        navigator.userAgent
-        ||
-        navigator.vendor
-        ||
-        "";
-
-    const isIPadOS =
-        navigator.platform === "MacIntel"
-        &&
-        navigator.maxTouchPoints > 1;
-
-    if(/android/i.test(ua)){
-        return "android";
-    }
-
-    if(
-        /iPad|iPhone|iPod/i.test(ua)
-        ||
-        isIPadOS
-    ){
-        return "ios";
-    }
-
-    return "other";
-}
-
-function wildIsLandscape(){
-    return (
-        window.matchMedia?.("(orientation: landscape)")?.matches
-        ||
-        innerWidth > innerHeight
-    );
-}
-
-function wildSetOrientationMessage(os){
-
-    const title =
-        document.getElementById(
-            "mobileOrientationTitle"
-        );
-
-    const text =
-        document.getElementById(
-            "mobileOrientationText"
-        );
-
-    if(!title || !text){
-        return;
-    }
-
-    if(os === "ios"){
-        title.textContent =
-            "GIRE SEU IPHONE";
-        text.textContent =
-            "No iPhone o navegador não permite que o WildSnake vire a tela sozinho. Gire o aparelho para a horizontal para continuar.";
-        return;
-    }
-
-    title.textContent =
-        "GIRE SEU CELULAR";
-    text.textContent =
-        "O navegador não conseguiu travar a tela automaticamente. Gire o aparelho para a horizontal para jogar.";
-}
-
-function wildShowOrientationOverlay(os){
-
-    const overlay =
-        document.getElementById(
-            "mobileOrientationOverlay"
-        );
-
-    if(!overlay){
-        return;
-    }
-
-    wildSetOrientationMessage(os);
-    overlay.classList.remove("hidden");
-}
-
-function wildHideOrientationOverlay(){
-
-    document.getElementById(
-        "mobileOrientationOverlay"
-    )?.classList.add("hidden");
-}
-
-function wildSyncOrientationOverlay(){
-
-    if(
-        platform !== "mobile"
-        ||
-        !wildMobileOrientationRequested
-    ){
-        wildHideOrientationOverlay();
-        return;
-    }
-
-    if(wildIsLandscape()){
-        wildHideOrientationOverlay();
-        return;
-    }
-
-    const os =
-        wildDetectMobileOS();
-
-    if(
-        os === "ios"
-        ||
-        wildAndroidOrientationLockFailed
-    ){
-        wildShowOrientationOverlay(os);
-    }
-}
-
-async function wildPrepareMobileOrientation(){
-
-    if(platform !== "mobile"){
-        wildMobileOrientationRequested = false;
-        wildHideOrientationOverlay();
-        return;
-    }
-
-    wildMobileOrientationRequested = true;
-    wildAndroidOrientationLockFailed = false;
-
-    const os =
-        wildDetectMobileOS();
-
-    if(os === "ios"){
-        /* O aviso é mostrado depois das verificações pré-jogo. */
-        wildHideOrientationOverlay();
-        return;
-    }
-
-    if(os === "android"){
-
-        try{
-            if(
-                !document.fullscreenElement
-                &&
-                document.documentElement.requestFullscreen
-            ){
-                await document.documentElement.requestFullscreen();
-            }
-        }
-        catch(error){
-            console.debug(
-                "WildSnake fullscreen Android:",
-                error
-            );
-        }
-
-        try{
-            if(screen.orientation?.lock){
-                await screen.orientation.lock("landscape");
-            }
-        }
-        catch(error){
-            wildAndroidOrientationLockFailed = true;
-            console.debug(
-                "WildSnake landscape Android:",
-                error
-            );
-        }
-
-        return;
-    }
-
-    /* Outros aparelhos/navegadores mobile: tenta o mesmo recurso. */
-    try{
-        if(
-            !document.fullscreenElement
-            &&
-            document.documentElement.requestFullscreen
-        ){
-            await document.documentElement.requestFullscreen();
-        }
-
-        if(screen.orientation?.lock){
-            await screen.orientation.lock("landscape");
-        }
-    }
-    catch(error){
-        wildAndroidOrientationLockFailed = true;
-    }
-
-}
-
-async function wildReleaseMobileOrientation(){
-
-    wildMobileOrientationRequested = false;
-    wildAndroidOrientationLockFailed = false;
-    wildHideOrientationOverlay();
-
-    try{
-        screen.orientation?.unlock?.();
-    }
-    catch{}
-
-    try{
-        if(
-            document.fullscreenElement
-            &&
-            document.exitFullscreen
-        ){
-            await document.exitFullscreen();
-        }
-    }
-    catch{}
-}
-
-window.addEventListener(
-    "resize",
-    ()=>{
-        setTimeout(
-            wildSyncOrientationOverlay,
-            80
-        );
-    }
-);
-
-window.addEventListener(
-    "orientationchange",
-    ()=>{
-        setTimeout(
-            wildSyncOrientationOverlay,
-            120
-        );
-    }
-);
-
-screen.orientation?.addEventListener?.(
-    "change",
-    ()=>{
-        setTimeout(
-            wildSyncOrientationOverlay,
-            80
-        );
-    }
-);
 
 
 /* =========================================================
@@ -6406,6 +6152,272 @@ body.mobile-mode .skin-grid{
     .auth-primary,.auth-secondary,.auth-google{min-height:46px;font-size:9px}
 }
 
+
+/* =========================================================
+   V13.11 - CAIXINHA DE RECOMPENSA GLOBAL
+========================================================= */
+.reward-inbox-button{
+    position:fixed;top:20px;right:128px;z-index:9011;
+    min-width:44px;height:38px;padding:0 12px;
+    border:1px solid rgba(255,255,255,.13);border-radius:999px;
+    background:rgba(5,12,10,.72);backdrop-filter:blur(14px);
+    color:#fff;font-size:18px;cursor:pointer;
+    box-shadow:0 12px 35px rgba(0,0,0,.30);
+    display:none;align-items:center;justify-content:center;gap:6px;
+}
+.reward-inbox-button.show{display:flex}
+.reward-inbox-button:hover{transform:translateY(-1px);border-color:rgba(96,255,169,.42)}
+.reward-inbox-badge{
+    min-width:17px;height:17px;padding:0 4px;display:flex;align-items:center;justify-content:center;
+    border-radius:999px;background:#ff4f72;color:white;font-size:8px;font-weight:1000;
+    box-shadow:0 0 16px rgba(255,79,114,.45);
+}
+.reward-inbox-overlay{
+    position:fixed;inset:0;z-index:999998;display:none;align-items:center;justify-content:center;
+    padding:20px;background:rgba(1,4,10,.88);backdrop-filter:blur(18px);
+}
+.reward-inbox-overlay.show{display:flex}
+.reward-inbox-card{
+    width:min(540px,94vw);border:1px solid rgba(90,255,170,.22);border-radius:26px;
+    padding:30px 26px;background:linear-gradient(145deg,rgba(12,24,32,.98),rgba(3,8,13,.99));
+    color:white;text-align:center;box-shadow:0 32px 100px rgba(0,0,0,.65);
+}
+.reward-inbox-icon{font-size:52px;margin-bottom:10px}
+.reward-inbox-card h2{margin:0 0 9px;font-size:27px}
+.reward-inbox-card p{margin:0;color:#9babb3;font-size:12px;line-height:1.7}
+.reward-inbox-warning{
+    margin-top:16px;padding:12px 14px;border-radius:14px;
+    border:1px solid rgba(255,190,75,.20);background:rgba(255,190,75,.08);
+    color:#ffd684;font-size:10px;line-height:1.55;
+}
+.reward-inbox-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+.reward-inbox-actions button{
+    min-height:46px;padding:0 18px;border-radius:13px;font-size:9px;font-weight:1000;
+    letter-spacing:.8px;cursor:pointer;
+}
+.reward-inbox-primary{border:0;background:linear-gradient(#82ffd0,#35e69b);color:#03120d}
+.reward-inbox-secondary{border:1px solid rgba(255,255,255,.14);background:#0a1412;color:#e8f1ed}
+@media(max-width:860px){
+    .reward-inbox-button{top:10px;right:103px;height:34px;min-width:38px;padding:0 9px;font-size:16px}
+}
+
+
+/* =========================================================
+   V13.13 - GAME UI POLISH + CAIXINHA DENTRO DA PARTIDA
+========================================================= */
+#game{
+    background:
+        radial-gradient(circle at 50% 45%,rgba(53,230,155,.05),transparent 34%),
+        #020608;
+}
+
+#gameCanvas{
+    filter:saturate(1.06) contrast(1.02);
+}
+
+.game-performance{
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:7px;
+    gap:7px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    background:rgba(3,10,13,.64);
+    backdrop-filter:blur(14px);
+    box-shadow:0 15px 45px rgba(0,0,0,.25);
+}
+
+.game-performance .perf{
+    min-width:78px;
+    padding:8px 11px;
+    border-radius:10px;
+    background:rgba(255,255,255,.035);
+    border:1px solid rgba(255,255,255,.06);
+    text-align:center;
+    font-weight:900;
+}
+
+.hud.stats{
+    top:78px;
+    left:18px;
+}
+
+.hud-card{
+    border:1px solid rgba(117,255,191,.12);
+    background:
+        linear-gradient(145deg,rgba(7,19,22,.84),rgba(3,9,12,.78));
+    backdrop-filter:blur(16px);
+    box-shadow:
+        0 18px 50px rgba(0,0,0,.30),
+        inset 0 1px rgba(255,255,255,.035);
+}
+
+.hud.stats .hud-card{
+    min-width:195px;
+    border-radius:18px;
+    padding:15px 16px;
+}
+
+.hud.stats strong{
+    color:#8dffd0;
+    font-size:15px;
+    letter-spacing:.2px;
+}
+
+.hud.stats small{
+    margin-top:7px;
+    color:#a0afb6;
+}
+
+.hud.leaderboard{
+    top:78px;
+    right:18px;
+    width:225px;
+    border-radius:18px;
+    padding:14px;
+}
+
+.hud.leaderboard h3{
+    margin-bottom:10px;
+    color:#dff9ee;
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+.minimap{
+    right:18px;
+    bottom:18px;
+    overflow:hidden;
+    border:1px solid rgba(117,255,191,.18);
+    border-radius:18px;
+    background:rgba(3,10,13,.72);
+    box-shadow:0 16px 45px rgba(0,0,0,.32);
+    backdrop-filter:blur(12px);
+}
+
+.exit-game{
+    left:18px;
+    bottom:18px;
+    min-width:96px;
+    height:43px;
+    border-radius:13px;
+    border:1px solid rgba(255,255,255,.11);
+    background:rgba(4,12,15,.78);
+    backdrop-filter:blur(12px);
+    color:#cbd8dd;
+    font-weight:900;
+    box-shadow:0 12px 35px rgba(0,0,0,.26);
+}
+
+.boost{
+    right:25px;
+    bottom:180px;
+    width:84px;
+    height:84px;
+    border-radius:50%;
+    border:1px solid rgba(255,225,105,.35);
+    background:
+        radial-gradient(circle at 35% 25%,#fff2a0,#f1be32 48%,#a96c08);
+    box-shadow:
+        0 13px 0 rgba(115,72,4,.55),
+        0 20px 45px rgba(255,191,47,.20);
+    color:#211600;
+    font-weight:1000;
+}
+
+.game-mailbox{
+    position:absolute;
+    z-index:95;
+    left:18px;
+    top:18px;
+    pointer-events:none;
+}
+
+.game-mailbox .reward-inbox-button{
+    position:relative;
+    inset:auto;
+    display:flex !important;
+    width:52px;
+    min-width:52px;
+    height:52px;
+    padding:0;
+    border-radius:16px;
+    pointer-events:auto;
+    border:1px solid rgba(122,255,194,.22);
+    background:
+        linear-gradient(145deg,rgba(12,30,28,.92),rgba(4,12,15,.90));
+    box-shadow:
+        0 15px 42px rgba(0,0,0,.34),
+        0 0 26px rgba(53,230,155,.08);
+    font-size:21px;
+}
+
+.game-mailbox .reward-inbox-button:hover{
+    transform:translateY(-2px) scale(1.03);
+    border-color:rgba(113,255,191,.46);
+}
+
+.game-mailbox .reward-inbox-badge{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+}
+
+.reward-inbox-badge.hidden-badge{
+    display:none !important;
+}
+
+.reward-inbox-warning:empty{
+    display:none;
+}
+
+.reward-inbox-card{
+    border-color:rgba(117,255,191,.20);
+    background:
+        radial-gradient(circle at 50% 0%,rgba(53,230,155,.11),transparent 40%),
+        linear-gradient(150deg,rgba(12,27,31,.985),rgba(3,8,12,.99));
+}
+
+.reward-inbox-icon{
+    width:76px;
+    height:76px;
+    margin:0 auto 14px;
+    display:grid;
+    place-items:center;
+    border-radius:22px;
+    background:rgba(53,230,155,.08);
+    border:1px solid rgba(117,255,191,.14);
+    box-shadow:0 14px 40px rgba(0,0,0,.25);
+}
+
+@media(max-width:860px){
+    .game-performance{
+        top:10px;
+        transform:translateX(-50%) scale(.90);
+        transform-origin:top center;
+    }
+    .game-mailbox{
+        top:10px;
+        left:10px;
+    }
+    .game-mailbox .reward-inbox-button{
+        width:44px;
+        min-width:44px;
+        height:44px;
+        border-radius:14px;
+    }
+    .hud.stats{
+        top:64px;
+        left:10px;
+    }
+    .hud.leaderboard{
+        top:64px;
+        right:10px;
+        width:185px;
+    }
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -6492,7 +6504,7 @@ body.mobile-mode .skin-grid{
             </div>
 
             <div class="auth-build">
-                WildSnake v13.10.4 • conexão protegida
+                WildSnake v13.14.0 • conexão protegida
             </div>
 
         </aside>
@@ -6862,6 +6874,7 @@ body.mobile-mode .skin-grid{
     <button
         class="main-play"
         id="playButton"
+        type="button"
     >
         JOGAR AGORA ⚡
     </button>
@@ -6885,6 +6898,7 @@ body.mobile-mode .skin-grid{
         <button
             class="menu-button"
             id="serversButton"
+            type="button"
         >
             🌐 SERVIDORES
         </button>
@@ -7150,7 +7164,7 @@ body.mobile-mode .skin-grid{
 
         <div class="profile-meta-item">
             <small>SERVIDOR / VERSÃO</small>
-            <strong id="profileServerVersion">— • v13.10.4</strong>
+            <strong id="profileServerVersion">— • v13.14.0</strong>
         </div>
 
     </div>
@@ -7445,7 +7459,7 @@ body.mobile-mode .skin-grid{
  
     </div> 
  
-</section>  e o css novo ,
+</section>
 
 <!-- MINHAS SKINS -->
 
@@ -7890,6 +7904,26 @@ body.mobile-mode .skin-grid{
 
 </div>
 
+<!-- V13.13 - CAIXINHA / CORREIO DENTRO DA PARTIDA -->
+<div class="game-mailbox">
+<button id="rewardInboxButton" class="reward-inbox-button" type="button" aria-label="Abrir caixinha de recompensa">
+    🎁 <span id="rewardInboxBadge" class="reward-inbox-badge" aria-hidden="true">1</span>
+</button>
+
+<div id="rewardInboxOverlay" class="reward-inbox-overlay" aria-hidden="true">
+    <div class="reward-inbox-card">
+        <div class="reward-inbox-icon">🎁</div>
+        <h2 id="rewardInboxTitle">SUA CAIXINHA</h2>
+        <p id="rewardInboxText">Existe uma recompensa aguardando você.</p>
+        <div id="rewardInboxWarning" class="reward-inbox-warning"></div>
+        <div class="reward-inbox-actions">
+            <button id="rewardInboxPrimary" class="reward-inbox-primary" type="button">ABRIR RECOMPENSA</button>
+            <button id="rewardInboxSecondary" class="reward-inbox-secondary" type="button">FECHAR</button>
+        </div>
+    </div>
+</div>
+</div>
+
 </section>
 
 <!-- V13.01 - CÂMERA DE ESPECTADOR DA SALA PRIVADA -->
@@ -8004,6 +8038,265 @@ body.mobile-mode .skin-grid{
 <!-- MERGED SOLID COLLISION + BOOST VISUAL + FPS -->
 
 <script>
+
+/* =========================================================
+   V13.12 - ORIENTAÇÃO MOBILE (CORRIGIDO)
+   Este bloco estava dentro do <style> na v13.11.
+========================================================= */
+/* =========================================================
+   MOBILE - ORIENTAÇÃO AUTOMÁTICA
+   Android: tenta fullscreen + landscape automaticamente.
+   iPhone/iPad: mostra instrução para girar manualmente.
+========================================================= */
+
+let wildMobileOrientationRequested = false;
+let wildAndroidOrientationLockFailed = false;
+
+function wildDetectMobileOS(){
+
+    const ua =
+        navigator.userAgent
+        ||
+        navigator.vendor
+        ||
+        "";
+
+    const isIPadOS =
+        navigator.platform === "MacIntel"
+        &&
+        navigator.maxTouchPoints > 1;
+
+    if(/android/i.test(ua)){
+        return "android";
+    }
+
+    if(
+        /iPad|iPhone|iPod/i.test(ua)
+        ||
+        isIPadOS
+    ){
+        return "ios";
+    }
+
+    return "other";
+}
+
+function wildIsLandscape(){
+    return (
+        window.matchMedia?.("(orientation: landscape)")?.matches
+        ||
+        innerWidth > innerHeight
+    );
+}
+
+function wildSetOrientationMessage(os){
+
+    const title =
+        document.getElementById(
+            "mobileOrientationTitle"
+        );
+
+    const text =
+        document.getElementById(
+            "mobileOrientationText"
+        );
+
+    if(!title || !text){
+        return;
+    }
+
+    if(os === "ios"){
+        title.textContent =
+            "GIRE SEU IPHONE";
+        text.textContent =
+            "No iPhone o navegador não permite que o WildSnake vire a tela sozinho. Gire o aparelho para a horizontal para continuar.";
+        return;
+    }
+
+    title.textContent =
+        "GIRE SEU CELULAR";
+    text.textContent =
+        "O navegador não conseguiu travar a tela automaticamente. Gire o aparelho para a horizontal para jogar.";
+}
+
+function wildShowOrientationOverlay(os){
+
+    const overlay =
+        document.getElementById(
+            "mobileOrientationOverlay"
+        );
+
+    if(!overlay){
+        return;
+    }
+
+    wildSetOrientationMessage(os);
+    overlay.classList.remove("hidden");
+}
+
+function wildHideOrientationOverlay(){
+
+    document.getElementById(
+        "mobileOrientationOverlay"
+    )?.classList.add("hidden");
+}
+
+function wildSyncOrientationOverlay(){
+
+    if(
+        platform !== "mobile"
+        ||
+        !wildMobileOrientationRequested
+    ){
+        wildHideOrientationOverlay();
+        return;
+    }
+
+    if(wildIsLandscape()){
+        wildHideOrientationOverlay();
+        return;
+    }
+
+    const os =
+        wildDetectMobileOS();
+
+    if(
+        os === "ios"
+        ||
+        wildAndroidOrientationLockFailed
+    ){
+        wildShowOrientationOverlay(os);
+    }
+}
+
+async function wildPrepareMobileOrientation(){
+
+    if(platform !== "mobile"){
+        wildMobileOrientationRequested = false;
+        wildHideOrientationOverlay();
+        return;
+    }
+
+    wildMobileOrientationRequested = true;
+    wildAndroidOrientationLockFailed = false;
+
+    const os =
+        wildDetectMobileOS();
+
+    if(os === "ios"){
+        /* O aviso é mostrado depois das verificações pré-jogo. */
+        wildHideOrientationOverlay();
+        return;
+    }
+
+    if(os === "android"){
+
+        try{
+            if(
+                !document.fullscreenElement
+                &&
+                document.documentElement.requestFullscreen
+            ){
+                await document.documentElement.requestFullscreen();
+            }
+        }
+        catch(error){
+            console.debug(
+                "WildSnake fullscreen Android:",
+                error
+            );
+        }
+
+        try{
+            if(screen.orientation?.lock){
+                await screen.orientation.lock("landscape");
+            }
+        }
+        catch(error){
+            wildAndroidOrientationLockFailed = true;
+            console.debug(
+                "WildSnake landscape Android:",
+                error
+            );
+        }
+
+        return;
+    }
+
+    /* Outros aparelhos/navegadores mobile: tenta o mesmo recurso. */
+    try{
+        if(
+            !document.fullscreenElement
+            &&
+            document.documentElement.requestFullscreen
+        ){
+            await document.documentElement.requestFullscreen();
+        }
+
+        if(screen.orientation?.lock){
+            await screen.orientation.lock("landscape");
+        }
+    }
+    catch(error){
+        wildAndroidOrientationLockFailed = true;
+    }
+
+}
+
+async function wildReleaseMobileOrientation(){
+
+    wildMobileOrientationRequested = false;
+    wildAndroidOrientationLockFailed = false;
+    wildHideOrientationOverlay();
+
+    try{
+        screen.orientation?.unlock?.();
+    }
+    catch{}
+
+    try{
+        if(
+            document.fullscreenElement
+            &&
+            document.exitFullscreen
+        ){
+            await document.exitFullscreen();
+        }
+    }
+    catch{}
+}
+
+window.addEventListener(
+    "resize",
+    ()=>{
+        setTimeout(
+            wildSyncOrientationOverlay,
+            80
+        );
+    }
+);
+
+window.addEventListener(
+    "orientationchange",
+    ()=>{
+        setTimeout(
+            wildSyncOrientationOverlay,
+            120
+        );
+    }
+);
+
+screen.orientation?.addEventListener?.(
+    "change",
+    ()=>{
+        setTimeout(
+            wildSyncOrientationOverlay,
+            80
+        );
+    }
+);
+
+
 
 /* =========================================================
    CONFIG
@@ -8863,7 +9156,7 @@ let onlineRoomId =
 
 let currentPublicServerId = null;
 let currentPublicServerName = "—";
-let gameVersion = "v13.10.4";
+let gameVersion = "v13.14.0";
 let publicSoloActive = false;
 let publicMigrationActive = false;
 let pendingPublicSoloData = null;
@@ -11375,295 +11668,219 @@ document.querySelectorAll(
    SERVIDORES
 ========================================================= */
 
-async function fetchServerStatus(){
+let latestServerStatus=null;
 
-    if(
-        serverStatusRequestInFlight
-    ){
-        return null;
+const FALLBACK_PUBLIC_SERVERS=[
+    {id:"BR-001",name:"Brasil #1",region:"BR",flag:"🇧🇷",max:24},
+    {id:"BR-002",name:"Brasil #2",region:"BR",flag:"🇧🇷",max:24},
+    {id:"BR-003",name:"Brasil #3",region:"BR",flag:"🇧🇷",max:24},
+    {id:"US-001",name:"US East #1",region:"US",flag:"🇺🇸",max:24},
+    {id:"US-002",name:"US West #1",region:"US",flag:"🇺🇸",max:24},
+    {id:"EU-001",name:"Europa #1",region:"EU",flag:"🇪🇺",max:24},
+    {id:"EU-002",name:"Europa #2",region:"EU",flag:"🇪🇺",max:24},
+    {id:"AS-001",name:"Ásia #1",region:"AS",flag:"🌏",max:24}
+];
+
+async function fetchServerStatus(){
+    if(serverStatusRequestInFlight){
+        return latestServerStatus;
     }
 
-    serverStatusRequestInFlight = true;
+    serverStatusRequestInFlight=true;
 
-    const controller =
-        typeof AbortController!=="undefined"
-        ?
-        new AbortController()
-        :
-        null;
+    const controller=typeof AbortController!=="undefined"
+        ? new AbortController()
+        : null;
 
-    const timeout =
-        controller
-        ?
-        setTimeout(
-            ()=>controller.abort(),
-            2200
-        )
-        :
-        null;
+    const timeout=controller
+        ? setTimeout(()=>controller.abort(),2200)
+        : null;
 
     try{
+        const response=await fetch("/api/status",{
+            cache:"no-store",
+            signal:controller?.signal
+        });
 
-        const response =
-            await fetch(
-                "/api/status",
-                {
-                    cache:"no-store",
-                    signal:controller?.signal
-                }
-            );
-
-        if(
-            !response.ok
-        ){
-
-            throw new Error(
-                "status"
-            );
-
+        if(!response.ok){
+            throw new Error("status");
         }
 
-        return await response.json();
-
+        const data=await response.json();
+        latestServerStatus=data||latestServerStatus;
+        return data;
+    }catch{
+        return latestServerStatus;
+    }finally{
+        if(timeout!==null) clearTimeout(timeout);
+        serverStatusRequestInFlight=false;
     }
-    catch{
-
-        return null;
-
-    }
-    finally{
-
-        if(
-            timeout!==null
-        ){
-            clearTimeout(timeout);
-        }
-
-        serverStatusRequestInFlight = false;
-
-    }
-
 }
 
-async function renderServers(){
 
-    const list =
-        document.getElementById(
-            "serverList"
+function wildCssEscape(value){
+    const raw=String(value??"");
+    if(window.CSS && typeof window.CSS.escape==="function"){
+        return window.CSS.escape(raw);
+    }
+    return raw.replace(/["\\]/g,"\\$&");
+}
+
+function serverListSource(status){
+    const live=Array.isArray(status?.publicServers)
+        ? status.publicServers
+        : [];
+
+    return live.length
+        ? live
+        : FALLBACK_PUBLIC_SERVERS.map(server=>({
+            ...server,
+            humans:null,
+            bots:null,
+            active:false,
+            statusUnavailable:true
+        }));
+}
+
+function createServerRow(server){
+    const row=document.createElement("div");
+    row.className="server";
+    row.dataset.serverId=server.id;
+
+    row.innerHTML=`
+        <div>
+            <strong>
+                <span class="server-main-label"></span>
+                <span class="server-region-chip"></span>
+            </strong>
+            <small class="server-meta"></small>
+        </div>
+        <div class="server-count"></div>
+        <button class="join-server">ENTRAR</button>
+    `;
+
+    row.querySelector(".join-server").onclick=()=>{
+        ensureAudio();
+        enterWithLoading("public",server.id);
+    };
+
+    return row;
+}
+
+function updateServerRow(row,server){
+    const humans=
+        Number.isFinite(Number(server.humans)) && server.humans!==null
+        ? Number(server.humans)
+        : null;
+
+    const botsCount=
+        Number.isFinite(Number(server.bots)) && server.bots!==null
+        ? Number(server.bots)
+        : null;
+
+    const humanText=
+        humans===null ? "status indisponível"
+        : humans===1 ? "1 pessoa"
+        : `${humans} pessoas`;
+
+    const botText=botsCount===null ? "IA —" : `${botsCount} IA`;
+
+    row.querySelector(".server-main-label").textContent=
+        `${server.flag || "🌐"} ${server.name || server.id}`;
+
+    row.querySelector(".server-region-chip").textContent=server.region || "--";
+
+    row.querySelector(".server-meta").textContent=
+        `${
+            server.statusUnavailable
+            ? "Servidor configurado • aguardando status"
+            : humans>0 ? "Arena ativa" : "Arena disponível"
+        } • ${server.id} • ${gameVersion}`;
+
+    row.querySelector(".server-count").textContent=
+        `👤 ${humanText} • 🤖 ${botText}`;
+}
+
+function applyServerStatus(status){
+    if(status?.version){
+        gameVersion=status.version;
+        updateServerFooter?.();
+    }
+
+    if(status){
+        latestServerStatus=status;
+    }
+
+    const list=document.getElementById("serverList");
+    if(!list) return;
+
+    const servers=serverListSource(status||latestServerStatus);
+    const desiredIds=new Set(servers.map(server=>server.id));
+
+    list.querySelectorAll(".server[data-server-id]").forEach(row=>{
+        if(!desiredIds.has(row.dataset.serverId)){
+            row.remove();
+        }
+    });
+
+    servers.forEach(server=>{
+        let row=list.querySelector(
+            `.server[data-server-id="${wildCssEscape(server.id)}"]`
         );
 
-    if(!list){
+        if(!row){
+            row=createServerRow(server);
+            list.appendChild(row);
+        }
+
+        updateServerRow(row,server);
+    });
+}
+
+async function renderServers(statusOverride=null){
+    const list=document.getElementById("serverList");
+    if(!list) return;
+
+    if(!list.querySelector(".server[data-server-id]")){
+        applyServerStatus(statusOverride||latestServerStatus);
+    }
+
+    if(statusOverride){
+        applyServerStatus(statusOverride);
         return;
     }
 
-    list.innerHTML =
-        '<div class="server"><div><strong>🌐 Buscando arenas...</strong><small>Consultando BR, US, EU e AS</small></div><div class="server-count">—</div><button class="join-server">AGUARDE</button></div>';
-
-    const status =
-        await fetchServerStatus();
-
-    if(
-        status?.version
-    ){
-        gameVersion =
-            status.version;
-    }
-
-    const fallbackServers = [
-        {id:"BR-001",name:"Brasil #1",region:"BR",flag:"🇧🇷"},
-        {id:"BR-002",name:"Brasil #2",region:"BR",flag:"🇧🇷"},
-        {id:"BR-003",name:"Brasil #3",region:"BR",flag:"🇧🇷"},
-        {id:"US-001",name:"US East #1",region:"US",flag:"🇺🇸"},
-        {id:"US-002",name:"US West #1",region:"US",flag:"🇺🇸"},
-        {id:"EU-001",name:"Europa #1",region:"EU",flag:"🇪🇺"},
-        {id:"EU-002",name:"Europa #2",region:"EU",flag:"🇪🇺"},
-        {id:"AS-001",name:"Ásia #1",region:"AS",flag:"🌏"}
-    ];
-
-    const liveServers =
-        Array.isArray(
-            status?.publicServers
-        )
-        ?
-        status.publicServers
-        :
-        [];
-
-    const servers =
-        liveServers.length
-        ?
-        liveServers
-        :
-        fallbackServers.map(
-            server=>({
-                ...server,
-                humans:null,
-                bots:null,
-                active:false,
-                statusUnavailable:true,
-                max:24
-            })
-        );
-
-    list.innerHTML = "";
-
-    for(
-        const server
-        of servers
-    ){
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-        row.className =
-            "server";
-
-        const humans =
-            Number.isFinite(
-                Number(server.humans)
-            )
-            &&
-            server.humans!==null
-            ?
-            Number(server.humans)
-            :
-            null;
-
-        const botsCount =
-            Number.isFinite(
-                Number(server.bots)
-            )
-            &&
-            server.bots!==null
-            ?
-            Number(server.bots)
-            :
-            null;
-
-        const humanText =
-            humans===null
-            ?
-            "status indisponível"
-            :
-            humans===1
-            ?
-            "1 pessoa"
-            :
-            `${humans} pessoas`;
-
-        const botText =
-            botsCount===null
-            ?
-            "IA —"
-            :
-            `${botsCount} IA`;
-
-        row.innerHTML = `
-            <div>
-                <strong>
-                    ${server.flag || "🌐"} ${escapeHtml(server.name || server.id)}
-                    <span class="server-region-chip">${escapeHtml(server.region || "--")}</span>
-                </strong>
-                <small>
-                    ${
-                        server.statusUnavailable
-                        ?
-                        "Servidor configurado • aguardando status"
-                        :
-                        humans>0
-                        ?
-                        "Arena ativa"
-                        :
-                        "Arena disponível"
-                    }
-                    • ${escapeHtml(server.id)}
-                    • ${escapeHtml(gameVersion)}
-                </small>
-            </div>
-
-            <div class="server-count">
-                👤 ${humanText} • 🤖 ${botText}
-            </div>
-
-            <button class="join-server">
-                ENTRAR
-            </button>
-        `;
-
-        const button =
-            row.querySelector(
-                "button"
-            );
-
-        button.onclick =
-        ()=>{
-
-            ensureAudio();
-
-            enterWithLoading(
-                "public",
-                server.id
-            );
-
-        };
-
-        list.appendChild(
-            row
-        );
-
-    }
-
+    const status=await fetchServerStatus();
+    applyServerStatus(status);
 }
 
-document.getElementById(
-    "serversButton"
-).onclick =
-()=>{
+document.getElementById("serversButton").onclick=async()=>{
+    const page=document.getElementById("serversPage");
+    page.classList.remove("hidden");
 
-    renderServers();
+    try{
+        /*
+           A tela abre imediatamente. A rede atualiza depois,
+           portanto falha de Socket.IO nunca bloqueia o clique.
+        */
+        applyServerStatus(latestServerStatus);
+        const connected=await ensureSocketConnected();
 
-    document.getElementById(
-        "serversPage"
-    ).classList.remove(
-        "hidden"
-    );
+        if(!latestServerStatus){
+            await renderServers();
+        }
 
-    clearInterval(
-        serverListRefreshTimer
-    );
-
-    serverListRefreshTimer =
-        setInterval(
-            ()=>{
-                const page = document.getElementById("serversPage");
-                if(page && !page.classList.contains("hidden")){
-                    renderServers();
-                }
-            },
-            3000
-        );
-
+        if(!connected && !latestServerStatus){
+            applyServerStatus(null);
+        }
+    }catch(error){
+        console.error("WildSnake serversButton:",error);
+        applyServerStatus(null);
+    }
 };
 
-document.getElementById(
-    "closeServers"
-).onclick =
-()=>{
-
-    clearInterval(
-        serverListRefreshTimer
-    );
-
-    serverListRefreshTimer = null;
-
-    document.getElementById(
-        "serversPage"
-    ).classList.add(
-        "hidden"
-    );
-
+document.getElementById("closeServers").onclick=()=>{
+    document.getElementById("serversPage").classList.add("hidden");
 };
 
 /* =========================================================
@@ -12058,7 +12275,7 @@ function buildReturnSwirlWorms(){
     }
 
     /*
-        HOTFIX v13.10.4
+        HOTFIX v13.14.0
         ----------------
         A versão anterior colocava todas as minhocas no centro e
         aplicava uma órbita com transform no mesmo elemento que já
@@ -13485,14 +13702,22 @@ document.getElementById(
 document.getElementById(
     "playButton"
 ).onclick =
-()=>{
+async()=>{
 
     ensureAudio();
 
-    enterWithLoading(
-        "public",
-        "Servidor automático"
-    );
+    try{
+        await enterWithLoading(
+            "public",
+            "Servidor automático"
+        );
+    }catch(error){
+        console.error("WildSnake playButton:",error);
+        entryInProgress=false;
+        document.getElementById("connectionScreen")?.classList.add("hidden");
+        menu?.classList.remove("hidden");
+        toast?.("Não foi possível iniciar a partida. Verifique a conexão com o servidor.");
+    }
 
 };
 
@@ -13534,10 +13759,26 @@ function ensureSocket(){
     socket =
         io(window.location.origin,{
             auth:{
-                token:
-                    v13Auth?.token
-                    ||
-                    null
+                token:(()=>{
+                    try{
+                        const runtime =
+                            typeof window.wildsnakeRuntimeAuth==="object"
+                            ? window.wildsnakeRuntimeAuth
+                            : null;
+
+                        if(runtime?.token){
+                            return runtime.token;
+                        }
+
+                        const saved=JSON.parse(
+                            localStorage.getItem("wildsnakeAuthV13") || "null"
+                        );
+
+                        return saved?.token || null;
+                    }catch{
+                        return null;
+                    }
+                })()
             },
             transports:[
                 "websocket",
@@ -13684,6 +13925,24 @@ function bindSocketEvents(){
 
         }
     );
+
+    socket.on(
+        "serverStatus",
+        status=>{
+            latestServerStatus=status||latestServerStatus;
+
+            const page=document.getElementById("serversPage");
+            if(page && !page.classList.contains("hidden")){
+                applyServerStatus(status);
+            }
+
+            if(status?.version){
+                gameVersion=status.version;
+                updateServerFooter?.();
+            }
+        }
+    );
+
 
     socket.on(
         "disconnect",
@@ -21884,7 +22143,7 @@ requestAnimationFrame(
 ========================================================= */
 
 const V13_VERSION =
-    "v13.10.4";
+    "v13.14.0";
 
 const V13_AUTH_KEY =
     "wildsnakeAuthV13";
@@ -21903,6 +22162,7 @@ let v13Auth = {
     token:null,
     account:null
 };
+window.wildsnakeRuntimeAuth=v13Auth;
 
 let v13LimitedStock =
     {};
@@ -22347,6 +22607,7 @@ function v13ShowMenuAfterAuth(){
     }
 
     v13RefreshProfileUI();
+    void v13RefreshRewardInbox();
 
 }
 
@@ -22508,6 +22769,7 @@ let WILDSNAKE_SUPABASE_PUBLISHABLE_KEY =
 
 let v13SupabaseClient = null;
 let v13LatestSupabaseSession = null;
+let v13PublicConfig = null;
 
 function v13SupabaseConfigured(){
     return /^https:\/\/.+\.supabase\.co$/i.test(WILDSNAKE_SUPABASE_URL)
@@ -22522,6 +22784,7 @@ async function v13LoadPublicConfig(){
             {cache:"no-store"}
         );
         const data=await response.json();
+        v13PublicConfig=data||null;
         if(data?.supabaseUrl){
             WILDSNAKE_SUPABASE_URL=data.supabaseUrl;
         }
@@ -22531,6 +22794,249 @@ async function v13LoadPublicConfig(){
         return data;
     }catch{
         return null;
+    }
+}
+
+function v13ReadOAuthSessionFromUrl(){
+    try{
+        const hash=String(location.hash||"").replace(/^#/,"");
+        if(!hash) return null;
+
+        const params=new URLSearchParams(hash);
+        const accessToken=params.get("access_token");
+        if(!accessToken) return null;
+
+        return{
+            access_token:accessToken,
+            refresh_token:params.get("refresh_token")||null,
+            token_type:params.get("token_type")||"bearer",
+            expires_in:Number(params.get("expires_in")||0)||null
+        };
+    }catch{
+        return null;
+    }
+}
+
+function v13ClearOAuthUrl(){
+    try{
+        history.replaceState(null,"",location.pathname+location.search);
+    }catch{}
+}
+
+const V13_GUEST_PENDING_CARD_KEY="wildsnakeGuestPendingCardV13";
+
+function v13GetGuestPendingCard(){
+    try{
+        const value=JSON.parse(
+            localStorage.getItem(V13_GUEST_PENDING_CARD_KEY)||"null"
+        );
+
+        const index=Number(value?.cardIndex);
+
+        if(value && Number.isInteger(index) && index>=0 && index<=2){
+            return{...value,cardIndex:index};
+        }
+    }catch{}
+
+    return null;
+}
+
+function v13HasLocalPendingReward(){
+    try{
+        return !!localStorage.getItem("wildsnake_pending_reward");
+    }catch{
+        return false;
+    }
+}
+
+async function v13ConvertGuestPendingRewardAfterAuth(){
+    const pending=v13GetGuestPendingCard();
+
+    if(!pending || !v13Auth.token){
+        return false;
+    }
+
+    const {data:status}=await v13FetchJson(
+        "/api/tutorial/status",
+        {method:"GET"}
+    );
+
+    if(!status?.ok){
+        return false;
+    }
+
+    if(status.tutorialCompleted){
+        try{
+            localStorage.removeItem(V13_GUEST_PENDING_CARD_KEY);
+        }catch{}
+        void v13RefreshRewardInbox();
+        return false;
+    }
+
+    await v13FetchJson(
+        "/api/tutorial/start",
+        {method:"POST",body:JSON.stringify({})}
+    );
+
+    const {data}=await v13FetchJson(
+        "/api/tutorial/reward/select",
+        {
+            method:"POST",
+            body:JSON.stringify({cardIndex:pending.cardIndex})
+        }
+    );
+
+    if(!data?.ok || !data.reward){
+        return false;
+    }
+
+    try{
+        localStorage.setItem("wildsnake_pending_reward",JSON.stringify(data.reward));
+        localStorage.removeItem(V13_GUEST_PENDING_CARD_KEY);
+        localStorage.setItem("wildsnakeTutorialResumeRewardV13","1");
+    }catch{}
+
+    await v13ShowNewAccountLoading();
+    location.href="/tutorial.html";
+    return true;
+}
+
+function v13OpenAuthForReward(tab="create"){
+    v13Auth={mode:"none",token:null,account:null};
+    v13SaveAuth();
+    v13ShowAuthGate();
+    v13SetAuthTab(tab==="login" ? "login" : "create");
+    v13SetAuthMessage(
+        tab==="login"
+        ? "Entre na sua conta para abrir a recompensa guardada."
+        : "Crie sua conta para o servidor revelar a recompensa guardada.",
+        "ok"
+    );
+}
+
+async function v13RefreshRewardInbox(){
+    const button=document.getElementById("rewardInboxButton");
+    const badge=document.getElementById("rewardInboxBadge");
+    if(!button) return;
+
+    let pending=!!v13GetGuestPendingCard() || v13HasLocalPendingReward();
+
+    if(v13Auth.token){
+        try{
+            const {data}=await v13FetchJson(
+                "/api/tutorial/status",
+                {method:"GET"}
+            );
+
+            if(data?.ok){
+                if(data.rewardState==="generated" && data.reward){
+                    pending=true;
+                    try{
+                        localStorage.setItem(
+                            "wildsnake_pending_reward",
+                            JSON.stringify(data.reward)
+                        );
+                    }catch{}
+                }
+
+                if(data.tutorialCompleted){
+                    try{
+                        localStorage.removeItem("wildsnake_pending_reward");
+                    }catch{}
+                    pending=!!v13GetGuestPendingCard();
+                }
+            }
+        }catch{}
+    }
+
+    /* A caixinha existe para todos. O #game controla quando ela aparece. */
+    button.classList.add("show");
+
+    if(badge){
+        badge.classList.toggle("hidden-badge",!pending);
+        badge.setAttribute("aria-hidden",pending ? "false" : "true");
+    }
+}
+
+function v13CloseRewardInbox(){
+    const overlay=document.getElementById("rewardInboxOverlay");
+    overlay?.classList.remove("show");
+    overlay?.setAttribute("aria-hidden","true");
+}
+
+async function v13OpenRewardInbox(){
+    const overlay=document.getElementById("rewardInboxOverlay");
+    const title=document.getElementById("rewardInboxTitle");
+    const message=document.getElementById("rewardInboxText");
+    const warning=document.getElementById("rewardInboxWarning");
+    const primary=document.getElementById("rewardInboxPrimary");
+
+    if(!overlay || !primary) return;
+
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden","false");
+    primary.onclick=null;
+
+    const guestPending=v13GetGuestPendingCard();
+    const localPending=v13HasLocalPendingReward();
+    const provider=String(v13Auth.account?.provider || "").toLowerCase();
+    const googleConnected=provider==="google";
+
+    warning.textContent="";
+
+    if(v13Auth.mode==="guest" || (!v13Auth.token && guestPending)){
+        title.textContent="RECOMPENSA GUARDADA";
+        message.textContent=
+            "Sua recompensa está segura, mas precisa de uma conta para ser vinculada.";
+        warning.textContent=
+            "Conecte sua conta com o Google para proteger o prêmio e sua evolução.";
+        primary.textContent="CONECTAR COM GOOGLE";
+        primary.onclick=()=>{
+            v13CloseRewardInbox();
+            v13StartGoogleOAuth("create");
+        };
+        return;
+    }
+
+    if(v13Auth.token && (guestPending || localPending)){
+        title.textContent="VOCÊ TEM UMA ENTREGA";
+        message.textContent=
+            "Existe uma recompensa esperando para ser aberta.";
+
+        if(!googleConnected){
+            warning.textContent=
+                "Sua conta ainda não está conectada ao Google. Conecte para proteger suas recompensas.";
+        }
+
+        primary.textContent="ABRIR RECOMPENSA";
+        primary.onclick=async()=>{
+            v13CloseRewardInbox();
+
+            if(await v13ConvertGuestPendingRewardAfterAuth()){
+                return;
+            }
+
+            await v13ShowNewAccountLoading();
+            location.href="/tutorial.html";
+        };
+        return;
+    }
+
+    title.textContent="CAIXINHA WILDSNAKE";
+    message.textContent=
+        "Nenhuma recompensa nova no momento. Continue jogando para receber novas entregas.";
+
+    if(!googleConnected){
+        warning.textContent=
+            "Conecte sua conta ao Google para proteger progresso, skins e futuras recompensas.";
+        primary.textContent="CONECTAR GOOGLE";
+        primary.onclick=()=>{
+            v13CloseRewardInbox();
+            v13StartGoogleOAuth("link");
+        };
+    }else{
+        primary.textContent="FECHAR";
+        primary.onclick=v13CloseRewardInbox;
     }
 }
 
@@ -22587,6 +23093,7 @@ function v13AcceptGameAuth(data,mode="local"){
         token:data.token,
         account:data.account
     };
+    window.wildsnakeRuntimeAuth=v13Auth;
 
     v13ApplyServerAccount(data.account);
     v13SaveAuth();
@@ -22815,6 +23322,10 @@ async function v13HandleGoogleSession(session,intent="login"){
     try{localStorage.removeItem("wildsnakeGoogleIntentV13");}catch{}
 
     if(data.tutorialRequired || data.isNew){
+        if(await v13ConvertGuestPendingRewardAfterAuth()){
+            return true;
+        }
+
         await v13GoToTutorial();
         return true;
     }
@@ -22825,35 +23336,46 @@ async function v13HandleGoogleSession(session,intent="login"){
 }
 
 async function v13InitSupabase(){
-    await v13LoadPublicConfig();
+    const config=await v13LoadPublicConfig();
 
-    if(!v13SupabaseConfigured()) return false;
-    if(!window.supabase?.createClient) return false;
+    if(
+        v13SupabaseConfigured()
+        &&
+        window.supabase?.createClient
+    ){
+        v13SupabaseClient=window.supabase.createClient(
+            WILDSNAKE_SUPABASE_URL,
+            WILDSNAKE_SUPABASE_PUBLISHABLE_KEY,
+            {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
+        );
 
-    v13SupabaseClient=window.supabase.createClient(
-        WILDSNAKE_SUPABASE_URL,
-        WILDSNAKE_SUPABASE_PUBLISHABLE_KEY,
-        {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
-    );
+        v13SupabaseClient.auth.onAuthStateChange((_event,session)=>{
+            v13LatestSupabaseSession=session || null;
+        });
+    }
 
-    v13SupabaseClient.auth.onAuthStateChange((_event,session)=>{
-        v13LatestSupabaseSession=session || null;
-    });
-
-    return true;
+    return !!config?.googleOAuthReady || !!v13SupabaseClient;
 }
 
 async function v13GoogleLogin(intent="login"){
-    if(!v13SupabaseClient){
-        v13SetAuthMessage(
-            "O Google ainda não está configurado no backend do WildSnake.",
-            "error"
-        );
+    if(intent==="link" && !v13Auth.token){
+        v13SetAuthMessage("Entre na conta antes de conectar o Google.","error");
         return;
     }
 
-    if(intent==="link" && !v13Auth.token){
-        v13SetAuthMessage("Entre na conta antes de conectar o Google.","error");
+    if(!v13PublicConfig){
+        await v13LoadPublicConfig();
+    }
+
+    if(!v13PublicConfig?.googleOAuthReady && !v13SupabaseClient){
+        const missing=v13PublicConfig?.configuration?.missing;
+
+        v13SetAuthMessage(
+            Array.isArray(missing) && missing.length
+            ? "Backend Supabase incompleto no Render: "+missing.join(", ")+"."
+            : "O backend seguro do Supabase ainda não está pronto.",
+            "error"
+        );
         return;
     }
 
@@ -22869,22 +23391,24 @@ async function v13GoogleLogin(intent="login"){
                 : "Abrindo login do Google..."
     );
 
-    const redirectTo=window.location.origin + "/";
+    if(v13SupabaseClient){
+        const redirectTo=window.location.origin + "/";
 
-    const {error}=await v13SupabaseClient.auth.signInWithOAuth({
-        provider:"google",
-        options:{
-            redirectTo,
-            queryParams:{
-                access_type:"offline",
-                prompt:"select_account"
+        const {error}=await v13SupabaseClient.auth.signInWithOAuth({
+            provider:"google",
+            options:{
+                redirectTo,
+                queryParams:{access_type:"offline",prompt:"select_account"}
             }
-        }
-    });
+        });
 
-    if(error){
-        v13SetAuthMessage(error.message || "Falha ao abrir o Google.","error");
+        if(error){
+            v13SetAuthMessage(error.message || "Falha ao abrir o Google.","error");
+        }
+        return;
     }
+
+    location.href="/api/auth/google/start?return=%2F";
 }
 
 /* =========================================================
@@ -23144,6 +23668,21 @@ document.getElementById("authMusicToggle")?.addEventListener("click",event=>{
 document.addEventListener("pointerdown",()=>v13StartMusicFromGesture(),{once:true,capture:true});
 v13UpdateMusicButton();
 
+document.getElementById("rewardInboxButton")?.addEventListener("click",event=>{
+    event.stopPropagation();
+    void v13OpenRewardInbox();
+});
+
+document.getElementById("rewardInboxSecondary")?.addEventListener("click",()=>{
+    v13CloseRewardInbox();
+});
+
+document.getElementById("rewardInboxOverlay")?.addEventListener("click",event=>{
+    if(event.target===event.currentTarget){
+        v13CloseRewardInbox();
+    }
+});
+
 /* =========================================================
    V13 - LOGIN LOCAL
 ========================================================= */
@@ -23215,6 +23754,10 @@ async()=>{
     );
 
     if(data.tutorialRequired){
+        if(await v13ConvertGuestPendingRewardAfterAuth()){
+            return;
+        }
+
         await v13GoToTutorial();
         return;
     }
@@ -23404,6 +23947,10 @@ async()=>{
             450
         );
 
+        if(await v13ConvertGuestPendingRewardAfterAuth()){
+            return;
+        }
+
         await v13GoToTutorial();
     }
     catch(error){
@@ -23530,11 +24077,30 @@ async function v13RestoreSession(){
 
     v13LoadAuth();
 
-    /* OAuth de VINCULAÇÃO precisa ser concluído antes de aceitar a sessão local. */
-    const pendingGoogleIntent =
+    const pendingGoogleIntent=
         localStorage.getItem("wildsnakeGoogleIntentV13")
         ||
         "";
+
+    const hashSession=v13ReadOAuthSessionFromUrl();
+
+    if(hashSession?.access_token){
+        const intent=pendingGoogleIntent || "login";
+
+        if(intent==="link" && !v13Auth.token){
+            v13SetAuthMessage(
+                "Sua sessão WildSnake expirou durante a vinculação. Entre novamente e repita Conectar com Google.",
+                "error"
+            );
+            v13ClearOAuthUrl();
+            v13ShowAuthGate();
+            return;
+        }
+
+        await v13HandleGoogleSession(hashSession,intent);
+        v13ClearOAuthUrl();
+        return;
+    }
 
     if(
         pendingGoogleIntent === "link"
@@ -23554,16 +24120,11 @@ async function v13RestoreSession(){
         }
     }
 
-    if(
-        v13Auth.mode === "guest"
-        &&
-        v13Auth.account
-    ){
+    if(v13Auth.mode==="guest" && v13Auth.account){
         v13ShowMenuAfterAuth();
         return;
     }
 
-    /* Primeiro tenta a sessão de jogo. */
     if(v13Auth.token){
         const {data}=await v13FetchJson(
             "/api/account/me",
@@ -23575,6 +24136,10 @@ async function v13RestoreSession(){
             v13SaveAuth();
 
             if(data.account.tutorialRequired){
+                if(await v13ConvertGuestPendingRewardAfterAuth()){
+                    return;
+                }
+
                 await v13GoToTutorial();
                 return;
             }
@@ -23584,17 +24149,18 @@ async function v13RestoreSession(){
         }
     }
 
-    /* Se o Node reiniciou, o Google consegue emitir uma nova sessão de jogo. */
     if(v13SupabaseClient){
         try{
             const {data}=await v13SupabaseClient.auth.getSession();
             const session=data?.session;
 
-            if(session?.user){
-                const intent=localStorage.getItem("wildsnakeGoogleIntentV13") || "login";
+            if(session?.access_token){
+                const intent=
+                    localStorage.getItem("wildsnakeGoogleIntentV13")
+                    ||
+                    "login";
 
                 if(intent==="link" && !v13Auth.token){
-                    // A sessão local expirou durante o OAuth. Não cria outra conta por engano.
                     v13SetAuthMessage(
                         "Sua sessão WildSnake expirou durante a vinculação. Entre novamente e repita Conectar com Google.",
                         "error"
@@ -23613,12 +24179,7 @@ async function v13RestoreSession(){
         }
     }
 
-    v13Auth={
-        mode:"none",
-        token:null,
-        account:null
-    };
-
+    v13Auth={mode:"none",token:null,account:null};
     v13SaveAuth();
     v13ShowAuthGate();
 }
@@ -29076,6 +29637,8 @@ updateServerFooter();
     await v13InitSupabase();
 
     await v13RestoreSession();
+
+    await v13RefreshRewardInbox();
 
 })();
 
