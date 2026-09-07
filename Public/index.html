@@ -7802,6 +7802,668 @@ body.mobile-mode .skin-grid{
     display:block;
 }
 
+
+
+/* =========================================================
+   WILDSNAKE - SALA PRIVADA MOBILE V3
+   Layout exclusivo para celular. O desktop permanece intacto.
+========================================================= */
+@media (max-width:760px){
+
+    /* libera o scroll que o lobby desktop bloqueia */
+    #friendsPage.lobby-open{
+        height:100dvh!important;
+        min-height:100dvh!important;
+        overflow-x:hidden!important;
+        overflow-y:auto!important;
+        -webkit-overflow-scrolling:touch;
+        overscroll-behavior-y:contain;
+        padding:0!important;
+        background:
+            radial-gradient(circle at 50% -10%,rgba(24,204,139,.12),transparent 35%),
+            linear-gradient(180deg,#02090a,#010506)!important;
+    }
+
+    #friendsPage.lobby-open > .page-card{
+        width:100%!important;
+        max-width:none!important;
+        height:auto!important;
+        min-height:100dvh!important;
+        max-height:none!important;
+        margin:0!important;
+        padding:
+            max(12px,env(safe-area-inset-top))
+            12px
+            calc(118px + env(safe-area-inset-bottom))
+            12px!important;
+        overflow:visible!important;
+        border:0!important;
+        border-radius:0!important;
+        background:transparent!important;
+        box-shadow:none!important;
+    }
+
+    /* no celular o fundo animado do desktop não ocupa espaço */
+    #friendsPage.lobby-open .private-lobby-bg{
+        display:none!important;
+    }
+
+    #friendsPage.lobby-open .back-button{
+        position:sticky!important;
+        top:max(8px,env(safe-area-inset-top))!important;
+        z-index:120!important;
+        width:auto!important;
+        min-width:0!important;
+        min-height:42px!important;
+        height:42px!important;
+        margin:0 0 14px!important;
+        padding:0 14px!important;
+        border-radius:12px!important;
+        font-size:12px!important;
+        background:rgba(7,16,20,.94)!important;
+        backdrop-filter:blur(16px)!important;
+        -webkit-backdrop-filter:blur(16px)!important;
+    }
+
+    #privateLobby{
+        width:100%!important;
+        min-width:0!important;
+        overflow:visible!important;
+    }
+
+    /* uma coluna de verdade no celular */
+    #privateLobby .private-lobby-shell{
+        display:flex!important;
+        flex-direction:column!important;
+        width:100%!important;
+        min-width:0!important;
+        min-height:0!important;
+        gap:14px!important;
+    }
+
+    #privateLobby .private-lobby-left,
+    #privateLobby .private-lobby-right{
+        width:100%!important;
+        min-width:0!important;
+        padding:0!important;
+        align-self:auto!important;
+    }
+
+    /* cabeçalho compacto */
+    #privateLobby .lobby-head{
+        display:grid!important;
+        grid-template-columns:minmax(0,1fr) auto!important;
+        align-items:start!important;
+        gap:8px!important;
+        margin:0 2px 12px!important;
+    }
+
+    #privateLobby .lobby-room-name{
+        max-width:100%!important;
+        overflow:hidden!important;
+        text-overflow:ellipsis!important;
+        white-space:nowrap!important;
+        font-size:clamp(19px,6vw,25px)!important;
+        line-height:1.1!important;
+        letter-spacing:-.4px!important;
+    }
+
+    #privateLobby .lobby-waiting{
+        margin-top:6px!important;
+        font-size:9px!important;
+        line-height:1.35!important;
+    }
+
+    #privateLobby .lobby-online-count{
+        padding:7px 9px!important;
+        font-size:8px!important;
+    }
+
+    /* cartão da sala ocupa a largura inteira */
+    #privateLobby .private-lobby-info-card{
+        width:100%!important;
+        padding:11px!important;
+        border-radius:17px!important;
+        box-shadow:0 16px 42px rgba(0,0,0,.24)!important;
+    }
+
+    #privateLobby .room-code-box{
+        margin:0 0 10px!important;
+        padding:13px 10px!important;
+        border-radius:13px!important;
+    }
+
+    #privateLobby .room-code-box small{
+        margin-bottom:5px!important;
+        font-size:8px!important;
+    }
+
+    #privateLobby .room-code-box strong{
+        font-size:clamp(21px,7vw,28px)!important;
+        letter-spacing:1.2px!important;
+        overflow-wrap:anywhere;
+    }
+
+    /* QR menor e proporcional ao celular */
+    #privateLobby .room-qr-box{
+        margin:0 0 10px!important;
+        padding:12px 10px!important;
+        border-radius:14px!important;
+    }
+
+    #privateLobby #privateRoomQr{
+        width:min(170px,48vw)!important;
+        min-height:min(170px,48vw)!important;
+        padding:7px!important;
+        margin:0 auto!important;
+        border-radius:11px!important;
+    }
+
+    #privateLobby #privateRoomQr img,
+    #privateLobby #privateRoomQr canvas{
+        width:100%!important;
+        max-width:100%!important;
+        height:auto!important;
+    }
+
+    #privateLobby .room-qr-hint{
+        max-width:270px!important;
+        margin:8px auto 0!important;
+        font-size:8px!important;
+        line-height:1.4!important;
+    }
+
+    #privateLobby .lobby-options-summary{
+        display:flex!important;
+        justify-content:center!important;
+        gap:6px!important;
+        margin:2px 0 0!important;
+    }
+
+    #privateLobby .lobby-option-chip{
+        flex:0 1 auto!important;
+        max-width:100%!important;
+        padding:6px 8px!important;
+        font-size:8px!important;
+    }
+
+    #privateLobby .private-lobby-message{
+        min-height:0!important;
+        margin:7px 2px 0!important;
+        font-size:9px!important;
+    }
+
+    /* jogadores viram um bloco natural abaixo do QR */
+    #privateLobby .private-lobby-players-panel{
+        width:100%!important;
+        min-height:0!important;
+        padding:11px!important;
+        border-radius:16px!important;
+    }
+
+    #privateLobby .private-lobby-panel-title{
+        margin:1px 2px 9px!important;
+        font-size:10px!important;
+    }
+
+    #privateLobby .lobby-list{
+        width:100%!important;
+        max-height:none!important;
+        overflow:visible!important;
+        margin:0!important;
+        padding:0!important;
+    }
+
+    #privateLobby .lobby-player{
+        width:100%!important;
+        min-width:0!important;
+        margin:0 0 7px!important;
+        padding:10px!important;
+        border-radius:11px!important;
+        font-size:10px!important;
+    }
+
+    #privateLobby .lobby-player > *{
+        min-width:0;
+    }
+
+    /* ações ficam sempre alcançáveis sem bloquear o scroll */
+    #privateLobby .lobby-actions{
+        position:sticky!important;
+        bottom:0!important;
+        z-index:110!important;
+        display:grid!important;
+        grid-template-columns:1fr!important;
+        gap:8px!important;
+        width:calc(100% + 24px)!important;
+        margin:10px -12px -1px!important;
+        padding:
+            10px
+            12px
+            calc(10px + env(safe-area-inset-bottom))
+            12px!important;
+        border-top:1px solid rgba(255,255,255,.08)!important;
+        background:
+            linear-gradient(180deg,rgba(2,8,10,.10),rgba(2,8,10,.96) 18%,#02080a 100%)!important;
+        backdrop-filter:blur(16px)!important;
+        -webkit-backdrop-filter:blur(16px)!important;
+    }
+
+    #privateLobby .lobby-actions button{
+        width:100%!important;
+        min-height:50px!important;
+        height:50px!important;
+        border-radius:13px!important;
+        font-size:11px!important;
+    }
+
+    /* no mobile: pronto primeiro, jogar depois */
+    #privateLobby .private-ready-button{
+        order:1!important;
+    }
+
+    #privateLobby .private-play-button{
+        order:2!important;
+    }
+}
+
+/* aparelhos muito estreitos */
+@media (max-width:390px){
+    #friendsPage.lobby-open > .page-card{
+        padding-left:9px!important;
+        padding-right:9px!important;
+    }
+
+    #privateLobby #privateRoomQr{
+        width:min(156px,46vw)!important;
+        min-height:min(156px,46vw)!important;
+    }
+
+    #privateLobby .lobby-head{
+        grid-template-columns:1fr!important;
+    }
+
+    #privateLobby .lobby-online-count{
+        width:max-content!important;
+    }
+
+    #privateLobby .lobby-actions{
+        width:calc(100% + 18px)!important;
+        margin-left:-9px!important;
+        margin-right:-9px!important;
+        padding-left:9px!important;
+        padding-right:9px!important;
+    }
+}
+
+/* celular deitado: mantém o layout móvel rolável e compacto */
+@media (max-width:900px) and (orientation:landscape) and (max-height:500px){
+    body.mobile-mode #friendsPage.lobby-open{
+        overflow-y:auto!important;
+    }
+
+    body.mobile-mode #friendsPage.lobby-open > .page-card{
+        height:auto!important;
+        min-height:100dvh!important;
+    }
+
+    body.mobile-mode #privateLobby .private-lobby-shell{
+        display:grid!important;
+        grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+        gap:12px!important;
+        align-items:start!important;
+    }
+
+    body.mobile-mode #privateLobby #privateRoomQr{
+        width:126px!important;
+        min-height:126px!important;
+    }
+
+    body.mobile-mode #privateLobby .lobby-actions{
+        position:static!important;
+        width:100%!important;
+        margin:10px 0 0!important;
+        padding:0!important;
+        background:transparent!important;
+        border:0!important;
+        backdrop-filter:none!important;
+    }
+}
+
+
+
+/* =========================================================
+   WILDSHOP - COMBOS
+========================================================= */
+.shop-combo-section{
+    position:relative;
+    z-index:3;
+    margin:34px 0 12px;
+    padding-top:26px;
+    border-top:1px solid rgba(103,255,180,.14);
+}
+.shop-combo-section::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:-1px;
+    width:min(360px,80%);
+    height:1px;
+    background:linear-gradient(90deg,#69ffae,transparent);
+}
+.shop-combo-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    margin-bottom:14px;
+}
+.shop-combo-kicker{
+    color:#6dffb2;
+    font-size:8px;
+    font-weight:1000;
+    letter-spacing:1.8px;
+}
+.shop-combo-head h2{
+    margin:5px 0 4px;
+    font-size:23px;
+    font-weight:1000;
+}
+.shop-combo-head p{
+    margin:0;
+    max-width:650px;
+    color:#7f9299;
+    font-size:9px;
+    line-height:1.55;
+}
+.combo-store-card{
+    position:relative;
+    display:grid;
+    grid-template-columns:minmax(300px,1.15fr) minmax(260px,.85fr);
+    min-height:315px;
+    overflow:hidden;
+    border:1px solid rgba(105,255,174,.16);
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 18% 28%,rgba(58,239,159,.11),transparent 38%),
+        linear-gradient(145deg,#0b1717,#071013 60%,#050b0d);
+    box-shadow:0 24px 70px rgba(0,0,0,.25);
+}
+.combo-carousel{
+    position:relative;
+    min-height:315px;
+    cursor:pointer;
+    overflow:hidden;
+    border-right:1px solid rgba(255,255,255,.06);
+}
+.combo-carousel canvas{
+    display:block;
+    width:100%;
+    height:100%;
+    min-height:315px;
+}
+.combo-carousel-overlay{
+    position:absolute;
+    inset:auto 18px 16px 18px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:10px;
+    pointer-events:none;
+}
+.combo-carousel-name{
+    min-width:0;
+    padding:10px 12px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:13px;
+    background:rgba(3,9,11,.78);
+    backdrop-filter:blur(12px);
+}
+.combo-carousel-name strong{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:15px;
+}
+.combo-carousel-name span{
+    display:block;
+    margin-top:3px;
+    color:#75f5b8;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1.2px;
+}
+.combo-carousel-counter{
+    padding:8px 10px;
+    border-radius:999px;
+    background:rgba(3,9,11,.78);
+    color:#adc0c5;
+    font-size:8px;
+    font-weight:1000;
+}
+.combo-info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:25px;
+}
+.combo-badge{
+    width:max-content;
+    padding:7px 10px;
+    border:1px solid rgba(105,255,174,.18);
+    border-radius:999px;
+    background:rgba(105,255,174,.07);
+    color:#72f9b5;
+    font-size:8px;
+    font-weight:1000;
+    letter-spacing:1.1px;
+}
+.combo-info h3{
+    margin:12px 0 7px;
+    font-size:27px;
+    line-height:1.05;
+}
+.combo-info p{
+    margin:0;
+    color:#81939a;
+    font-size:10px;
+    line-height:1.6;
+}
+.combo-prices{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:17px;
+}
+.combo-price{
+    padding:12px 9px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:13px;
+    background:rgba(255,255,255,.025);
+    text-align:center;
+}
+.combo-price small{
+    display:block;
+    color:#71838a;
+    font-size:7px;
+    font-weight:900;
+}
+.combo-price strong{
+    display:block;
+    margin-top:4px;
+    font-size:12px;
+}
+.combo-open-button{
+    width:100%;
+    min-height:47px;
+    margin-top:12px;
+    border:0;
+    border-radius:13px;
+    cursor:pointer;
+    color:#03100a;
+    background:linear-gradient(135deg,#72ffa8,#38dcff);
+    font-size:10px;
+    font-weight:1000;
+    letter-spacing:1px;
+}
+.combo-owned-label{
+    margin-top:12px;
+    padding:12px;
+    border:1px solid rgba(105,255,174,.16);
+    border-radius:13px;
+    color:#75f5b8;
+    background:rgba(105,255,174,.06);
+    text-align:center;
+    font-size:9px;
+    font-weight:1000;
+}
+
+/* modal gigante */
+.combo-modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:950;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:rgba(0,3,6,.88);
+    backdrop-filter:blur(16px);
+}
+.combo-modal-overlay.hidden{display:none!important}
+.combo-modal{
+    width:min(1180px,96vw);
+    max-height:92dvh;
+    overflow:auto;
+    padding:24px;
+    border:1px solid rgba(105,255,174,.16);
+    border-radius:26px;
+    background:
+        radial-gradient(circle at 16% 0%,rgba(60,255,170,.09),transparent 32%),
+        linear-gradient(145deg,#0b1518,#050a0d);
+    box-shadow:0 40px 120px rgba(0,0,0,.58);
+}
+.combo-modal-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:18px;
+}
+.combo-modal-top h2{
+    margin:5px 0 5px;
+    font-size:clamp(25px,4vw,40px);
+}
+.combo-modal-top p{
+    margin:0;
+    color:#81939a;
+    font-size:10px;
+}
+.combo-modal-close{
+    flex:0 0 auto;
+    width:45px;
+    height:45px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:13px;
+    cursor:pointer;
+    color:#d8e4e7;
+    background:#10191d;
+    font-size:19px;
+}
+.combo-skins-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;
+    margin-top:20px;
+}
+.combo-skin-item{
+    min-width:0;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:17px;
+    background:rgba(255,255,255,.025);
+}
+.combo-skin-item canvas{
+    display:block;
+    width:100%;
+    height:150px;
+    background:radial-gradient(circle,rgba(50,210,150,.06),transparent 58%);
+}
+.combo-skin-copy{
+    padding:11px 12px 13px;
+}
+.combo-skin-copy strong{
+    display:block;
+    font-size:12px;
+}
+.combo-skin-copy span{
+    display:block;
+    margin-top:4px;
+    color:#778b92;
+    font-size:8px;
+}
+.combo-modal-buy{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:18px;
+}
+.combo-buy-button{
+    min-height:54px;
+    border:0;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:10px;
+    font-weight:1000;
+}
+.combo-buy-button.coin{
+    color:#1c1401;
+    background:linear-gradient(135deg,#ffd85d,#ffad36);
+}
+.combo-buy-button.gem{
+    color:#071019;
+    background:linear-gradient(135deg,#82efff,#9884ff);
+}
+.combo-buy-button:disabled{
+    cursor:default;
+    opacity:.55;
+}
+.combo-modal-status{
+    min-height:20px;
+    margin-top:10px;
+    color:#7cf6ba;
+    text-align:center;
+    font-size:9px;
+    font-weight:900;
+}
+
+@media(max-width:760px){
+    .shop-combo-head{display:block}
+    .combo-store-card{grid-template-columns:1fr}
+    .combo-carousel{
+        min-height:240px;
+        border-right:0;
+        border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .combo-carousel canvas{min-height:240px}
+    .combo-info{padding:18px}
+    .combo-info h3{font-size:22px}
+    .combo-modal-overlay{padding:9px}
+    .combo-modal{
+        width:100%;
+        max-height:95dvh;
+        padding:15px;
+        border-radius:20px;
+    }
+    .combo-skins-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .combo-skin-item canvas{height:115px}
+}
+@media(max-width:390px){
+    .combo-prices,
+    .combo-modal-buy{grid-template-columns:1fr}
+    .combo-skins-grid{grid-template-columns:1fr 1fr}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -8841,6 +9503,25 @@ body.mobile-mode .skin-grid{
 
         <div class="skin-grid" id="shopGrid"></div>
 
+        
+        <!-- =================================================
+             COMBOS
+        ================================================== -->
+        <section class="shop-combo-section" id="shopComboSection">
+            <div class="shop-combo-head">
+                <div>
+                    <div class="shop-combo-kicker">🐾 COMBOS EXCLUSIVOS</div>
+                    <h2>PACOTES DE SKINS</h2>
+                    <p>
+                        Skins exclusivas que só podem ser obtidas pelo pacote.
+                        O carrossel troca automaticamente a cada 3 segundos.
+                    </p>
+                </div>
+            </div>
+
+            <div id="comboStoreContainer"></div>
+        </section>
+
         <section class="shop-limited-section" id="shopLimitedSection">
             <div class="shop-limited-head">
                 <div>
@@ -8864,6 +9545,37 @@ body.mobile-mode .skin-grid{
     </div> 
  
 </section>
+
+
+<!-- ======================================================
+     MODAL GIGANTE DO COMBO
+====================================================== -->
+<div class="combo-modal-overlay hidden" id="comboDetailsModal">
+    <div class="combo-modal" role="dialog" aria-modal="true" aria-labelledby="comboModalTitle">
+        <div class="combo-modal-top">
+            <div>
+                <div class="shop-combo-kicker">🐾 PACOTE EXCLUSIVO</div>
+                <h2 id="comboModalTitle">Combo Animais Selvagens</h2>
+                <p>Veja todas as skins incluídas antes de comprar.</p>
+            </div>
+            <button class="combo-modal-close" id="closeComboModal" type="button" aria-label="Fechar">✕</button>
+        </div>
+
+        <div class="combo-skins-grid" id="comboModalSkins"></div>
+
+        <div class="combo-modal-buy">
+            <button class="combo-buy-button coin" id="buyComboCoins" type="button">
+                🪙 COMPRAR • 50.000 WILDCOINS
+            </button>
+            <button class="combo-buy-button gem" id="buyComboGems" type="button">
+                💎 COMPRAR • 2.000 WILDGEMS
+            </button>
+        </div>
+
+        <div class="combo-modal-status" id="comboModalStatus"></div>
+    </div>
+</div>
+
 
 <!-- MINHAS SKINS -->
 
@@ -9959,7 +10671,7 @@ const SKINS = {
         name:"Peixe Tropical",
         description:"Criatura aquática tropical.",
         currency:"coin",
-        price:18000,
+        price:5000,
         rarity:"rare",
         color:"#1bb9ff"
     },
@@ -9969,7 +10681,7 @@ const SKINS = {
         name:"Tubarão Azul",
         description:"Predador marinho com barbatana.",
         currency:"coin",
-        price:28000,
+        price:7000,
         rarity:"epic",
         color:"#4b819c"
     },
@@ -9979,7 +10691,7 @@ const SKINS = {
         name:"Cobra Venenosa",
         description:"Visual verde tóxico e preto.",
         currency:"coin",
-        price:32000,
+        price:7000,
         rarity:"epic",
         color:"#8bd014"
     },
@@ -9989,7 +10701,7 @@ const SKINS = {
         name:"Dragão Verde",
         description:"Dragão com chifres e espinhos.",
         currency:"coin",
-        price:45000,
+        price:10000,
         rarity:"legendary",
         color:"#21c951"
     },
@@ -9999,7 +10711,7 @@ const SKINS = {
         name:"Rei Leão",
         description:"Juba dourada e rosto de leão.",
         currency:"gem",
-        price:450,
+        price:300,
         rarity:"legendary",
         color:"#e99a1b"
     },
@@ -10009,7 +10721,7 @@ const SKINS = {
         name:"Cyber Snake",
         description:"Robô azul com energia neon.",
         currency:"gem",
-        price:520,
+        price:300,
         rarity:"legendary",
         color:"#27cfe9"
     },
@@ -10019,7 +10731,7 @@ const SKINS = {
         name:"Cyber Pink",
         description:"Robô rosa e vermelho com energia neon.",
         currency:"gem",
-        price:560,
+        price:300,
         rarity:"legendary",
         color:"#ff4f9c"
     },
@@ -10029,7 +10741,7 @@ const SKINS = {
         name:"Retro Wave",
         description:"Rosa, roxo e azul no estilo anos 80.",
         currency:"coin",
-        price:36000,
+        price:7000,
         rarity:"epic",
         color:"#ff54d9"
     },
@@ -10039,7 +10751,7 @@ const SKINS = {
         name:"Rainbow 90s",
         description:"Uma explosão de cores retrô.",
         currency:"gem",
-        price:320,
+        price:300,
         rarity:"legendary",
         color:"#ff5b69"
     },
@@ -10049,7 +10761,7 @@ const SKINS = {
         name:"Arcade Neon",
         description:"Visual inspirado nos fliperamas.",
         currency:"coin",
-        price:39000,
+        price:7000,
         rarity:"epic",
         color:"#00f5ff"
     },
@@ -10059,7 +10771,7 @@ const SKINS = {
         name:"Disco Snake",
         description:"Cores brilhantes de pista de dança.",
         currency:"gem",
-        price:380,
+        price:300,
         rarity:"legendary",
         color:"#ff42e6"
     }
@@ -10079,7 +10791,7 @@ Object.assign(
             name:"Tigre Imperial",
             description:"Listras negras, orelhas e focinho felino.",
             currency:"coin",
-            price:52000,
+            price:7000,
             rarity:"epic",
             color:"#f18a24",
             animal:true
@@ -10090,7 +10802,7 @@ Object.assign(
             name:"Lobo Lunar",
             description:"Lobo cinza-prateado com olhar azul.",
             currency:"gem",
-            price:480,
+            price:300,
             rarity:"legendary",
             color:"#718899",
             animal:true
@@ -10101,7 +10813,7 @@ Object.assign(
             name:"Panda Real",
             description:"Visual branco e preto com orelhas arredondadas.",
             currency:"coin",
-            price:42000,
+            price:7000,
             rarity:"epic",
             color:"#f0f0ea",
             animal:true
@@ -10112,7 +10824,7 @@ Object.assign(
             name:"Axolote Rosa",
             description:"Brânquias externas e tons suaves de rosa.",
             currency:"gem",
-            price:520,
+            price:300,
             rarity:"legendary",
             color:"#ff8fbd",
             animal:true
@@ -10195,6 +10907,148 @@ Object.assign(
     }
 );
 
+
+/* =========================================================
+   WILDSNAKE - NOVA COLEÇÃO ANIMAL / COMBO
+========================================================= */
+
+Object.assign(
+    SKINS,
+    {
+        iceDragon:{
+            id:"iceDragon",
+            name:"Dragão de Gelo",
+            description:"Dragão congelado com chifres de cristal.",
+            currency:"gem",
+            price:750,
+            rarity:"mythic",
+            color:"#66d9ff",
+            animal:true,
+            soldSeparately:true
+        },
+
+        horse:{
+            id:"horse",
+            name:"Cavalo Selvagem",
+            description:"Cavalo veloz com crina escura.",
+            currency:"coin",
+            price:7000,
+            rarity:"epic",
+            color:"#a86f42",
+            animal:true,
+            soldSeparately:true
+        },
+
+        pig:{
+            id:"pig",
+            name:"Porquinho Rosa",
+            description:"Porquinho simpático com focinho rosado.",
+            currency:"coin",
+            price:5000,
+            rarity:"rare",
+            color:"#ff9eb5",
+            animal:true,
+            soldSeparately:true
+        },
+
+        crow:{
+            id:"crow",
+            name:"Corvo Sombrio",
+            description:"Corvo misterioso com penas negras e olhos violetas.",
+            currency:"gem",
+            price:300,
+            rarity:"legendary",
+            color:"#25263a",
+            animal:true,
+            soldSeparately:true
+        },
+
+        crocodile:{
+            id:"crocodile",
+            name:"Crocodilo",
+            description:"Crocodilo verde com escamas, dentes e olhos ferozes.",
+            rarity:"epic",
+            color:"#4f9b58",
+            animal:true,
+            soldSeparately:false,
+            comboId:"wildAnimalCombo"
+        },
+
+        bat:{
+            id:"bat",
+            name:"Morcego",
+            description:"Morcego sombrio com orelhas grandes e asas.",
+            rarity:"epic",
+            color:"#423852",
+            animal:true,
+            soldSeparately:false,
+            comboId:"wildAnimalCombo"
+        },
+
+        scorpion:{
+            id:"scorpion",
+            name:"Escorpião",
+            description:"Escorpião venenoso com carapaça e pinças.",
+            rarity:"legendary",
+            color:"#8c5138",
+            animal:true,
+            soldSeparately:false,
+            comboId:"wildAnimalCombo"
+        },
+
+        cow:{
+            id:"cow",
+            name:"Vaquinha",
+            description:"Vaquinha branca com manchas pretas e chifres.",
+            rarity:"rare",
+            color:"#f2f2f2",
+            animal:true,
+            soldSeparately:false,
+            comboId:"wildAnimalCombo"
+        },
+
+        cockatielLutino:{
+            id:"cockatielLutino",
+            name:"Calopsita Lutina",
+            description:"Calopsita amarela com bochechas laranjas.",
+            rarity:"legendary",
+            color:"#ffe56b",
+            animal:true,
+            soldSeparately:false,
+            comboId:"wildAnimalCombo"
+        },
+
+        cockatielPearl:{
+            id:"cockatielPearl",
+            name:"Calopsita Pérola",
+            description:"Calopsita pérola com padrões claros nas penas.",
+            rarity:"legendary",
+            color:"#90908a",
+            animal:true,
+            soldSeparately:false,
+            comboId:"wildAnimalCombo"
+        }
+    }
+);
+
+const SKIN_COMBOS = {
+    wildAnimalCombo:{
+        id:"wildAnimalCombo",
+        name:"Combo Animais Selvagens",
+        description:"6 skins exclusivas em um único pacote.",
+        coinPrice:50000,
+        gemPrice:2000,
+        skins:[
+            "crocodile",
+            "bat",
+            "scorpion",
+            "cow",
+            "cockatielLutino",
+            "cockatielPearl"
+        ]
+    }
+};
+
 /* =========================================================
    ACCOUNT
 ========================================================= */
@@ -10210,6 +11064,7 @@ function defaultAccount(){
         coins:0,
         gems:0,
         ownedSkins:["basic"],
+        ownedCombos:[],
         equippedSkin:"basic",
         totalMatches:0,
         totalKills:0,
@@ -11377,6 +12232,10 @@ function isOwned(id){
 
 }
 
+function isComboOnlySkin(skin){
+    return !!skin && (skin.soldSeparately===false || !!skin.comboId);
+}
+
 function buySkin(id){
 
     const skin =
@@ -11390,6 +12249,11 @@ function buySkin(id){
 
         return;
 
+    }
+
+    if(isComboOnlySkin(skin)){
+        toast("🐾 Esta skin é exclusiva de um combo.");
+        return;
     }
 
     if(
@@ -11496,6 +12360,2472 @@ function equipSkin(id){
 /* =========================================================
    CORES SKIN
 ========================================================= */
+
+function circle(ctx, x, y, radius, color) {
+
+    ctx.fillStyle = color;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+}
+
+
+function ellipse(
+    ctx,
+    x,
+    y,
+    radiusX,
+    radiusY,
+    color
+) {
+
+    ctx.fillStyle = color;
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        x,
+        y,
+        radiusX,
+        radiusY,
+        0,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+}
+
+
+// ============================================================
+// DRAGÃO DE GELO
+// ============================================================
+
+function drawIceDragonSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(2, radius);
+
+
+    // Glow
+    ctx.shadowColor = "#5cecff";
+    ctx.shadowBlur = radius * 0.8;
+
+
+    // Corpo
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.35,
+        -radius * 0.4,
+        radius * 0.05,
+        0,
+        0,
+        radius * 1.25
+    );
+
+    gradient.addColorStop(0, "#e8fdff");
+    gradient.addColorStop(0.3, "#a7efff");
+    gradient.addColorStop(0.68, "#66d9ff");
+    gradient.addColorStop(1, "#247dac");
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.12,
+            0,
+            radius * 1.18,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    // Barriga
+    ellipse(
+        ctx,
+        radius * 0.05,
+        radius * 0.45,
+        radius * 0.62,
+        radius * 0.22,
+        "#c9f6ff"
+    );
+
+
+    // Cristais
+    ctx.fillStyle = "#baf7ff";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -radius * 0.48,
+        -radius * 0.72
+    );
+
+    ctx.lineTo(
+        -radius * 0.18,
+        -radius * 1.22
+    );
+
+    ctx.lineTo(
+        radius * 0.05,
+        -radius * 0.72
+    );
+
+    ctx.closePath();
+    ctx.fill();
+
+
+    ctx.fillStyle = "#8eeaff";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        radius * 0.05,
+        -radius * 0.73
+    );
+
+    ctx.lineTo(
+        radius * 0.3,
+        -radius * 1.06
+    );
+
+    ctx.lineTo(
+        radius * 0.5,
+        -radius * 0.64
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    // Escamas
+    ctx.strokeStyle = "rgba(230,253,255,0.7)";
+    ctx.lineWidth = Math.max(
+        0.7,
+        radius * 0.06
+    );
+
+    for (let i = -1; i <= 1; i++) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            i * radius * 0.38,
+            0,
+            radius * 0.22,
+            0.15 * Math.PI,
+            0.85 * Math.PI
+        );
+
+        ctx.stroke();
+    }
+
+
+    if (isHead) {
+
+        // Chifres
+
+        ctx.shadowColor = "#adf9ff";
+        ctx.shadowBlur = radius * 0.6;
+
+        ctx.fillStyle = "#d5fbff";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.32,
+            -radius * 0.7
+        );
+
+        ctx.lineTo(
+            -radius * 0.14,
+            -radius * 1.65
+        );
+
+        ctx.lineTo(
+            radius * 0.1,
+            -radius * 0.75
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.32,
+            radius * 0.7
+        );
+
+        ctx.lineTo(
+            -radius * 0.14,
+            radius * 1.65
+        );
+
+        ctx.lineTo(
+            radius * 0.1,
+            radius * 0.75
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.shadowBlur = 0;
+
+
+        // Olhos
+
+        ctx.shadowColor = "#ffffff";
+        ctx.shadowBlur = radius * 0.65;
+
+        circle(
+            ctx,
+            radius * 0.47,
+            -radius * 0.4,
+            radius * 0.14,
+            "#ffffff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.47,
+            radius * 0.4,
+            radius * 0.14,
+            "#ffffff"
+        );
+
+        ctx.shadowBlur = 0;
+
+
+        circle(
+            ctx,
+            radius * 0.52,
+            -radius * 0.4,
+            radius * 0.065,
+            "#087eb8"
+        );
+
+        circle(
+            ctx,
+            radius * 0.52,
+            radius * 0.4,
+            radius * 0.065,
+            "#087eb8"
+        );
+
+
+        // Narinas
+
+        circle(
+            ctx,
+            radius * 0.91,
+            -radius * 0.17,
+            radius * 0.055,
+            "#176783"
+        );
+
+        circle(
+            ctx,
+            radius * 0.91,
+            radius * 0.17,
+            radius * 0.055,
+            "#176783"
+        );
+
+
+        // Presas
+
+        ctx.fillStyle = "#ffffff";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.69,
+            -radius * 0.08
+        );
+
+        ctx.lineTo(
+            radius * 0.79,
+            -radius * 0.32
+        );
+
+        ctx.lineTo(
+            radius * 0.86,
+            -radius * 0.07
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.69,
+            radius * 0.08
+        );
+
+        ctx.lineTo(
+            radius * 0.79,
+            radius * 0.32
+        );
+
+        ctx.lineTo(
+            radius * 0.86,
+            radius * 0.07
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// CAVALO
+// ============================================================
+
+function drawHorseSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    ctx.shadowColor = "rgba(93,54,28,.45)";
+    ctx.shadowBlur = radius * 0.35;
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.35,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#dda476");
+    gradient.addColorStop(0.55, "#a86f42");
+    gradient.addColorStop(1, "#684024");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.15,
+            0,
+            radius * 1.2,
+            radius * 0.92,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    // Crina
+
+    ctx.fillStyle = "#34231a";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -radius * 0.7,
+        -radius * 0.55
+    );
+
+    ctx.lineTo(
+        -radius * 0.48,
+        -radius
+    );
+
+    ctx.lineTo(
+        -radius * 0.16,
+        -radius * 0.67
+    );
+
+    ctx.lineTo(
+        radius * 0.1,
+        -radius
+    );
+
+    ctx.lineTo(
+        radius * 0.35,
+        -radius * 0.62
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    if (isHead) {
+
+        // Orelhas
+
+        ctx.fillStyle = "#a86f42";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.28,
+            -radius * 0.68
+        );
+
+        ctx.lineTo(
+            -radius * 0.14,
+            -radius * 1.4
+        );
+
+        ctx.lineTo(
+            radius * 0.08,
+            -radius * 0.72
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.28,
+            radius * 0.68
+        );
+
+        ctx.lineTo(
+            -radius * 0.14,
+            radius * 1.4
+        );
+
+        ctx.lineTo(
+            radius * 0.08,
+            radius * 0.72
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Focinho
+
+        ellipse(
+            ctx,
+            radius * 0.75,
+            0,
+            radius * 0.45,
+            radius * 0.5,
+            "#d29a77"
+        );
+
+
+        // Olhos
+
+        circle(
+            ctx,
+            radius * 0.31,
+            -radius * 0.4,
+            radius * 0.12,
+            "#16110e"
+        );
+
+        circle(
+            ctx,
+            radius * 0.31,
+            radius * 0.4,
+            radius * 0.12,
+            "#16110e"
+        );
+
+
+        circle(
+            ctx,
+            radius * 0.35,
+            -radius * 0.44,
+            radius * 0.035,
+            "#ffffff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.35,
+            radius * 0.44,
+            radius * 0.035,
+            "#ffffff"
+        );
+
+
+        // Narinas
+
+        circle(
+            ctx,
+            radius * 0.98,
+            -radius * 0.18,
+            radius * 0.065,
+            "#56372a"
+        );
+
+        circle(
+            ctx,
+            radius * 0.98,
+            radius * 0.18,
+            radius * 0.065,
+            "#56372a"
+        );
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// PORCO
+// ============================================================
+
+function drawPigSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.4,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#ffd6e1");
+    gradient.addColorStop(0.6, "#ff9eb5");
+    gradient.addColorStop(1, "#e37191");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.1,
+            0,
+            radius * 1.15,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+
+    ellipse(
+        ctx,
+        0,
+        radius * 0.45,
+        radius * 0.6,
+        radius * 0.22,
+        "#ffc4d3"
+    );
+
+
+    if (isHead) {
+
+        // Orelhas
+
+        ctx.fillStyle = "#ec7d9b";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.38,
+            -radius * 0.68
+        );
+
+        ctx.lineTo(
+            -radius * 0.22,
+            -radius * 1.3
+        );
+
+        ctx.lineTo(
+            radius * 0.05,
+            -radius * 0.73
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.38,
+            radius * 0.68
+        );
+
+        ctx.lineTo(
+            -radius * 0.22,
+            radius * 1.3
+        );
+
+        ctx.lineTo(
+            radius * 0.05,
+            radius * 0.73
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Olhos
+
+        circle(
+            ctx,
+            radius * 0.32,
+            -radius * 0.4,
+            radius * 0.11,
+            "#28171d"
+        );
+
+        circle(
+            ctx,
+            radius * 0.32,
+            radius * 0.4,
+            radius * 0.11,
+            "#28171d"
+        );
+
+
+        circle(
+            ctx,
+            radius * 0.36,
+            -radius * 0.44,
+            radius * 0.03,
+            "#ffffff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.36,
+            radius * 0.44,
+            radius * 0.03,
+            "#ffffff"
+        );
+
+
+        // Focinho
+
+        ellipse(
+            ctx,
+            radius * 0.8,
+            0,
+            radius * 0.4,
+            radius * 0.47,
+            "#ff789d"
+        );
+
+
+        circle(
+            ctx,
+            radius * 0.9,
+            -radius * 0.16,
+            radius * 0.07,
+            "#a34461"
+        );
+
+        circle(
+            ctx,
+            radius * 0.9,
+            radius * 0.16,
+            radius * 0.07,
+            "#a34461"
+        );
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// CORVO
+// ============================================================
+
+function drawCrowSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    ctx.shadowColor = "#614be7";
+    ctx.shadowBlur = radius * 0.4;
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.3,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#535775");
+    gradient.addColorStop(0.4, "#292c43");
+    gradient.addColorStop(1, "#101118");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.1,
+            0,
+            radius * 1.1,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    // Penas
+
+    ctx.fillStyle = "#1c1e2d";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -radius * 0.5,
+        -radius * 0.4
+    );
+
+    ctx.lineTo(
+        0,
+        -radius
+    );
+
+    ctx.lineTo(
+        radius * 0.22,
+        -radius * 0.55
+    );
+
+    ctx.lineTo(
+        radius * 0.55,
+        -radius * 0.82
+    );
+
+    ctx.lineTo(
+        radius * 0.62,
+        -radius * 0.32
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    if (isHead) {
+
+        // Bico
+
+        ctx.fillStyle = "#464957";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.58,
+            -radius * 0.3
+        );
+
+        ctx.lineTo(
+            radius * 1.55,
+            0
+        );
+
+        ctx.lineTo(
+            radius * 0.58,
+            radius * 0.3
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Olhos
+
+        ctx.shadowColor = "#9875ff";
+        ctx.shadowBlur = radius * 0.7;
+
+        circle(
+            ctx,
+            radius * 0.4,
+            -radius * 0.4,
+            radius * 0.13,
+            "#ae91ff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.4,
+            radius * 0.4,
+            radius * 0.13,
+            "#ae91ff"
+        );
+
+        ctx.shadowBlur = 0;
+
+
+        circle(
+            ctx,
+            radius * 0.43,
+            -radius * 0.4,
+            radius * 0.045,
+            "#ffffff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.43,
+            radius * 0.4,
+            radius * 0.045,
+            "#ffffff"
+        );
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// CROCODILO
+// COMBO
+// ============================================================
+
+function drawCrocodileSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.25,
+        -radius * 0.3,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#79bc65");
+    gradient.addColorStop(0.6, "#4f9b58");
+    gradient.addColorStop(1, "#28663c");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.2,
+            0,
+            radius * 1.3,
+            radius * 0.88,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+
+    // Barriga
+
+    ellipse(
+        ctx,
+        0,
+        radius * 0.45,
+        radius * 0.65,
+        radius * 0.2,
+        "#94c76d"
+    );
+
+
+    // Placas / escamas
+
+    ctx.fillStyle = "#307147";
+
+    for (let i = -1; i <= 1; i++) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            i * radius * 0.4 - radius * 0.16,
+            -radius * 0.68
+        );
+
+        ctx.lineTo(
+            i * radius * 0.4,
+            -radius * 1.02
+        );
+
+        ctx.lineTo(
+            i * radius * 0.4 + radius * 0.16,
+            -radius * 0.68
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+    }
+
+
+    if (isHead) {
+
+        // Focinho
+
+        ellipse(
+            ctx,
+            radius * 0.76,
+            0,
+            radius * 0.55,
+            radius * 0.54,
+            "#579b51"
+        );
+
+
+        // Olhos
+
+        circle(
+            ctx,
+            radius * 0.35,
+            -radius * 0.48,
+            radius * 0.16,
+            "#e8e76c"
+        );
+
+        circle(
+            ctx,
+            radius * 0.35,
+            radius * 0.48,
+            radius * 0.16,
+            "#e8e76c"
+        );
+
+
+        // Pupilas verticais
+
+        ellipse(
+            ctx,
+            radius * 0.4,
+            -radius * 0.48,
+            radius * 0.035,
+            radius * 0.1,
+            "#111811"
+        );
+
+        ellipse(
+            ctx,
+            radius * 0.4,
+            radius * 0.48,
+            radius * 0.035,
+            radius * 0.1,
+            "#111811"
+        );
+
+
+        // Narinas
+
+        circle(
+            ctx,
+            radius,
+            -radius * 0.18,
+            radius * 0.055,
+            "#183e2d"
+        );
+
+        circle(
+            ctx,
+            radius,
+            radius * 0.18,
+            radius * 0.055,
+            "#183e2d"
+        );
+
+
+        // Dentes
+
+        ctx.fillStyle = "#ffffff";
+
+        for (let i = -1; i <= 1; i++) {
+
+            const dx =
+                radius * 0.62 +
+                i * radius * 0.18;
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                dx,
+                -radius * 0.07
+            );
+
+            ctx.lineTo(
+                dx + radius * 0.07,
+                -radius * 0.25
+            );
+
+            ctx.lineTo(
+                dx + radius * 0.12,
+                -radius * 0.06
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                dx,
+                radius * 0.07
+            );
+
+            ctx.lineTo(
+                dx + radius * 0.07,
+                radius * 0.25
+            );
+
+            ctx.lineTo(
+                dx + radius * 0.12,
+                radius * 0.06
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+        }
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// MORCEGO
+// COMBO
+// ============================================================
+
+function drawBatSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    ctx.shadowColor = "rgba(126,80,180,.5)";
+    ctx.shadowBlur = radius * 0.45;
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.3,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#766682");
+    gradient.addColorStop(0.55, "#423852");
+    gradient.addColorStop(1, "#201a29");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.08,
+            0,
+            radius * 1.05,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    // Asinhas dos segmentos
+
+    ctx.fillStyle = "#30263d";
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -radius * 0.35,
+        -radius * 0.55
+    );
+
+    ctx.lineTo(
+        radius * 0.05,
+        -radius * 1.12
+    );
+
+    ctx.lineTo(
+        radius * 0.24,
+        -radius * 0.75
+    );
+
+    ctx.lineTo(
+        radius * 0.55,
+        -radius
+    );
+
+    ctx.lineTo(
+        radius * 0.58,
+        -radius * 0.45
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        -radius * 0.35,
+        radius * 0.55
+    );
+
+    ctx.lineTo(
+        radius * 0.05,
+        radius * 1.12
+    );
+
+    ctx.lineTo(
+        radius * 0.24,
+        radius * 0.75
+    );
+
+    ctx.lineTo(
+        radius * 0.55,
+        radius
+    );
+
+    ctx.lineTo(
+        radius * 0.58,
+        radius * 0.45
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    if (isHead) {
+
+        // Orelhas
+
+        ctx.fillStyle = "#342a42";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.42,
+            -radius * 0.7
+        );
+
+        ctx.lineTo(
+            -radius * 0.25,
+            -radius * 1.55
+        );
+
+        ctx.lineTo(
+            radius * 0.08,
+            -radius * 0.68
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.42,
+            radius * 0.7
+        );
+
+        ctx.lineTo(
+            -radius * 0.25,
+            radius * 1.55
+        );
+
+        ctx.lineTo(
+            radius * 0.08,
+            radius * 0.68
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Olhos
+
+        ctx.shadowColor = "#ff496f";
+        ctx.shadowBlur = radius * 0.6;
+
+        circle(
+            ctx,
+            radius * 0.38,
+            -radius * 0.38,
+            radius * 0.12,
+            "#ff5577"
+        );
+
+        circle(
+            ctx,
+            radius * 0.38,
+            radius * 0.38,
+            radius * 0.12,
+            "#ff5577"
+        );
+
+        ctx.shadowBlur = 0;
+
+
+        // Nariz
+
+        ctx.fillStyle = "#b58aa4";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.82,
+            0
+        );
+
+        ctx.lineTo(
+            radius * 0.66,
+            -radius * 0.13
+        );
+
+        ctx.lineTo(
+            radius * 0.66,
+            radius * 0.13
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Presinhas
+
+        ctx.fillStyle = "#ffffff";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.57,
+            -radius * 0.07
+        );
+
+        ctx.lineTo(
+            radius * 0.68,
+            -radius * 0.27
+        );
+
+        ctx.lineTo(
+            radius * 0.74,
+            -radius * 0.06
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.57,
+            radius * 0.07
+        );
+
+        ctx.lineTo(
+            radius * 0.68,
+            radius * 0.27
+        );
+
+        ctx.lineTo(
+            radius * 0.74,
+            radius * 0.06
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// ESCORPIÃO
+// COMBO
+// ============================================================
+
+function drawScorpionSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    ctx.shadowColor = "rgba(255,113,49,.35)";
+    ctx.shadowBlur = radius * 0.35;
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.3,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#c6764d");
+    gradient.addColorStop(0.55, "#8c5138");
+    gradient.addColorStop(1, "#532f27");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.1,
+            0,
+            radius * 1.05,
+            radius * 0.9,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    // Carapaça
+
+    ctx.strokeStyle = "#4e2c25";
+
+    ctx.lineWidth = Math.max(
+        0.7,
+        radius * 0.08
+    );
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        0,
+        0,
+        radius * 0.68,
+        -1.1,
+        1.1
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        -radius * 0.25,
+        0,
+        radius * 0.52,
+        -1.1,
+        1.1
+    );
+
+    ctx.stroke();
+
+
+    if (isHead) {
+
+        // Pinça superior
+
+        ctx.strokeStyle = "#6c3b2d";
+
+        ctx.lineWidth = Math.max(
+            2,
+            radius * 0.18
+        );
+
+        ctx.lineCap = "round";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.15,
+            -radius * 0.62
+        );
+
+        ctx.lineTo(
+            radius * 0.72,
+            -radius * 1.08
+        );
+
+        ctx.stroke();
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            radius * 0.82,
+            -radius * 1.08,
+            radius * 0.27,
+            0.5,
+            5.6
+        );
+
+        ctx.stroke();
+
+
+        // Pinça inferior
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.15,
+            radius * 0.62
+        );
+
+        ctx.lineTo(
+            radius * 0.72,
+            radius * 1.08
+        );
+
+        ctx.stroke();
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            radius * 0.82,
+            radius * 1.08,
+            radius * 0.27,
+            0.7,
+            5.8
+        );
+
+        ctx.stroke();
+
+
+        // Olhos
+
+        circle(
+            ctx,
+            radius * 0.47,
+            -radius * 0.24,
+            radius * 0.09,
+            "#f5d050"
+        );
+
+        circle(
+            ctx,
+            radius * 0.47,
+            radius * 0.24,
+            radius * 0.09,
+            "#f5d050"
+        );
+
+
+        circle(
+            ctx,
+            radius * 0.5,
+            -radius * 0.24,
+            radius * 0.035,
+            "#17120d"
+        );
+
+        circle(
+            ctx,
+            radius * 0.5,
+            radius * 0.24,
+            radius * 0.035,
+            "#17120d"
+        );
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// VACA
+// COMBO
+// ============================================================
+
+function drawCowSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    ctx.fillStyle = "#f3f1eb";
+
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.1,
+            0,
+            radius * 1.12,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+
+    // Manchas
+
+    ellipse(
+        ctx,
+        -radius * 0.25,
+        -radius * 0.22,
+        radius * 0.33,
+        radius * 0.28,
+        "#282525"
+    );
+
+
+    ellipse(
+        ctx,
+        radius * 0.34,
+        radius * 0.37,
+        radius * 0.25,
+        radius * 0.2,
+        "#282525"
+    );
+
+
+    if (isHead) {
+
+        // Orelhas
+
+        ellipse(
+            ctx,
+            -radius * 0.18,
+            -radius * 0.9,
+            radius * 0.3,
+            radius * 0.18,
+            "#dad5ca"
+        );
+
+        ellipse(
+            ctx,
+            -radius * 0.18,
+            radius * 0.9,
+            radius * 0.3,
+            radius * 0.18,
+            "#dad5ca"
+        );
+
+
+        // Chifres
+
+        ctx.fillStyle = "#e7d49a";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.2,
+            -radius * 0.68
+        );
+
+        ctx.lineTo(
+            -radius * 0.03,
+            -radius * 1.25
+        );
+
+        ctx.lineTo(
+            radius * 0.08,
+            -radius * 0.68
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.2,
+            radius * 0.68
+        );
+
+        ctx.lineTo(
+            -radius * 0.03,
+            radius * 1.25
+        );
+
+        ctx.lineTo(
+            radius * 0.08,
+            radius * 0.68
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Focinho
+
+        ellipse(
+            ctx,
+            radius * 0.75,
+            0,
+            radius * 0.43,
+            radius * 0.5,
+            "#e9a8b4"
+        );
+
+
+        // Olhos
+
+        circle(
+            ctx,
+            radius * 0.32,
+            -radius * 0.4,
+            radius * 0.105,
+            "#1b1717"
+        );
+
+        circle(
+            ctx,
+            radius * 0.32,
+            radius * 0.4,
+            radius * 0.105,
+            "#1b1717"
+        );
+
+
+        // Narinas
+
+        circle(
+            ctx,
+            radius * 0.91,
+            -radius * 0.17,
+            radius * 0.065,
+            "#6e4d50"
+        );
+
+        circle(
+            ctx,
+            radius * 0.91,
+            radius * 0.17,
+            radius * 0.065,
+            "#6e4d50"
+        );
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// CALOPSITA LUTINA
+// COMBO
+// ============================================================
+
+function drawCockatielLutinoSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    ctx.shadowColor = "rgba(255,231,105,.45)";
+    ctx.shadowBlur = radius * 0.35;
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.4,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#fff7bd");
+    gradient.addColorStop(0.55, "#ffe56b");
+    gradient.addColorStop(1, "#ddb844");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.1,
+            0,
+            radius * 1.08,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    // Asa
+
+    ellipse(
+        ctx,
+        -radius * 0.05,
+        radius * 0.27,
+        radius * 0.55,
+        radius * 0.3,
+        "#fff2ad"
+    );
+
+
+    if (isHead) {
+
+        // Topete
+
+        ctx.fillStyle = "#ffe86c";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.45,
+            -radius * 0.4
+        );
+
+        ctx.lineTo(
+            -radius * 0.85,
+            -radius * 1.35
+        );
+
+        ctx.lineTo(
+            -radius * 0.2,
+            -radius * 0.58
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.25,
+            -radius * 0.48
+        );
+
+        ctx.lineTo(
+            -radius * 0.4,
+            -radius * 1.45
+        );
+
+        ctx.lineTo(
+            radius * 0.02,
+            -radius * 0.55
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Bochechas
+
+        circle(
+            ctx,
+            radius * 0.3,
+            -radius * 0.51,
+            radius * 0.18,
+            "#ff8c29"
+        );
+
+        circle(
+            ctx,
+            radius * 0.3,
+            radius * 0.51,
+            radius * 0.18,
+            "#ff8c29"
+        );
+
+
+        // Olhos vermelhos escuros típicos de lutino
+
+        circle(
+            ctx,
+            radius * 0.38,
+            -radius * 0.31,
+            radius * 0.1,
+            "#7d2d39"
+        );
+
+        circle(
+            ctx,
+            radius * 0.38,
+            radius * 0.31,
+            radius * 0.1,
+            "#7d2d39"
+        );
+
+
+        circle(
+            ctx,
+            radius * 0.41,
+            -radius * 0.34,
+            radius * 0.027,
+            "#ffffff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.41,
+            radius * 0.34,
+            radius * 0.027,
+            "#ffffff"
+        );
+
+
+        // Bico
+
+        ctx.fillStyle = "#d3a66c";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.65,
+            -radius * 0.16
+        );
+
+        ctx.lineTo(
+            radius * 1.06,
+            0
+        );
+
+        ctx.lineTo(
+            radius * 0.65,
+            radius * 0.16
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// CALOPSITA PÉROLA
+// COMBO
+// ============================================================
+
+function drawCockatielPearlSkin(
+    ctx,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    radius = Math.max(radius, 2);
+
+
+    const gradient = ctx.createRadialGradient(
+        -radius * 0.3,
+        -radius * 0.4,
+        0,
+        0,
+        0,
+        radius
+    );
+
+    gradient.addColorStop(0, "#bdbdb4");
+    gradient.addColorStop(0.55, "#90908a");
+    gradient.addColorStop(1, "#5b5c5c");
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+
+    if (isHead) {
+
+        ctx.ellipse(
+            radius * 0.1,
+            0,
+            radius * 1.08,
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+    } else {
+
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
+    }
+
+    ctx.fill();
+
+
+    // Padrão pérola
+
+    ctx.fillStyle = "#dfd9b5";
+
+
+    const pearlPositions = [
+        [-0.42, -0.28],
+        [0, -0.46],
+        [0.38, -0.22],
+        [-0.2, 0.3],
+        [0.28, 0.38]
+    ];
+
+
+    for (
+        const [px, py]
+        of pearlPositions
+    ) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            radius * px,
+            radius * py,
+            radius * 0.11,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    }
+
+
+    if (isHead) {
+
+        // Topete
+
+        ctx.fillStyle = "#c5bb79";
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.42,
+            -radius * 0.42
+        );
+
+        ctx.lineTo(
+            -radius * 0.78,
+            -radius * 1.35
+        );
+
+        ctx.lineTo(
+            -radius * 0.17,
+            -radius * 0.57
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -radius * 0.22,
+            -radius * 0.46
+        );
+
+        ctx.lineTo(
+            -radius * 0.38,
+            -radius * 1.46
+        );
+
+        ctx.lineTo(
+            radius * 0.05,
+            -radius * 0.54
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        // Face clara
+
+        ellipse(
+            ctx,
+            radius * 0.28,
+            0,
+            radius * 0.56,
+            radius * 0.73,
+            "#d7d097"
+        );
+
+
+        // Bochechas
+
+        circle(
+            ctx,
+            radius * 0.3,
+            -radius * 0.5,
+            radius * 0.17,
+            "#ee8c31"
+        );
+
+        circle(
+            ctx,
+            radius * 0.3,
+            radius * 0.5,
+            radius * 0.17,
+            "#ee8c31"
+        );
+
+
+        // Olhos
+
+        circle(
+            ctx,
+            radius * 0.4,
+            -radius * 0.3,
+            radius * 0.105,
+            "#1b1b1b"
+        );
+
+        circle(
+            ctx,
+            radius * 0.4,
+            radius * 0.3,
+            radius * 0.105,
+            "#1b1b1b"
+        );
+
+
+        circle(
+            ctx,
+            radius * 0.43,
+            -radius * 0.33,
+            radius * 0.03,
+            "#ffffff"
+        );
+
+        circle(
+            ctx,
+            radius * 0.43,
+            radius * 0.33,
+            radius * 0.03,
+            "#ffffff"
+        );
+
+
+        // Bico
+
+        ctx.fillStyle = "#b6a278";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            radius * 0.66,
+            -radius * 0.16
+        );
+
+        ctx.lineTo(
+            radius * 1.07,
+            0
+        );
+
+        ctx.lineTo(
+            radius * 0.66,
+            radius * 0.16
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+    }
+
+
+    ctx.restore();
+}
+
+
+// ============================================================
+
+
+
+const CUSTOM_WILD_ANIMAL_SKINS = new Set([
+    "iceDragon",
+    "horse",
+    "pig",
+    "crow",
+    "crocodile",
+    "bat",
+    "scorpion",
+    "cow",
+    "cockatielLutino",
+    "cockatielPearl"
+]);
+
+function drawWildAnimalSkin(
+    context,
+    skinId,
+    x,
+    y,
+    radius,
+    angle,
+    isHead
+){
+    switch(skinId){
+        case "iceDragon":
+            drawIceDragonSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "horse":
+            drawHorseSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "pig":
+            drawPigSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "crow":
+            drawCrowSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "crocodile":
+            drawCrocodileSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "bat":
+            drawBatSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "scorpion":
+            drawScorpionSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "cow":
+            drawCowSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "cockatielLutino":
+            drawCockatielLutinoSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "cockatielPearl":
+            drawCockatielPearlSkin(context,x,y,radius,angle,isHead);
+            return true;
+    }
+    return false;
+}
+
 
 function skinBodyColor(
     id,
@@ -11671,6 +15001,19 @@ function drawBodySegment(
     const id =
         snake.skinId;
 
+    if(CUSTOM_WILD_ANIMAL_SKINS.has(id)){
+        drawWildAnimalSkin(
+            context,
+            id,
+            x,
+            y,
+            radius,
+            0,
+            false
+        );
+        return;
+    }
+
     const bodyColor =
         skinBodyColor(
             id,
@@ -11845,6 +15188,19 @@ function drawHead(
 
     const id =
         snake.skinId;
+
+    if(CUSTOM_WILD_ANIMAL_SKINS.has(id)){
+        drawWildAnimalSkin(
+            context,
+            id,
+            x,
+            y,
+            radius,
+            angle,
+            true
+        );
+        return;
+    }
 
     context.save();
 
@@ -12433,7 +15789,7 @@ function drawSkinPreview(canvas,id){
 ========================================================= */
 
 const SHOP_RARITY_META = {
-    all:{title:"Todas as skins",subtitle:"Explore toda a coleção disponível."},
+    all:{title:"Skins avulsas",subtitle:"Explore as skins disponíveis individualmente. Os pacotes estão na seção de combos."},
     common:{title:"Skins comuns",subtitle:"Visuais clássicos para começar sua coleção."},
     rare:{title:"Skins raras",subtitle:"Visuais diferentes e mais difíceis de encontrar."},
     epic:{title:"Skins épicas",subtitle:"Aparências marcantes para se destacar na arena."},
@@ -12498,26 +15854,33 @@ function startLimitedShopTimer(){
 function createShopCard(skin){
     const owned = isOwned(skin.id);
     const equipped = account.equippedSkin===skin.id;
+    const comboOnly = isComboOnlySkin(skin);
     const card = document.createElement("div");
 
     card.className = "skin-card"+(equipped?" equipped":"");
     card.dataset.rarity = skin.rarity;
     card.dataset.skinId = skin.id;
 
-    let priceText = "GRÁTIS";
-    let priceClass = "owned";
+    // Ausência de preço individual nunca significa que uma skin é gratuita.
+    let priceText = comboOnly ? "EXCLUSIVA DO COMBO" : "INDISPONÍVEL";
+    let priceClass = "";
 
-    if(skin.currency==="coin"){
+    if(!comboOnly && skin.currency==="free" && skin.price===0){
+        priceText = "GRÁTIS";
+        priceClass = "owned";
+    }
+
+    if(!comboOnly && skin.currency==="coin" && Number.isFinite(skin.price) && skin.price>0){
         priceText = "🪙 "+formatNumber(skin.price)+" WildCoins";
         priceClass = "coin";
     }
 
-    if(skin.currency==="gem"){
+    if(!comboOnly && skin.currency==="gem" && Number.isFinite(skin.price) && skin.price>0){
         priceText = "💎 "+formatNumber(skin.price)+" WildGems";
         priceClass = "gem";
     }
 
-    let action = "COMPRAR";
+    let action = comboOnly ? "VER COMBO" : "COMPRAR";
     let actionClass = skin.currency==="gem" ? "buy-gem" : "buy-coin";
 
     if(owned){
@@ -12556,12 +15919,21 @@ function createShopCard(skin){
     `;
 
     const actionButton = card.querySelector(".skin-action");
+    actionButton.disabled = !owned && (
+        priceText==="INDISPONÍVEL" || (comboOnly && !SKIN_COMBOS[skin.comboId])
+    );
 
     actionButton.onclick = ()=>{
+        if(actionButton.disabled) return;
         if(equipped) return;
 
         if(owned){
             equipSkin(skin.id);
+            return;
+        }
+
+        if(comboOnly){
+            openComboModal(skin.comboId);
             return;
         }
 
@@ -12580,7 +15952,7 @@ function createShopCard(skin){
 function applyShopRarityFilter(rarity){
     activeShopRarity = SHOP_RARITY_META[rarity] ? rarity : "all";
 
-    const normalSkins = Object.values(SKINS).filter(skin=>!skin.limited);
+    const normalSkins = Object.values(SKINS).filter(skin=>!skin.limited && !isComboOnlySkin(skin));
     const visible = activeShopRarity==="all"
         ? normalSkins
         : normalSkins.filter(skin=>skin.rarity===activeShopRarity);
@@ -12608,12 +15980,257 @@ function applyShopRarityFilter(rarity){
     });
 }
 
+
+/* =========================================================
+   WILDSHOP - SISTEMA DE COMBOS
+========================================================= */
+
+let comboCarouselIndex = 0;
+let comboCarouselTimer = null;
+
+function ownsCombo(comboId){
+    return Array.isArray(account.ownedCombos)
+        && account.ownedCombos.includes(comboId);
+}
+
+function comboSkinList(comboId){
+    const combo = SKIN_COMBOS[comboId];
+    if(!combo) return [];
+
+    return combo.skins
+        .map(id=>SKINS[id])
+        .filter(Boolean);
+}
+
+function drawComboCarouselFrame(){
+    const canvas = document.getElementById("comboCarouselCanvas");
+    const name = document.getElementById("comboCarouselSkinName");
+    const rarity = document.getElementById("comboCarouselSkinRarity");
+    const counter = document.getElementById("comboCarouselCounter");
+
+    if(!canvas) return;
+
+    const skins = comboSkinList("wildAnimalCombo");
+    if(!skins.length) return;
+
+    comboCarouselIndex =
+        ((comboCarouselIndex % skins.length) + skins.length) % skins.length;
+
+    const skin = skins[comboCarouselIndex];
+
+    drawSkinPreview(canvas,skin.id);
+
+    if(name) name.textContent = skin.name;
+    if(rarity) rarity.textContent = String(skin.rarity||"").toUpperCase();
+    if(counter) counter.textContent = `${comboCarouselIndex+1} / ${skins.length}`;
+}
+
+function startComboCarousel(){
+    if(comboCarouselTimer){
+        clearInterval(comboCarouselTimer);
+        comboCarouselTimer = null;
+    }
+
+    drawComboCarouselFrame();
+
+    comboCarouselTimer = setInterval(()=>{
+        comboCarouselIndex++;
+        drawComboCarouselFrame();
+    },3000);
+}
+
+function renderComboShop(){
+    const container = document.getElementById("comboStoreContainer");
+    if(!container) return;
+
+    const combo = SKIN_COMBOS.wildAnimalCombo;
+    const owned = ownsCombo(combo.id);
+
+    container.innerHTML = `
+        <article class="combo-store-card">
+            <div class="combo-carousel" id="openComboFromCarousel" title="Clique para ver todas as skins">
+                <canvas id="comboCarouselCanvas" width="760" height="360"></canvas>
+                <div class="combo-carousel-overlay">
+                    <div class="combo-carousel-name">
+                        <strong id="comboCarouselSkinName">Carregando...</strong>
+                        <span id="comboCarouselSkinRarity">EXCLUSIVA DO COMBO</span>
+                    </div>
+                    <div class="combo-carousel-counter" id="comboCarouselCounter">1 / 6</div>
+                </div>
+            </div>
+
+            <div class="combo-info">
+                <div class="combo-badge">6 SKINS EXCLUSIVAS</div>
+                <h3>${combo.name}</h3>
+                <p>${combo.description} Clique no carrossel ou no botão abaixo para ver o pacote completo.</p>
+
+                <div class="combo-prices">
+                    <div class="combo-price">
+                        <small>WILDCOINS</small>
+                        <strong>🪙 ${formatNumber(combo.coinPrice)}</strong>
+                    </div>
+                    <div class="combo-price">
+                        <small>WILDGEMS</small>
+                        <strong>💎 ${formatNumber(combo.gemPrice)}</strong>
+                    </div>
+                </div>
+
+                ${
+                    owned
+                    ? `<div class="combo-owned-label">PACOTE ADQUIRIDO ✓</div>`
+                    : `<button class="combo-open-button" id="openComboButton" type="button">VER TODAS AS SKINS</button>`
+                }
+            </div>
+        </article>
+    `;
+
+    const carousel = document.getElementById("openComboFromCarousel");
+    if(carousel){
+        carousel.onclick = ()=>openComboModal(combo.id);
+    }
+
+    const button = document.getElementById("openComboButton");
+    if(button){
+        button.onclick = ()=>openComboModal(combo.id);
+    }
+
+    startComboCarousel();
+}
+
+function openComboModal(comboId="wildAnimalCombo"){
+    const combo = SKIN_COMBOS[comboId];
+    if(!combo) return;
+
+    const modal = document.getElementById("comboDetailsModal");
+    const grid = document.getElementById("comboModalSkins");
+    const status = document.getElementById("comboModalStatus");
+
+    if(!modal || !grid) return;
+
+    document.getElementById("comboModalTitle").textContent = combo.name;
+    grid.innerHTML = "";
+
+    comboSkinList(comboId).forEach(skin=>{
+        const item = document.createElement("div");
+        item.className = "combo-skin-item";
+        item.innerHTML = `
+            <canvas width="420" height="180"></canvas>
+            <div class="combo-skin-copy">
+                <strong>${skin.name}</strong>
+                <span>${String(skin.rarity||"").toUpperCase()} • EXCLUSIVA DO COMBO</span>
+            </div>
+        `;
+
+        grid.appendChild(item);
+        drawSkinPreview(item.querySelector("canvas"),skin.id);
+    });
+
+    const owned = ownsCombo(comboId);
+    const coinButton = document.getElementById("buyComboCoins");
+    const gemButton = document.getElementById("buyComboGems");
+
+    coinButton.disabled = owned;
+    gemButton.disabled = owned;
+
+    coinButton.textContent = owned
+        ? "PACOTE ADQUIRIDO ✓"
+        : `🪙 COMPRAR • ${formatNumber(combo.coinPrice)} WILDCOINS`;
+
+    gemButton.textContent = owned
+        ? "PACOTE ADQUIRIDO ✓"
+        : `💎 COMPRAR • ${formatNumber(combo.gemPrice)} WILDGEMS`;
+
+    if(status){
+        status.textContent = owned
+            ? "As 6 skins já estão na sua coleção."
+            : "Escolha apenas uma das formas de pagamento.";
+    }
+
+    coinButton.onclick = ()=>buySkinCombo(comboId,"coin");
+    gemButton.onclick = ()=>buySkinCombo(comboId,"gem");
+
+    modal.classList.remove("hidden");
+}
+
+function closeComboModal(){
+    document.getElementById("comboDetailsModal")?.classList.add("hidden");
+}
+
+function buySkinCombo(comboId,currency){
+    const combo = SKIN_COMBOS[comboId];
+
+    if(!combo || ownsCombo(comboId)) return;
+
+    if(currency==="coin"){
+        if(account.coins < combo.coinPrice){
+            document.getElementById("comboModalStatus").textContent =
+                "🪙 WildCoins insuficientes para comprar este combo.";
+            toast("🪙 WildCoins insuficientes.");
+            return;
+        }
+
+        account.coins -= combo.coinPrice;
+    }
+    else if(currency==="gem"){
+        if(account.gems < combo.gemPrice){
+            document.getElementById("comboModalStatus").textContent =
+                "💎 WildGems insuficientes para comprar este combo.";
+            toast("💎 WildGems insuficientes.");
+            return;
+        }
+
+        account.gems -= combo.gemPrice;
+    }
+    else{
+        return;
+    }
+
+    if(!Array.isArray(account.ownedCombos)){
+        account.ownedCombos = [];
+    }
+
+    account.ownedCombos.push(comboId);
+
+    if(!Array.isArray(account.ownedSkins)){
+        account.ownedSkins = ["basic"];
+    }
+
+    for(const skinId of combo.skins){
+        if(!account.ownedSkins.includes(skinId)){
+            account.ownedSkins.push(skinId);
+        }
+    }
+
+    saveAccount();
+    renderMySkins();
+    playSound("buy");
+    toast("✅ Combo Animais Selvagens adquirido!");
+
+    openComboModal(comboId);
+    renderComboShop();
+}
+
+document.getElementById("closeComboModal")?.addEventListener("click",closeComboModal);
+
+document.getElementById("comboDetailsModal")?.addEventListener("click",event=>{
+    if(event.target?.id==="comboDetailsModal"){
+        closeComboModal();
+    }
+});
+
+document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){
+        closeComboModal();
+    }
+});
+
+
 function renderLimitedShop(){
     const grid = document.getElementById("limitedShopGrid");
     if(!grid) return;
 
     grid.innerHTML = "";
-    const limitedSkins = Object.values(SKINS).filter(skin=>!!skin.limited);
+    const limitedSkins = Object.values(SKINS).filter(skin=>!!skin.limited && !isComboOnlySkin(skin));
 
     limitedSkins.forEach(skin=>grid.appendChild(createShopCard(skin)));
 
@@ -12629,6 +16246,7 @@ function renderShop(){
     updateAccountUI();
     limitedOfferEnd = getLimitedOfferEnd();
     applyShopRarityFilter(activeShopRarity);
+    renderComboShop();
     renderLimitedShop();
     startLimitedShopTimer();
 }
@@ -12836,6 +16454,13 @@ document.getElementById(
         clearInterval(limitedShopTimer);
         limitedShopTimer = null;
     }
+
+    if(comboCarouselTimer){
+        clearInterval(comboCarouselTimer);
+        comboCarouselTimer = null;
+    }
+
+    closeComboModal();
 
 };
 
@@ -30235,6 +33860,11 @@ buySkin = async function(id){
     const skin=SKINS[id];
     if(!skin || isOwned(id)) return;
 
+    if(isComboOnlySkin(skin)){
+        toast("🐾 Esta skin é exclusiva de um combo.");
+        return;
+    }
+
     if(!v13Auth.token || v13Auth.mode==="guest"){
         toast("🔐 Entre em uma conta para comprar skins.");
         return;
@@ -30422,89 +34052,10 @@ function(
 
 
 /* =========================================================
-   V13 - SHOP SORT
+   LOJA: renderShop mantém filtros, combos e limitadas.
+   O estoque V13 complementa createShopCard acima, sem substituir
+   a renderização da loja ou incluir skins exclusivas como avulsas.
 ========================================================= */
-
-renderShop =
-function(){
-
-    updateAccountUI();
-
-    const grid =
-        document.getElementById(
-            "shopGrid"
-        );
-
-    grid.innerHTML =
-        "";
-
-    const all =
-        Object.values(
-            SKINS
-        );
-
-    const normal =
-        all.filter(
-            skin =>
-                !skin.limited
-        );
-
-    const limited =
-        all.filter(
-            skin =>
-                skin.limited
-        );
-
-    normal.forEach(
-        skin=>{
-
-            grid.appendChild(
-                createShopCard(
-                    skin
-                )
-            );
-
-        }
-    );
-
-    if(
-        limited.length
-    ){
-
-        const divider =
-            document.createElement(
-                "div"
-            );
-
-        divider.className =
-            "limited-divider";
-
-        divider.innerHTML =
-            `
-                <h2>✨ LIMITADOS</h2>
-                <p>As skins mais raras do WildSnake. O estoque é compartilhado pelo servidor de desenvolvimento.</p>
-            `;
-
-        grid.appendChild(
-            divider
-        );
-
-        limited.forEach(
-            skin=>{
-
-                grid.appendChild(
-                    createShopCard(
-                        skin
-                    )
-                );
-
-            }
-        );
-
-    }
-
-};
-
 
 document.getElementById(
     "shopButton"
