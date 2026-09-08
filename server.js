@@ -77,8 +77,8 @@ const io = new Server(httpServer, {
 ========================================================= */
 
 const PORT = Number(process.env.PORT || 3000);
-const GAME_VERSION = 'v13.14.0';
-const BUILD = 'wildsnake-v13.14.0-zero-bala-structural-hotfix';
+const GAME_VERSION = 'v13.17.0';
+const BUILD = 'wildsnake-v13.17.0-worlds-skins-economy';
 
 const WORLD_RADIUS = 4200;
 const SAFE_RADIUS = 3900;
@@ -1547,6 +1547,511 @@ const TUTORIAL_SKIN_ODDS = Object.freeze([
   { rarity: 'rare', label: 'RARA', weight: 40 }
 ]);
 
+
+/* =========================================================
+   V13.17 - ECONOMIA / COMBOS / CAMINHO DE RECOMPENSAS
+   Regra central: 1 WildGem = 100 WildCoins.
+   O navegador apenas anima; compra, roleta e resgate são
+   validados e gravados pelo servidor/Supabase.
+========================================================= */
+
+const WILD_GEM_COIN_VALUE = 100;
+
+const WILD_ANIMAL_COMBO = Object.freeze({
+  id: 'wildAnimalCombo',
+  name: 'Combo Animais Selvagens',
+  coinPrice: 50_000,
+  gemPrice: 500,
+  skins: Object.freeze([
+    'crocodile',
+    'bat',
+    'scorpion',
+    'cow',
+    'cockatielLutino',
+    'cockatielPearl'
+  ])
+});
+
+const COMBO_ONLY_SKIN_IDS = new Set(WILD_ANIMAL_COMBO.skins);
+
+/*
+   Catálogo autoritativo das skins AVULSAS não limitadas.
+   Regra de preço V13.17:
+   - Comum / Rara / Épica: WildCoins.
+   - Lendária / Mítica: WildGems.
+   - 1 WildGem = 100 WildCoins.
+   O preço é definido pelo valor visual real, não apenas pelo nome da raridade.
+*/
+const SHOP_SKIN_CATALOG = Object.freeze({
+  fish:{ id:'fish', name:'Peixe Tropical', currency:'coin', price:7000, rarity:'rare', active:true },
+  shark:{ id:'shark', name:'Tubarão Azul', currency:'coin', price:15000, rarity:'epic', active:true },
+  venom:{ id:'venom', name:'Cobra Venenosa', currency:'coin', price:16000, rarity:'epic', active:true },
+  dragon:{ id:'dragon', name:'Dragão Verde', currency:'coin', price:18000, rarity:'epic', active:true },
+  lion:{ id:'lion', name:'Rei Leão', currency:'coin', price:16000, rarity:'epic', active:true },
+  robot:{ id:'robot', name:'Cyber Snake', currency:'gem', price:300, rarity:'legendary', active:true },
+  robotPink:{ id:'robotPink', name:'Cyber Pink', currency:'gem', price:300, rarity:'legendary', active:true },
+  retro:{ id:'retro', name:'Retro Wave', currency:'coin', price:8000, rarity:'rare', active:true },
+  rainbow:{ id:'rainbow', name:'Rainbow 90s', currency:'coin', price:10000, rarity:'rare', active:true },
+  arcade:{ id:'arcade', name:'Arcade Neon', currency:'coin', price:15000, rarity:'epic', active:true },
+  disco:{ id:'disco', name:'Disco Snake', currency:'coin', price:18000, rarity:'epic', active:true },
+  tiger:{ id:'tiger', name:'Tigre Imperial', currency:'coin', price:15000, rarity:'epic', active:true },
+  wolf:{ id:'wolf', name:'Lobo Lunar', currency:'coin', price:18000, rarity:'epic', active:true },
+  panda:{ id:'panda', name:'Panda Real', currency:'coin', price:8000, rarity:'rare', active:true },
+  axolotl:{ id:'axolotl', name:'Axolote Rosa', currency:'coin', price:15000, rarity:'epic', active:true },
+  peacock:{ id:'peacock', name:'Pavão Esmeralda', currency:'gem', price:330, rarity:'legendary', active:true },
+  unicorn:{ id:'unicorn', name:'Unicórnio Aurora', currency:'gem', price:650, rarity:'mythic', active:true },
+  iceDragon:{ id:'iceDragon', name:'Dragão de Gelo', currency:'gem', price:300, rarity:'legendary', active:true },
+  horse:{ id:'horse', name:'Cavalo Selvagem', currency:'coin', price:14000, rarity:'epic', active:true },
+  pig:{ id:'pig', name:'Porquinho Rosa', currency:'coin', price:7000, rarity:'rare', active:true },
+  crow:{ id:'crow', name:'Corvo Sombrio', currency:'coin', price:18000, rarity:'epic', active:true },
+  capybara:{ id:'capybara', name:'Capivara do Pantanal', currency:'coin', price:8500, rarity:'rare', active:true },
+  alien:{ id:'alien', name:'Alien Nebuloso', currency:'gem', price:320, rarity:'legendary', active:true },
+  octopus:{ id:'octopus', name:'Polvo Abissal', currency:'coin', price:18000, rarity:'epic', active:true },
+  crab:{ id:'crab', name:'Caranguejo Rubi', currency:'coin', price:15000, rarity:'epic', active:true },
+  lizard:{ id:'lizard', name:'Lagarto Esmeralda', currency:'coin', price:16000, rarity:'epic', active:true }
+});
+
+let shopCatalogSyncPromise = null;
+
+async function ensureAuthoritativeShopCatalog() {
+  if (!secureDbReady()) return false;
+  if (shopCatalogSyncPromise) return shopCatalogSyncPromise;
+
+  shopCatalogSyncPromise = Promise.all(
+    Object.values(SHOP_SKIN_CATALOG).map(skin =>
+      dbInsert(
+        SECURE_DB_TABLES.catalog,
+        {
+          skin_id:skin.id,
+          name:skin.name,
+          currency:skin.currency,
+          price:skin.price,
+          rarity:skin.rarity,
+          limited:false,
+          active:skin.active !== false
+        },
+        { upsert:true, onConflict:'skin_id' }
+      )
+    )
+  )
+    .then(() => true)
+    .catch(error => {
+      shopCatalogSyncPromise = null;
+      console.error('shop catalog sync:', error?.message || error);
+      throw error;
+    });
+
+  return shopCatalogSyncPromise;
+}
+
+const PROGRESSION_SKIN_ODDS = Object.freeze([
+  { rarity:'common', label:'COMUM', weight:45 },
+  { rarity:'rare', label:'RARA', weight:30 },
+  { rarity:'epic', label:'ÉPICA', weight:17 },
+  { rarity:'legendary', label:'LENDÁRIA', weight:6 },
+  { rarity:'mythic', label:'MÍTICA', weight:2 }
+]);
+
+const PROGRESSION_WORLDS = Object.freeze([
+  {
+    id:'world1',
+    index:1,
+    name:'Selva do Despertar',
+    subtitle:'Recompensas rápidas para começar forte.',
+    theme:'jungle',
+    icon:'🌿',
+    unlockXp:0,
+    endXp:20_000
+  },
+  {
+    id:'world2',
+    index:2,
+    name:'Órbita Neon',
+    subtitle:'O ritmo desacelera e as conquistas ficam mais valiosas.',
+    theme:'cosmic',
+    icon:'🌌',
+    unlockXp:20_000,
+    endXp:65_000
+  },
+  {
+    id:'world3',
+    index:3,
+    name:'Fenda Vulcânica',
+    subtitle:'Mais XP por etapa e recompensas especiais mais espaçadas.',
+    theme:'magma',
+    icon:'🌋',
+    unlockXp:65_000,
+    endXp:150_000
+  },
+  {
+    id:'world4',
+    index:4,
+    name:'Reino Congelado',
+    subtitle:'Uma trilha longa para jogadores persistentes.',
+    theme:'frost',
+    icon:'❄️',
+    unlockXp:150_000,
+    endXp:300_000
+  },
+  {
+    id:'world5',
+    index:5,
+    name:'Vazio Astral',
+    subtitle:'O mundo mais difícil da primeira temporada.',
+    theme:'void',
+    icon:'🕳️',
+    unlockXp:300_000,
+    endXp:600_000
+  }
+]);
+
+function totalXpRequiredForLevel(level) {
+  const safeLevel = Math.max(1, Math.floor(Number(level) || 1));
+  const completedLevels = safeLevel - 1;
+
+  // Soma: 500 + 750 + 1000 + ... até o nível anterior.
+  return (
+    500 * completedLevels
+    +
+    125 * completedLevels * Math.max(0, completedLevels - 1)
+  );
+}
+
+function totalXpForWallet(wallet) {
+  const level = Math.max(1, Math.floor(Number(wallet?.level) || 1));
+  const currentXp = Math.max(0, Math.floor(Number(wallet?.xp) || 0));
+  return totalXpRequiredForLevel(level) + currentXp;
+}
+
+function progressionRewardForLevel(level, worldIndex, ordinal) {
+  const safeWorld = Math.max(1, Number(worldIndex) || 1);
+  const safeOrdinal = Math.max(1, Number(ordinal) || 1);
+
+  if (safeWorld === 1 && safeOrdinal === 1) {
+    return {
+      kind:'coins',
+      icon:'🪙',
+      coins:150,
+      gems:0,
+      label:'150 WildCoins'
+    };
+  }
+
+  if (safeOrdinal % 9 === 0) {
+    return {
+      kind:'gift',
+      icon:'🎁',
+      coins:600 + safeWorld * 350,
+      gems:3 + safeWorld * 2,
+      skinChoice:['rare','epic'],
+      label:'Presente Especial'
+    };
+  }
+
+  if (safeOrdinal % 5 === 0) {
+    return {
+      kind:'skin_roll',
+      icon:'🎰',
+      coins:0,
+      gems:0,
+      label:'Roleta de Skin'
+    };
+  }
+
+  if (safeOrdinal % 3 === 0) {
+    const gems = 2 + safeWorld * 2;
+    return {
+      kind:'gems',
+      icon:'💎',
+      coins:0,
+      gems,
+      label:`${gems} WildGems`
+    };
+  }
+
+  const coins = Math.round(
+    150
+    + safeWorld * 120
+    + Math.min(1_700, safeOrdinal * (55 + safeWorld * 8))
+  );
+
+  return {
+    kind:'coins',
+    icon:'🪙',
+    coins,
+    gems:0,
+    label:`${coins.toLocaleString('pt-BR')} WildCoins`
+  };
+}
+
+function progressionWorldFinalReward(world) {
+  const idx = Math.max(1, Number(world?.index) || 1);
+  const table = {
+    1:{ coins:1_500, gems:10 },
+    2:{ coins:2_500, gems:15 },
+    3:{ coins:3_500, gems:20 },
+    4:{ coins:5_000, gems:30 },
+    5:{ coins:8_000, gems:50 }
+  };
+  const reward = table[idx] || table[5];
+
+  return {
+    kind:'gift',
+    icon:'👑',
+    coins:reward.coins,
+    gems:reward.gems,
+    skinChoice:['rare','epic'],
+    label:'Baú do Mundo'
+  };
+}
+
+function buildProgressionWorldDefinitions() {
+  return PROGRESSION_WORLDS.map(world => {
+    const nodes = [];
+    let ordinal = 0;
+
+    for (let level = 1; level <= 250; level++) {
+      const xpRequired = totalXpRequiredForLevel(level);
+
+      if (xpRequired < world.unlockXp) continue;
+      if (xpRequired >= world.endXp) break;
+
+      ordinal += 1;
+      nodes.push({
+        id:`${world.id}-level-${level}`,
+        worldId:world.id,
+        worldIndex:world.index,
+        level,
+        ordinal,
+        xpRequired,
+        final:false,
+        reward:progressionRewardForLevel(level, world.index, ordinal)
+      });
+    }
+
+    nodes.push({
+      id:`${world.id}-final`,
+      worldId:world.id,
+      worldIndex:world.index,
+      level:null,
+      ordinal:ordinal + 1,
+      xpRequired:world.endXp,
+      final:true,
+      reward:progressionWorldFinalReward(world)
+    });
+
+    return {
+      ...world,
+      nodes
+    };
+  });
+}
+
+const PROGRESSION_WORLD_DEFINITIONS = buildProgressionWorldDefinitions();
+const PROGRESSION_NODE_MAP = new Map(
+  PROGRESSION_WORLD_DEFINITIONS
+    .flatMap(world => world.nodes)
+    .map(node => [node.id,node])
+);
+
+function progressionNodeById(nodeId) {
+  return PROGRESSION_NODE_MAP.get(String(nodeId || '')) || null;
+}
+
+function progressionOddsPublicView() {
+  return PROGRESSION_SKIN_ODDS.map(item => ({
+    rarity:item.rarity,
+    label:item.label,
+    percent:item.weight
+  }));
+}
+
+async function progressionLedgerRows(accountId) {
+  if (!accountId || !secureDbReady()) return [];
+
+  return dbSelect(SECURE_DB_TABLES.ledger, {
+    select:'event_type,idempotency_key,skin_id,metadata,created_at',
+    account_id:`eq.${accountId}`,
+    event_type:'in.(progression_reward,progression_skin_roll,progression_gift_skin)',
+    order:'created_at.asc'
+  });
+}
+
+function progressionClaimsFromRows(rows) {
+  const claimed = new Set();
+  const giftSkinClaimed = new Set();
+  const metadataByNode = new Map();
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    const nodeId = String(row?.metadata?.nodeId || '');
+    if (!nodeId) continue;
+
+    if (
+      row.event_type === 'progression_reward'
+      ||
+      row.event_type === 'progression_skin_roll'
+    ) {
+      claimed.add(nodeId);
+      metadataByNode.set(nodeId,row.metadata || {});
+    }
+
+    if (row.event_type === 'progression_gift_skin') {
+      giftSkinClaimed.add(nodeId);
+    }
+  }
+
+  return { claimed, giftSkinClaimed, metadataByNode };
+}
+
+function progressionWorldsView(totalXp, claims) {
+  const safeXp = Math.max(0, Math.floor(Number(totalXp) || 0));
+  const claimed = claims?.claimed || new Set();
+  const giftSkinClaimed = claims?.giftSkinClaimed || new Set();
+
+  return PROGRESSION_WORLD_DEFINITIONS.map(world => {
+    const unlocked = safeXp >= world.unlockXp;
+    const completed = safeXp >= world.endXp;
+
+    const nodes = world.nodes.map(node => {
+      const isClaimed = claimed.has(node.id);
+      const xpUnlocked = safeXp >= node.xpRequired;
+      const status = isClaimed
+        ? 'claimed'
+        : (xpUnlocked ? 'available' : 'locked');
+
+      return {
+        ...node,
+        status,
+        claimed:isClaimed,
+        unlocked:xpUnlocked,
+        giftSkinClaimed:
+          node.reward?.kind === 'gift'
+          ? giftSkinClaimed.has(node.id)
+          : false
+      };
+    });
+
+    return {
+      id:world.id,
+      index:world.index,
+      name:world.name,
+      subtitle:world.subtitle,
+      theme:world.theme,
+      icon:world.icon,
+      unlockXp:world.unlockXp,
+      endXp:world.endXp,
+      unlocked,
+      completed,
+      nodes
+    };
+  });
+}
+
+async function progressionSkinPool(accountId, allowedRarities = null) {
+  if (secureDbReady()) {
+    await ensureAuthoritativeShopCatalog().catch(() => false);
+  }
+
+  let rows = Object.values(SHOP_SKIN_CATALOG)
+    .filter(item =>
+      item?.active !== false
+      && !COMBO_ONLY_SKIN_IDS.has(String(item.id || ''))
+      && (!allowedRarities || allowedRarities.includes(String(item.rarity || '')))
+    )
+    .map(item => ({
+      skin_id:item.id,
+      name:item.name,
+      rarity:item.rarity,
+      limited:false,
+      active:true
+    }));
+
+  if (!accountId || !secureDbReady()) return rows;
+
+  const ownedRows = await dbSelect(SECURE_DB_TABLES.skins, {
+    select:'skin_id',
+    account_id:`eq.${accountId}`
+  });
+
+  const owned = new Set(ownedRows.map(row => String(row.skin_id || '')));
+  return rows.filter(row => !owned.has(String(row.skin_id || '')));
+}
+
+function chooseProgressionSkin(pool) {
+  const available = Array.isArray(pool) ? pool : [];
+  if (!available.length) return null;
+
+  const raritySet = new Set(available.map(item => String(item.rarity || '')));
+  const odds = PROGRESSION_SKIN_ODDS.filter(item => raritySet.has(item.rarity));
+  const total = odds.reduce((sum,item) => sum + item.weight,0);
+
+  if (!total) {
+    return available[crypto.randomInt(0,available.length)];
+  }
+
+  let roll = crypto.randomInt(1,total + 1);
+  let selectedRarity = odds[odds.length - 1].rarity;
+
+  for (const item of odds) {
+    roll -= item.weight;
+    if (roll <= 0) {
+      selectedRarity = item.rarity;
+      break;
+    }
+  }
+
+  const candidates = available.filter(item => item.rarity === selectedRarity);
+  const source = candidates.length ? candidates : available;
+  return source[crypto.randomInt(0,source.length)];
+}
+
+async function secureProgressionState(accountId = null) {
+  if (!accountId) {
+    const pool = secureDbReady()
+      ? await progressionSkinPool(null)
+      : [];
+
+    return {
+      previewOnly:true,
+      totalXp:0,
+      level:1,
+      currentXp:0,
+      nextLevelXp:500,
+      economy:{ gemCoinValue:WILD_GEM_COIN_VALUE },
+      odds:progressionOddsPublicView(),
+      worlds:progressionWorldsView(0,{claimed:new Set(),giftSkinClaimed:new Set()}),
+      rollPool:pool,
+      giftPool:pool.filter(item => ['rare','epic'].includes(item.rarity))
+    };
+  }
+
+  const state = await loadSecureGameState(accountId);
+  if (!state?.wallet) return null;
+
+  const [ledgerRows,rollPool,giftPool] = await Promise.all([
+    progressionLedgerRows(accountId),
+    progressionSkinPool(accountId),
+    progressionSkinPool(accountId,['rare','epic'])
+  ]);
+
+  const totalXp = totalXpForWallet(state.wallet);
+  const claims = progressionClaimsFromRows(ledgerRows);
+
+  return {
+    previewOnly:false,
+    totalXp,
+    level:Number(state.wallet.level || 1),
+    currentXp:Number(state.wallet.xp || 0),
+    nextLevelXp:serverXpNeeded(Number(state.wallet.level || 1)),
+    economy:{ gemCoinValue:WILD_GEM_COIN_VALUE },
+    odds:progressionOddsPublicView(),
+    worlds:progressionWorldsView(totalXp,claims),
+    rollPool,
+    giftPool,
+    account:secureAccountView(state)
+  };
+}
+
 function supabaseUrlReady() {
   return /^https:\/\/.+\.supabase\.co$/i.test(SUPABASE_URL);
 }
@@ -1983,7 +2488,12 @@ function secureAccountView(state) {
     totalMatches: Number(wallet?.total_matches || 0),
     totalKills: Number(wallet?.total_kills || 0),
     totalScore: Number(wallet?.total_score || 0),
-    ownedSkins: Array.isArray(ownedSkins) ? ownedSkins : ['basic']
+    ownedSkins: Array.isArray(ownedSkins) ? ownedSkins : ['basic'],
+    ownedCombos:
+      Array.isArray(ownedSkins)
+      && WILD_ANIMAL_COMBO.skins.every(skinId => ownedSkins.includes(skinId))
+        ? [WILD_ANIMAL_COMBO.id]
+        : []
   };
 }
 
@@ -2488,6 +2998,12 @@ function secureErrorMessage(error) {
   if (raw.includes('RECOMPENSA_NAO_GERADA')) return 'A recompensa ainda não foi gerada.';
   if (raw.includes('CARTEIRA_NAO_ENCONTRADA')) return 'Carteira da conta não encontrada.';
   if (raw.includes('MATCH_REWARD_FAILED')) return 'Não foi possível creditar a recompensa da partida.';
+  if (raw.includes('COMBO_JA_POSSUI')) return 'Você já possui este combo.';
+  if (raw.includes('COMBO_INVALIDO')) return 'Combo inválido.';
+  if (raw.includes('RECOMPENSA_JA_RESGATADA')) return 'Esta recompensa já foi resgatada.';
+  if (raw.includes('XP_INSUFICIENTE')) return 'Você ainda não possui XP suficiente.';
+  if (raw.includes('PRESENTE_NAO_RESGATADO')) return 'Abra o presente antes de escolher a skin.';
+  if (raw.includes('SKIN_FORA_DA_FAIXA')) return 'Esta skin não pode ser escolhida neste presente.';
   if (raw.includes('SUPABASE_SERVER_NOT_CONFIGURED')) {
     return 'Servidor seguro ainda não está conectado ao Supabase.';
   }
@@ -2630,6 +3146,107 @@ async function withMatchRewardLock(accountId, task) {
       matchRewardLocks.delete(accountId);
     }
   }
+}
+
+
+async function purchaseShopSkinForAccount(accountId, requestedSkinId) {
+  const skinId = sanitizeSkin(requestedSkinId);
+  const skin = SHOP_SKIN_CATALOG[skinId];
+
+  if (!skin || skin.active === false || COMBO_ONLY_SKIN_IDS.has(skinId)) {
+    throw new Error('SKIN_INVALIDA');
+  }
+
+  if (!secureDbReady()) {
+    throw new Error('SUPABASE_SERVER_NOT_CONFIGURED');
+  }
+
+  return withMatchRewardLock(accountId, async () => {
+    await ensureAuthoritativeShopCatalog();
+
+    const state = await loadSecureGameState(accountId);
+    if (!state?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const owned = new Set(Array.isArray(state.ownedSkins) ? state.ownedSkins : []);
+    if (owned.has(skinId)) throw new Error('SKIN_JA_POSSUI');
+
+    const wallet = state.wallet;
+    const price = Math.max(0, Math.floor(Number(skin.price) || 0));
+    const currency = skin.currency === 'gem' ? 'gem' : 'coin';
+    const oldCoins = Math.max(0, Number(wallet.coins || 0));
+    const oldGems = Math.max(0, Number(wallet.wildgems || 0));
+
+    if (!price) throw new Error('SKIN_INVALIDA');
+    if (currency === 'coin' && oldCoins < price) throw new Error('COINS_INSUFICIENTES');
+    if (currency === 'gem' && oldGems < price) throw new Error('GEMS_INSUFICIENTES');
+
+    const walletPatch = {
+      updated_at:new Date().toISOString()
+    };
+
+    if (currency === 'coin') walletPatch.coins = oldCoins - price;
+    else walletPatch.wildgems = oldGems - price;
+
+    await dbUpdate(
+      SECURE_DB_TABLES.wallets,
+      { account_id:`eq.${accountId}` },
+      walletPatch
+    );
+
+    try {
+      await dbInsert(SECURE_DB_TABLES.skins, {
+        account_id:accountId,
+        skin_id:skinId,
+        source:'shop'
+      });
+    } catch (error) {
+      // Reverte o débito caso outra instância tenha comprado a mesma skin
+      // no mesmo instante ou caso o INSERT falhe por qualquer motivo.
+      await dbUpdate(
+        SECURE_DB_TABLES.wallets,
+        { account_id:`eq.${accountId}` },
+        {
+          coins:oldCoins,
+          wildgems:oldGems,
+          updated_at:new Date().toISOString()
+        }
+      ).catch(() => {});
+
+      if (error?.status === 409) throw new Error('SKIN_JA_POSSUI');
+      throw error;
+    }
+
+    try {
+      await dbInsert(SECURE_DB_TABLES.ledger, {
+        account_id:accountId,
+        event_type:'skin_purchase',
+        currency,
+        amount:-price,
+        skin_id:skinId,
+        idempotency_key:`skin-purchase:${accountId}:${skinId}`,
+        metadata:{
+          skinId,
+          name:skin.name,
+          rarity:skin.rarity,
+          price,
+          currency,
+          gemCoinValue:WILD_GEM_COIN_VALUE,
+          purchasedAt:new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      // A posse + débito já são a fonte de verdade. Ledger é auditoria.
+      if (error?.status !== 409) {
+        console.error('skin purchase ledger:', error?.message || error);
+      }
+    }
+
+    const updatedState = await loadSecureGameState(accountId);
+    return {
+      skin:{ ...skin },
+      account:secureAccountView(updatedState)
+    };
+  });
 }
 
 async function grantSecureMatchReward(snake, rewardPreview) {
@@ -3201,7 +3818,12 @@ const BOT_SKINS = [
   'panda',
   'axolotl',
   'peacock',
-  'unicorn'
+  'unicorn',
+  'capybara',
+  'alien',
+  'octopus',
+  'crab',
+  'lizard'
 ];
 
 const BOT_COLORS = [
@@ -5857,14 +6479,36 @@ app.post('/api/shop/purchase', async (req, res) => {
 
   const skinId = sanitizeSkin(req.body?.skinId);
 
-  try {
-    const result = await dbRpc('ws_purchase_skin', {
-      p_account_id:session.accountId,
-      p_skin_id:skinId
+  if (COMBO_ONLY_SKIN_IDS.has(skinId)) {
+    return res.status(409).json({
+      ok:false,
+      error:'Esta skin é exclusiva do Combo Animais Selvagens.'
     });
-    runtimeMetrics.limitedPurchases += skinId && LIMITED_SKIN_CATALOG[skinId] ? 1 : 0;
-    const state = await loadSecureGameState(session.accountId);
-    return res.json({ ok:true, purchase:result, account:secureAccountView(state) });
+  }
+
+  try {
+    /*
+       Skins limitadas continuam usando a função SQL com estoque atômico.
+       Skins avulsas normais usam o catálogo autoritativo V13.17 do servidor,
+       então uma tabela antiga no Supabase não consegue cobrar preço errado.
+    */
+    if (LIMITED_SKIN_CATALOG[skinId]) {
+      const result = await dbRpc('ws_purchase_skin', {
+        p_account_id:session.accountId,
+        p_skin_id:skinId
+      });
+      runtimeMetrics.limitedPurchases += 1;
+      const state = await loadSecureGameState(session.accountId);
+      return res.json({ ok:true, purchase:result, account:secureAccountView(state) });
+    }
+
+    const result = await purchaseShopSkinForAccount(session.accountId, skinId);
+    return res.json({
+      ok:true,
+      purchase:result.skin,
+      account:result.account,
+      economy:{ gemCoinValue:WILD_GEM_COIN_VALUE }
+    });
   } catch (error) {
     console.error('purchase:', error?.message || error);
     return res.status(409).json({ ok:false, error:secureErrorMessage(error) });
@@ -5891,6 +6535,363 @@ app.post('/api/shop/limited/purchase', async (req, res) => {
       account:secureAccountView(state)
     });
   } catch (error) {
+    return res.status(409).json({ ok:false, error:secureErrorMessage(error) });
+  }
+});
+
+
+
+/* =========================================================
+   V13.16 - COMBO AUTORITATIVO
+========================================================= */
+
+app.post('/api/shop/combo/purchase', async (req, res) => {
+  const session = sessionFromRequest(req);
+  if (!session) {
+    return res.status(401).json({ ok:false, error:'Entre na sua conta para comprar combos.' });
+  }
+
+  const key = `combo-purchase:${session.accountId}`;
+  if (!rateLimit(key, { windowMs:10_000, max:3 })) {
+    return res.status(429).json({ ok:false, error:'Aguarde alguns segundos antes de comprar novamente.' });
+  }
+
+  const comboId = String(req.body?.comboId || '').trim();
+  const currency = String(req.body?.currency || '').trim().toLowerCase();
+
+  if (comboId !== WILD_ANIMAL_COMBO.id || !['coin','gem'].includes(currency)) {
+    return res.status(400).json({ ok:false, error:'Combo ou forma de pagamento inválida.' });
+  }
+
+  try {
+    const result = await dbRpc('ws_purchase_combo', {
+      p_account_id:session.accountId,
+      p_combo_id:comboId,
+      p_currency:currency
+    });
+
+    const state = await loadSecureGameState(session.accountId);
+
+    return res.json({
+      ok:true,
+      combo:result,
+      account:secureAccountView(state),
+      economy:{ gemCoinValue:WILD_GEM_COIN_VALUE }
+    });
+  } catch (error) {
+    console.error('combo purchase:', error?.message || error);
+    return res.status(409).json({ ok:false, error:secureErrorMessage(error) });
+  }
+});
+
+
+/* =========================================================
+   V13.16 - CAMINHO DE RECOMPENSAS / MUNDOS
+========================================================= */
+
+app.get('/api/rewards/progression', async (req, res) => {
+  res.set('Cache-Control','no-store');
+
+  const session = sessionFromRequest(req);
+
+  try {
+    const progression = await secureProgressionState(session?.accountId || null);
+
+    if (!progression) {
+      return res.status(404).json({ ok:false, error:'Conta não encontrada.' });
+    }
+
+    return res.json({
+      ok:true,
+      version:GAME_VERSION,
+      progression
+    });
+  } catch (error) {
+    console.error('reward progression:', error?.message || error);
+    return res.status(500).json({
+      ok:false,
+      error:'Não foi possível carregar o caminho de recompensas.'
+    });
+  }
+});
+
+app.post('/api/rewards/claim', async (req, res) => {
+  const session = sessionFromRequest(req);
+  if (!session) {
+    return res.status(401).json({ ok:false, error:'Entre na sua conta para resgatar recompensas.' });
+  }
+
+  const key = `reward-claim:${session.accountId}`;
+  if (!rateLimit(key, { windowMs:10_000, max:12 })) {
+    return res.status(429).json({ ok:false, error:'Muitos resgates seguidos. Aguarde alguns segundos.' });
+  }
+
+  const nodeId = String(req.body?.nodeId || '').trim();
+  const node = progressionNodeById(nodeId);
+
+  if (!node) {
+    return res.status(404).json({ ok:false, error:'Recompensa inválida.' });
+  }
+
+  if (node.reward?.kind === 'skin_roll') {
+    return res.status(409).json({
+      ok:false,
+      code:'USE_SKIN_ROLL',
+      error:'Use a roleta para resgatar esta recompensa.'
+    });
+  }
+
+  try {
+    const stateBefore = await loadSecureGameState(session.accountId);
+    if (!stateBefore?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const totalXp = totalXpForWallet(stateBefore.wallet);
+    if (totalXp < node.xpRequired) {
+      return res.status(403).json({
+        ok:false,
+        code:'XP_INSUFICIENTE',
+        error:`Você precisa de ${node.xpRequired.toLocaleString('pt-BR')} XP total para resgatar.`
+      });
+    }
+
+    const reward = node.reward || {};
+    const result = await dbRpc('ws_claim_progression_currency', {
+      p_account_id:session.accountId,
+      p_node_id:node.id,
+      p_coins:Math.max(0,Math.floor(Number(reward.coins) || 0)),
+      p_gems:Math.max(0,Math.floor(Number(reward.gems) || 0)),
+      p_metadata:{
+        nodeId:node.id,
+        worldId:node.worldId,
+        level:node.level,
+        xpRequired:node.xpRequired,
+        final:!!node.final,
+        kind:reward.kind,
+        label:reward.label,
+        skinChoice:Array.isArray(reward.skinChoice) ? reward.skinChoice : null
+      }
+    });
+
+    const progression = await secureProgressionState(session.accountId);
+
+    return res.json({
+      ok:true,
+      claim:result,
+      reward,
+      node,
+      progression,
+      account:progression?.account || null
+    });
+  } catch (error) {
+    console.error('reward claim:', error?.message || error);
+    return res.status(409).json({ ok:false, error:secureErrorMessage(error) });
+  }
+});
+
+app.post('/api/rewards/roll-skin', async (req, res) => {
+  const session = sessionFromRequest(req);
+  if (!session) {
+    return res.status(401).json({ ok:false, error:'Entre na sua conta para rodar a roleta.' });
+  }
+
+  const key = `reward-roll:${session.accountId}`;
+  if (!rateLimit(key, { windowMs:10_000, max:6 })) {
+    return res.status(429).json({ ok:false, error:'Aguarde alguns segundos antes de rodar novamente.' });
+  }
+
+  const nodeId = String(req.body?.nodeId || '').trim();
+  const node = progressionNodeById(nodeId);
+
+  if (!node || node.reward?.kind !== 'skin_roll') {
+    return res.status(404).json({ ok:false, error:'Roleta de skin inválida.' });
+  }
+
+  try {
+    const stateBefore = await loadSecureGameState(session.accountId);
+    if (!stateBefore?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const totalXp = totalXpForWallet(stateBefore.wallet);
+    if (totalXp < node.xpRequired) {
+      return res.status(403).json({
+        ok:false,
+        code:'XP_INSUFICIENTE',
+        error:'Você ainda não desbloqueou esta roleta.'
+      });
+    }
+
+    // Se já foi rodada, devolve exatamente o resultado anterior.
+    const previous = await dbSelect(SECURE_DB_TABLES.ledger, {
+      select:'skin_id,metadata',
+      account_id:`eq.${session.accountId}`,
+      idempotency_key:`eq.progression:${session.accountId}:${node.id}`,
+      limit:1
+    });
+
+    if (previous.length) {
+      const skinId = String(previous[0]?.skin_id || previous[0]?.metadata?.skinId || '');
+      const catalog = skinId
+        ? await dbSelect(SECURE_DB_TABLES.catalog, {
+            select:'skin_id,name,rarity',
+            skin_id:`eq.${skinId}`,
+            limit:1
+          })
+        : [];
+
+      const progression = await secureProgressionState(session.accountId);
+
+      return res.json({
+        ok:true,
+        reused:true,
+        result:catalog[0] || {
+          skin_id:skinId,
+          name:previous[0]?.metadata?.skinName || skinId,
+          rarity:previous[0]?.metadata?.rarity || 'rare'
+        },
+        progression,
+        account:progression?.account || null
+      });
+    }
+
+    let pool = await progressionSkinPool(session.accountId);
+
+    if (!pool.length) {
+      return res.status(409).json({
+        ok:false,
+        code:'NO_SKINS_AVAILABLE',
+        error:'Você já possui todas as skins disponíveis nesta roleta.'
+      });
+    }
+
+    let chosen = null;
+    let result = null;
+    let lastError = null;
+
+    for (let attempt = 0; attempt < 4; attempt++) {
+      chosen = chooseProgressionSkin(pool);
+      if (!chosen) break;
+
+      try {
+        result = await dbRpc('ws_claim_progression_skin', {
+          p_account_id:session.accountId,
+          p_node_id:node.id,
+          p_skin_id:chosen.skin_id,
+          p_metadata:{
+            nodeId:node.id,
+            worldId:node.worldId,
+            level:node.level,
+            xpRequired:node.xpRequired,
+            kind:'skin_roll',
+            skinId:chosen.skin_id,
+            skinName:chosen.name,
+            rarity:chosen.rarity
+          }
+        });
+        break;
+      } catch (error) {
+        lastError = error;
+        pool = pool.filter(item => item.skin_id !== chosen.skin_id);
+      }
+    }
+
+    if (!result || !chosen) {
+      throw lastError || new Error('SKIN_INVALIDA');
+    }
+
+    const progression = await secureProgressionState(session.accountId);
+
+    return res.json({
+      ok:true,
+      reused:false,
+      claim:result,
+      result:chosen,
+      progression,
+      account:progression?.account || null
+    });
+  } catch (error) {
+    console.error('progression skin roll:', error?.message || error);
+    return res.status(409).json({ ok:false, error:secureErrorMessage(error) });
+  }
+});
+
+app.post('/api/rewards/gift/skin', async (req, res) => {
+  const session = sessionFromRequest(req);
+  if (!session) {
+    return res.status(401).json({ ok:false, error:'Entre na sua conta para escolher a skin.' });
+  }
+
+  const nodeId = String(req.body?.nodeId || '').trim();
+  const skinId = sanitizeSkin(req.body?.skinId);
+  const node = progressionNodeById(nodeId);
+
+  if (!node || node.reward?.kind !== 'gift') {
+    return res.status(404).json({ ok:false, error:'Presente inválido.' });
+  }
+
+  try {
+    const stateBefore = await loadSecureGameState(session.accountId);
+    if (!stateBefore?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const totalXp = totalXpForWallet(stateBefore.wallet);
+    if (totalXp < node.xpRequired) {
+      throw new Error('XP_INSUFICIENTE');
+    }
+
+    const claimRows = await dbSelect(SECURE_DB_TABLES.ledger, {
+      select:'id,metadata',
+      account_id:`eq.${session.accountId}`,
+      idempotency_key:`eq.progression:${session.accountId}:${node.id}`,
+      limit:1
+    });
+
+    if (!claimRows.length) {
+      throw new Error('PRESENTE_NAO_RESGATADO');
+    }
+
+    const allowed = await dbSelect(SECURE_DB_TABLES.catalog, {
+      select:'skin_id,name,rarity,limited,active',
+      skin_id:`eq.${skinId}`,
+      active:'eq.true',
+      limited:'eq.false',
+      limit:1
+    });
+
+    const skin = allowed[0];
+
+    if (
+      !skin
+      ||
+      !['rare','epic'].includes(String(skin.rarity || ''))
+      ||
+      COMBO_ONLY_SKIN_IDS.has(String(skin.skin_id || ''))
+    ) {
+      throw new Error('SKIN_FORA_DA_FAIXA');
+    }
+
+    const result = await dbRpc('ws_claim_progression_gift_skin', {
+      p_account_id:session.accountId,
+      p_node_id:node.id,
+      p_skin_id:skin.skin_id,
+      p_metadata:{
+        nodeId:node.id,
+        worldId:node.worldId,
+        kind:'gift_skin_choice',
+        skinId:skin.skin_id,
+        skinName:skin.name,
+        rarity:skin.rarity
+      }
+    });
+
+    const progression = await secureProgressionState(session.accountId);
+
+    return res.json({
+      ok:true,
+      claim:result,
+      result:skin,
+      progression,
+      account:progression?.account || null
+    });
+  } catch (error) {
+    console.error('gift skin:', error?.message || error);
     return res.status(409).json({ ok:false, error:secureErrorMessage(error) });
   }
 });
