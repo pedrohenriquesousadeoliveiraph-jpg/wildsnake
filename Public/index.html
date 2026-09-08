@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
 >
-<title>WILDSNAKE — Premium Snake Arena • v13.17.0</title>
+<title>WILDSNAKE — Premium Snake Arena • v13.18.0</title>
 
 <style>
 *{
@@ -8484,6 +8484,76 @@ body.mobile-mode .skin-grid{
     box-shadow:0 0 28px rgba(53,230,155,.08);
 }
 
+.reward-path-cta{
+    border-color:rgba(53,230,155,.26)!important;
+    background:
+        linear-gradient(135deg,rgba(53,230,155,.15),rgba(5,11,15,.92))!important;
+    box-shadow:0 0 24px rgba(53,230,155,.08);
+    gap:8px!important;
+    padding-right:8px!important;
+}
+.reward-path-cta:hover{
+    border-color:rgba(53,230,155,.55)!important;
+    box-shadow:0 0 34px rgba(53,230,155,.16)!important;
+}
+.reward-path-gift{
+    display:grid;
+    place-items:center;
+    width:28px;
+    height:28px;
+    flex:0 0 28px;
+    border-radius:9px;
+    background:rgba(53,230,155,.12);
+    font-size:17px;
+    filter:drop-shadow(0 0 8px rgba(53,230,155,.22));
+    animation:rewardPathGiftFloat 2.2s ease-in-out infinite;
+}
+.reward-path-label{
+    font-size:9px;
+    font-weight:1000;
+    letter-spacing:.45px;
+    color:#bfffe1;
+    white-space:nowrap;
+}
+.reward-level-badge{
+    width:auto!important;
+    min-width:46px;
+    height:27px!important;
+    padding:0 8px;
+    border-radius:999px!important;
+    font-size:8px;
+    gap:3px;
+    white-space:nowrap;
+}
+.reward-level-badge b{
+    font-size:10px;
+    color:#7affc1;
+}
+@keyframes rewardPathGiftFloat{
+    0%,100%{transform:translateY(0) rotate(-2deg)}
+    50%{transform:translateY(-2px) rotate(2deg)}
+}
+.reward-path-shop-cta{
+    min-width:220px;
+    border-color:rgba(53,230,155,.24)!important;
+    background:linear-gradient(135deg,rgba(53,230,155,.11),rgba(7,15,18,.92))!important;
+}
+.reward-path-shop-cta .wallet-content small{
+    color:#bfffe1!important;
+    font-size:8px!important;
+    letter-spacing:.35px;
+}
+.reward-path-shop-cta .wallet-content strong{
+    color:#75f5bb!important;
+}
+@media(max-width:640px){
+    .reward-path-label{font-size:7px;letter-spacing:.2px}
+    .reward-path-cta{padding:6px 8px!important}
+    .reward-path-gift{width:25px;height:25px;flex-basis:25px;font-size:15px}
+    .reward-level-badge{min-width:42px;padding:0 6px}
+    .reward-path-shop-cta{min-width:190px}
+}
+
 .reward-world-page{
     position:fixed;
     inset:0;
@@ -8839,8 +8909,10 @@ body.mobile-mode .skin-grid{
 }
 
 
+
 /* =========================================================
-   V13.17 - CENÁRIOS VIVOS DOS MUNDOS
+   V13.18 - CENÁRIOS VIVOS DOS MUNDOS (REFINADOS)
+   Fundos mais bonitos, com profundidade, clima e animações.
 ========================================================= */
 .reward-theme-scene{
     --scene-x:0px;
@@ -8861,115 +8933,181 @@ body.mobile-mode .skin-grid{
     z-index:-2;
     inset:4px 0 10px;
     border-radius:32px;
-    opacity:.50;
+    opacity:.58;
     pointer-events:none;
 }
+.reward-world-music-toggle{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.13);
+    background:rgba(9,15,18,.72);
+    color:#e9f4f0;
+    min-height:34px;
+    padding:7px 12px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.45px;
+    cursor:pointer;
+    transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.reward-world-music-toggle:hover{transform:translateY(-1px);border-color:rgba(117,250,187,.38);background:rgba(15,25,28,.88)}
+.reward-world-music-toggle.off{opacity:.72}
 
-/* abas também contam a história visual */
-.reward-world-tab[data-theme="jungle"]{background:linear-gradient(145deg,rgba(48,88,42,.50),#091216)}
-.reward-world-tab[data-theme="cosmic"]{background:linear-gradient(145deg,rgba(45,47,120,.55),#080b17)}
-.reward-world-tab[data-theme="magma"]{background:linear-gradient(145deg,rgba(111,36,19,.52),#150905)}
-.reward-world-tab[data-theme="frost"]{background:linear-gradient(145deg,rgba(35,92,122,.50),#07121a)}
-.reward-world-tab[data-theme="void"]{background:linear-gradient(145deg,rgba(62,36,105,.52),#06030b)}
+.reward-world-tab[data-theme="jungle"]{background:linear-gradient(145deg,rgba(58,96,47,.58),#08130f)}
+.reward-world-tab[data-theme="cosmic"]{background:linear-gradient(145deg,rgba(40,51,119,.60),#060814)}
+.reward-world-tab[data-theme="magma"]{background:linear-gradient(145deg,rgba(117,38,21,.62),#160704)}
+.reward-world-tab[data-theme="frost"]{background:linear-gradient(145deg,rgba(33,96,132,.56),#07111a)}
+.reward-world-tab[data-theme="void"]{background:linear-gradient(145deg,rgba(70,38,126,.58),#05030d)}
 
-/* MUNDO 1 - NATUREZA / BARRO */
+/* MUNDO 1 - NATUREZA */
 .reward-world-stage[data-theme="jungle"]{
     background:
-        linear-gradient(180deg,rgba(8,48,28,.26),rgba(15,21,10,.34)),
-        radial-gradient(circle at 50% 10%,rgba(137,255,112,.14),transparent 34%),
-        linear-gradient(#0a2a19,#07140d 55%,#161109);
+        linear-gradient(180deg,rgba(155,214,255,.18),rgba(11,26,19,.20) 38%,rgba(7,18,12,.40)),
+        radial-gradient(circle at 70% 10%,rgba(255,246,184,.20),transparent 18%),
+        linear-gradient(180deg,#87cfe8 0%,#bfeaf3 20%,#83c67f 56%,#335126 100%);
 }
 .reward-world-stage[data-theme="jungle"] .reward-path::before{
     background:
-        radial-gradient(circle at 10% 20%,rgba(255,214,137,.10),transparent 9%),
-        radial-gradient(circle at 82% 66%,rgba(255,214,137,.08),transparent 10%),
-        linear-gradient(180deg,rgba(101,66,34,.20),rgba(83,50,26,.42));
-    box-shadow:inset 0 0 0 4px rgba(88,55,30,.20),0 0 55px rgba(40,92,45,.13);
+        radial-gradient(circle at 8% 20%,rgba(255,232,167,.10),transparent 10%),
+        radial-gradient(circle at 84% 72%,rgba(255,232,167,.08),transparent 12%),
+        linear-gradient(180deg,rgba(127,88,44,.22),rgba(106,69,35,.48));
+    box-shadow:inset 0 0 0 4px rgba(98,67,38,.20),0 0 55px rgba(64,109,55,.13);
 }
 .reward-world-stage[data-theme="jungle"] .reward-node{
-    border-color:rgba(126,94,58,.34);
-    background:linear-gradient(145deg,rgba(65,48,28,.88),rgba(20,37,22,.86));
-    box-shadow:inset 0 1px 0 rgba(255,229,176,.05),0 12px 26px rgba(0,0,0,.18);
+    border-color:rgba(135,103,64,.38);
+    background:linear-gradient(145deg,rgba(72,54,29,.84),rgba(29,52,31,.88));
+    box-shadow:inset 0 1px 0 rgba(255,229,176,.06),0 15px 34px rgba(0,0,0,.18);
 }
-.reward-world-stage[data-theme="jungle"] .reward-node::after{height:5px;background:#76512e;box-shadow:0 2px 0 rgba(32,18,8,.28);border-radius:999px}
-.reward-world-stage[data-theme="jungle"] .reward-node-icon{background:linear-gradient(145deg,rgba(139,102,58,.34),rgba(41,74,42,.45))}
-.jungle-canopy{
-    position:absolute;left:-4%;right:-4%;top:-5%;height:36%;opacity:.72;
-    background:
-      radial-gradient(ellipse at 8% 6%,#1e6b3a 0 7%,transparent 7.6%),
-      radial-gradient(ellipse at 24% 8%,#2b7c42 0 9%,transparent 9.7%),
-      radial-gradient(ellipse at 44% 2%,#175b34 0 10%,transparent 10.7%),
-      radial-gradient(ellipse at 67% 5%,#27783d 0 8%,transparent 8.7%),
-      radial-gradient(ellipse at 88% 7%,#15552f 0 11%,transparent 11.7%);
-    filter:blur(.3px) drop-shadow(0 12px 25px rgba(0,0,0,.25));
-}
-.jungle-ground{position:absolute;left:-5%;right:-5%;bottom:-20px;height:34%;background:linear-gradient(transparent,rgba(30,50,20,.45) 28%,rgba(35,26,13,.72));border-radius:50% 50% 0 0/25% 25% 0 0}
-.jungle-firefly{position:absolute;width:4px;height:4px;border-radius:50%;background:#d9ff7d;left:var(--x);top:var(--y);box-shadow:0 0 12px 4px rgba(210,255,106,.45);animation:jungleFirefly var(--d) ease-in-out var(--delay) infinite alternate}
+.reward-world-stage[data-theme="jungle"] .reward-node::after{height:6px;background:linear-gradient(90deg,#87572d,#654020);box-shadow:0 2px 0 rgba(42,23,10,.30);border-radius:999px}
+.reward-world-stage[data-theme="jungle"] .reward-node-icon{background:linear-gradient(145deg,rgba(139,102,58,.36),rgba(44,92,47,.48))}
+.jungle-sky-glow{position:absolute;inset:-5% -10% auto -10%;height:44%;background:radial-gradient(circle at 55% 8%,rgba(255,243,191,.75),transparent 25%),linear-gradient(180deg,rgba(255,255,255,.14),transparent 85%);opacity:.65}
+.jungle-sun-haze{position:absolute;right:11%;top:10%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,246,194,.95) 0 16%,rgba(255,233,142,.40) 32%,transparent 70%);filter:blur(2px);animation:jungleSunPulse 9s ease-in-out infinite alternate}
+@keyframes jungleSunPulse{to{transform:scale(1.08);opacity:.86}}
+.jungle-hills{position:absolute;left:-10%;right:-10%;border-radius:50% 50% 0 0/100% 100% 0 0;filter:drop-shadow(0 18px 22px rgba(0,0,0,.12))}
+.jungle-hills.layer-1{bottom:25%;height:26%;background:linear-gradient(180deg,rgba(93,157,85,.94),rgba(58,108,55,.94));opacity:.86}
+.jungle-hills.layer-2{bottom:18%;height:20%;background:linear-gradient(180deg,rgba(65,127,62,.88),rgba(43,82,42,.92));opacity:.98}
+.jungle-meadow{position:absolute;left:-10%;right:-10%;bottom:-4%;height:34%;background:linear-gradient(180deg,rgba(80,145,70,.0),rgba(103,168,77,.44) 20%,rgba(53,107,48,.98) 80%);border-radius:46% 46% 0 0/35% 35% 0 0}
+.jungle-meadow::before{content:"";position:absolute;left:0;right:0;bottom:18%;height:35%;background:repeating-linear-gradient(90deg,rgba(46,95,40,.0) 0 10px,rgba(46,95,40,.16) 10px 14px,rgba(61,117,53,.0) 14px 28px);opacity:.45}
+.jungle-path-band{position:absolute;left:7%;right:7%;bottom:15%;height:13%;border-radius:999px;background:linear-gradient(180deg,#d8c08f,#b89a62 48%,#917240);box-shadow:0 8px 14px rgba(0,0,0,.12),inset 0 2px 0 rgba(255,244,193,.24);transform:perspective(500px) rotateX(48deg)}
+.jungle-tree{position:absolute;bottom:17%;width:130px;height:210px;transform-origin:bottom center;animation:jungleTreeSway 5.8s ease-in-out infinite alternate}
+.jungle-tree.left{left:-8px}.jungle-tree.right{right:8px;animation-duration:6.6s;animation-delay:-2.1s;transform:scaleX(-1)}
+.jungle-tree::before{content:"";position:absolute;left:50%;bottom:0;width:22px;height:110px;transform:translateX(-50%);background:linear-gradient(180deg,#6c4d28,#4d351c);border-radius:16px;box-shadow:0 0 0 1px rgba(46,25,9,.12)}
+.jungle-tree::after{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:138px;height:118px;background:radial-gradient(circle at 42% 38%,#76d16d 0 16%,transparent 17%),radial-gradient(circle at 64% 44%,#5eb55d 0 18%,transparent 19%),radial-gradient(circle at 32% 58%,#91dc75 0 20%,transparent 21%),radial-gradient(circle at 48% 66%,#4d9547 0 22%,transparent 23%),radial-gradient(circle at 70% 66%,#3b7f3d 0 18%,transparent 19%);filter:drop-shadow(0 15px 10px rgba(0,0,0,.12))}
+@keyframes jungleTreeSway{from{transform:rotate(-2deg)}to{transform:rotate(2.5deg)}}
+.jungle-firefly{position:absolute;width:4px;height:4px;border-radius:50%;background:#ebff95;left:var(--x);top:var(--y);box-shadow:0 0 12px 4px rgba(229,255,122,.55);animation:jungleFirefly var(--d) ease-in-out var(--delay) infinite alternate}
 @keyframes jungleFirefly{from{transform:translate(-8px,8px) scale(.7);opacity:.22}to{transform:translate(18px,-17px) scale(1.25);opacity:1}}
-.jungle-bird{position:absolute;top:16%;left:-90px;font-size:34px;filter:drop-shadow(0 8px 9px rgba(0,0,0,.35));animation:jungleBird 14s linear infinite}
-@keyframes jungleBird{0%{transform:translateX(-80px) translateY(10px) rotate(-4deg)}45%{transform:translateX(52vw) translateY(-22px) rotate(2deg)}100%{transform:translateX(calc(100vw + 180px)) translateY(18px) rotate(-2deg)}}
-.jungle-capybara{position:absolute;right:-150px;bottom:32px;width:116px;height:48px;border-radius:55% 45% 45% 42%;background:#765038;box-shadow:inset 0 -9px 0 rgba(48,29,19,.24),0 12px 24px rgba(0,0,0,.25);animation:jungleCapy 18s linear infinite}
-.jungle-capybara::before{content:"";position:absolute;right:-23px;top:8px;width:42px;height:34px;border-radius:54% 58% 48% 52%;background:#8c6244}
-.jungle-capybara::after{content:"";position:absolute;right:-13px;top:2px;width:9px;height:9px;border-radius:50%;background:#3a241a;box-shadow:-22px 1px 0 #3a241a}
-@keyframes jungleCapy{0%{transform:translateX(0)}100%{transform:translateX(calc(-100vw - 260px))}}
+.jungle-leaf{position:absolute;left:var(--x);top:var(--y);width:14px;height:8px;border-radius:100% 0 100% 0;background:linear-gradient(145deg,#79ca62,#3e9240);transform:rotate(18deg);opacity:.80;filter:drop-shadow(0 2px 3px rgba(0,0,0,.10));animation:jungleLeafDrift var(--d) linear var(--delay) infinite}
+@keyframes jungleLeafDrift{0%{transform:translate3d(0,0,0) rotate(15deg)}50%{transform:translate3d(25px,18px,0) rotate(120deg)}100%{transform:translate3d(60px,58px,0) rotate(220deg);opacity:0}}
+.jungle-bird{position:absolute;top:13%;left:-100px;width:60px;height:28px;animation:jungleBird 16s linear infinite}
+.jungle-bird::before,.jungle-bird::after{content:"";position:absolute;top:6px;width:28px;height:16px;border-top:3px solid rgba(35,61,55,.86);border-radius:100% 100% 0 0;transform-origin:right bottom}
+.jungle-bird::before{left:2px;transform:rotate(-10deg);animation:birdWing .65s ease-in-out infinite alternate}
+.jungle-bird::after{right:2px;transform:scaleX(-1) rotate(-10deg);animation:birdWing .65s ease-in-out infinite alternate-reverse}
+@keyframes jungleBird{0%{transform:translateX(-110px) translateY(10px)}45%{transform:translateX(52vw) translateY(-18px)}100%{transform:translateX(calc(100vw + 180px)) translateY(20px)}}
+@keyframes birdWing{from{transform:rotate(-18deg)}to{transform:rotate(8deg)}}
+.jungle-cow{position:absolute;left:12%;bottom:18%;width:118px;height:54px;background:linear-gradient(180deg,#fff8f1,#ece4db);border-radius:48% 42% 36% 34%;box-shadow:0 12px 18px rgba(0,0,0,.16);animation:jungleGraze 6.4s ease-in-out infinite}
+.jungle-cow::before{content:"";position:absolute;right:-20px;top:10px;width:36px;height:30px;border-radius:50%;background:#fff8f1;box-shadow:inset -6px -4px 0 rgba(255,201,214,.62)}
+.jungle-cow::after{content:"";position:absolute;left:16px;top:14px;width:60px;height:24px;background:radial-gradient(circle at 22% 40%,#5b4635 0 14%,transparent 15%),radial-gradient(circle at 74% 55%,#6a5141 0 17%,transparent 18%),radial-gradient(circle at 50% 70%,#7e614f 0 16%,transparent 17%)}
+.jungle-cow span,.jungle-capybara span{display:none}
+@keyframes jungleGraze{0%,100%{transform:translateY(0) rotate(0deg)}40%{transform:translateY(3px) rotate(-2deg)}65%{transform:translateY(2px) rotate(1deg)}}
+.jungle-capybara{position:absolute;right:-150px;bottom:18%;width:126px;height:54px;border-radius:55% 45% 45% 42%;background:linear-gradient(180deg,#8d664a,#6a4935);box-shadow:inset 0 -10px 0 rgba(48,29,19,.24),0 12px 24px rgba(0,0,0,.20);animation:jungleCapy 20s linear infinite}
+.jungle-capybara::before{content:"";position:absolute;right:-24px;top:8px;width:42px;height:34px;border-radius:54% 58% 48% 52%;background:#9c7454}
+.jungle-capybara::after{content:"";position:absolute;right:-15px;top:5px;width:11px;height:11px;border-radius:50%;background:#3a241a;box-shadow:-24px 1px 0 #3a241a, -6px 12px 0 1px #3a241a}
+@keyframes jungleCapy{0%{transform:translateX(0)}100%{transform:translateX(calc(-100vw - 280px))}}
 
 /* MUNDO 2 - ESPAÇO */
-.reward-world-stage[data-theme="cosmic"] .reward-path::before{background:linear-gradient(180deg,rgba(38,44,99,.15),rgba(45,20,92,.33));box-shadow:inset 0 0 0 2px rgba(112,116,255,.13),0 0 60px rgba(88,70,255,.12)}
-.reward-world-stage[data-theme="cosmic"] .reward-node{border-color:rgba(117,123,255,.25);background:linear-gradient(145deg,rgba(24,27,62,.84),rgba(15,12,40,.82));box-shadow:0 0 26px rgba(86,73,255,.06)}
-.reward-world-stage[data-theme="cosmic"] .reward-node::after{background:linear-gradient(90deg,#556fff,#bf62ff);height:3px;box-shadow:0 0 12px rgba(114,100,255,.5)}
-.cosmic-nebula{position:absolute;inset:-20%;background:radial-gradient(circle at 30% 38%,rgba(73,104,255,.22),transparent 20%),radial-gradient(circle at 68% 30%,rgba(198,72,255,.16),transparent 18%),radial-gradient(circle at 52% 72%,rgba(45,219,255,.09),transparent 24%);filter:blur(22px);animation:cosmicNebula 14s ease-in-out infinite alternate}
-@keyframes cosmicNebula{to{transform:translate3d(3%,-2%,0) scale(1.06);filter:blur(28px)}}
+.reward-world-stage[data-theme="cosmic"] .reward-path::before{background:linear-gradient(180deg,rgba(42,49,122,.18),rgba(30,14,70,.38));box-shadow:inset 0 0 0 2px rgba(126,131,255,.14),0 0 70px rgba(88,70,255,.14)}
+.reward-world-stage[data-theme="cosmic"] .reward-node{border-color:rgba(129,136,255,.28);background:linear-gradient(145deg,rgba(24,27,62,.86),rgba(12,13,34,.88));box-shadow:0 0 26px rgba(86,73,255,.08), inset 0 0 30px rgba(99,111,255,.03)}
+.reward-world-stage[data-theme="cosmic"] .reward-node::after{background:linear-gradient(90deg,#4f6cff,#bf62ff);height:3px;box-shadow:0 0 12px rgba(114,100,255,.58)}
+.cosmic-gradient{position:absolute;inset:0;background:radial-gradient(circle at 50% -5%,rgba(205,194,255,.12),transparent 24%),linear-gradient(180deg,rgba(9,12,34,.18),transparent 40%,rgba(5,6,16,.12)),linear-gradient(180deg,#050811,#090f24 38%,#03050b 100%)}
+.cosmic-nebula{position:absolute;inset:-18%;background:radial-gradient(circle at 26% 30%,rgba(87,120,255,.30),transparent 19%),radial-gradient(circle at 72% 27%,rgba(194,75,255,.18),transparent 18%),radial-gradient(circle at 48% 68%,rgba(62,214,255,.14),transparent 22%);filter:blur(18px);animation:cosmicNebula 14s ease-in-out infinite alternate}
+@keyframes cosmicNebula{to{transform:translate3d(3%,-2%,0) scale(1.06);filter:blur(24px)}}
+.cosmic-planet{position:absolute;right:12%;top:10%;width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 30% 28%,#9adfff 0 12%,#4dc0ff 18%,#536fff 48%,#12214a 72%,#071125 100%);box-shadow:0 0 0 6px rgba(130,170,255,.10),0 0 26px rgba(108,174,255,.18)}
+.cosmic-planet::after{content:"";position:absolute;left:-16px;right:-16px;top:52px;height:16px;border:3px solid rgba(178,205,255,.42);border-left-color:transparent;border-right-color:transparent;border-radius:50%;transform:rotate(-10deg)}
 .cosmic-star{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(173,222,255,.8);animation:cosmicTwinkle var(--d) ease-in-out var(--delay) infinite alternate}
 @keyframes cosmicTwinkle{from{opacity:.12;transform:scale(.5)}to{opacity:1;transform:scale(1.5)}}
-.alien-ship{position:absolute;left:-180px;top:22%;width:112px;height:38px;border-radius:50%;background:linear-gradient(#d3f9ff,#5ed8de 48%,#274a68 52%,#151c34);box-shadow:0 0 25px rgba(71,255,223,.35);animation:alienShip 11s linear infinite}
-.alien-ship::before{content:"";position:absolute;left:31px;top:-20px;width:50px;height:28px;border-radius:50% 50% 35% 35%;background:rgba(133,255,227,.50);border:1px solid rgba(191,255,245,.75);box-shadow:inset 0 0 18px rgba(82,255,210,.32)}
-.alien-ship::after{content:"";position:absolute;left:15px;right:15px;bottom:-7px;height:8px;border-radius:50%;background:#89ffbb;box-shadow:0 0 18px 5px rgba(99,255,167,.48)}
-@keyframes alienShip{0%{transform:translate(-120px,30px) rotate(-5deg) scale(.72)}45%{transform:translate(55vw,-18px) rotate(2deg) scale(1)}100%{transform:translate(calc(100vw + 260px),36px) rotate(5deg) scale(.72)}}
-.alien-ship.second{top:66%;animation-duration:16s;animation-delay:-7s;transform:scale(.62);filter:hue-rotate(70deg)}
+.alien-ship{position:absolute;left:-180px;top:24%;width:132px;height:42px;border-radius:50%;background:linear-gradient(#d9fbff,#78dde6 48%,#2d506d 52%,#11182f);box-shadow:0 0 26px rgba(71,255,223,.36);animation:alienShip 12s linear infinite}
+.alien-ship::before{content:"";position:absolute;left:37px;top:-20px;width:58px;height:30px;border-radius:50% 50% 35% 35%;background:rgba(133,255,227,.50);border:1px solid rgba(191,255,245,.75);box-shadow:inset 0 0 18px rgba(82,255,210,.32)}
+.alien-ship::after{content:"";position:absolute;left:16px;right:16px;bottom:-8px;height:10px;border-radius:50%;background:#89ffbb;box-shadow:0 0 18px 5px rgba(99,255,167,.48)}
+@keyframes alienShip{0%{transform:translate(-120px,20px) rotate(-5deg) scale(.72)}45%{transform:translate(56vw,-18px) rotate(2deg) scale(1)}100%{transform:translate(calc(100vw + 260px),36px) rotate(4deg) scale(.72)}}
+.alien-ship.second{top:64%;animation-duration:17s;animation-delay:-7s;transform:scale(.62);filter:hue-rotate(70deg)}
 
-/* MUNDO 3 - VULCÃO / LAVA */
-.reward-world-stage[data-theme="magma"] .reward-path::before{background:linear-gradient(180deg,rgba(122,24,12,.18),rgba(71,8,3,.44));box-shadow:inset 0 0 0 2px rgba(255,93,31,.16),0 0 70px rgba(255,62,20,.09)}
-.reward-world-stage[data-theme="magma"] .reward-node{border-color:rgba(255,96,43,.27);background:linear-gradient(145deg,rgba(76,19,11,.88),rgba(26,8,6,.88));box-shadow:0 10px 28px rgba(0,0,0,.24),inset 0 0 22px rgba(255,70,20,.04)}
+/* MUNDO 3 - VULCÃO */
+.reward-world-stage[data-theme="magma"]{
+    background:
+        radial-gradient(circle at 50% 16%,rgba(255,164,88,.18),transparent 22%),
+        linear-gradient(180deg,#ffb076 0%,#f78257 18%,#632317 45%,#1a0905 100%);
+}
+.reward-world-stage[data-theme="magma"] .reward-path::before{background:linear-gradient(180deg,rgba(122,24,12,.20),rgba(71,8,3,.50));box-shadow:inset 0 0 0 2px rgba(255,93,31,.16),0 0 80px rgba(255,62,20,.12)}
+.reward-world-stage[data-theme="magma"] .reward-node{border-color:rgba(255,96,43,.30);background:linear-gradient(145deg,rgba(76,19,11,.90),rgba(26,8,6,.92));box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 0 22px rgba(255,70,20,.06)}
 .reward-world-stage[data-theme="magma"] .reward-node::after{height:5px;background:linear-gradient(90deg,#ff3b16,#ffb239);box-shadow:0 0 15px rgba(255,72,16,.55);border-radius:999px}
-.volcano-mountain{position:absolute;left:50%;bottom:-52px;width:480px;height:250px;transform:translateX(-50%);clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(135deg,#2a1714,#0d0807 65%);filter:drop-shadow(0 -10px 28px rgba(255,57,18,.11))}
-.volcano-crater{position:absolute;left:50%;bottom:178px;width:105px;height:24px;transform:translateX(-50%);border-radius:50%;background:#1c0805;box-shadow:0 0 18px 6px rgba(255,55,15,.28),inset 0 0 14px #ff4b15}
-.volcano-lava{position:absolute;left:50%;bottom:-20px;width:26px;height:205px;transform:translateX(-50%) rotate(2deg);border-radius:45%;background:linear-gradient(#fff1a3,#ff9b28 20%,#ff3b16 64%,#6c1008);box-shadow:0 0 20px 6px rgba(255,72,20,.26);animation:lavaFlow 1.6s ease-in-out infinite alternate}
-@keyframes lavaFlow{to{width:35px;filter:brightness(1.25)}}
-.volcano-burst{position:absolute;left:50%;bottom:185px;width:8px;height:8px;border-radius:50%;background:#ffb02f;box-shadow:0 0 16px #ff4d16;animation:volcanoBurst var(--d) cubic-bezier(.2,.7,.2,1) var(--delay) infinite}
-@keyframes volcanoBurst{0%{transform:translate(0,0) scale(.7);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx),-180px) scale(.18);opacity:0}}
-.magma-ember{position:absolute;left:var(--x);top:var(--y);width:4px;height:4px;border-radius:50%;background:#ff9a31;box-shadow:0 0 10px #ff491a;animation:magmaEmber var(--d) linear var(--delay) infinite}
-@keyframes magmaEmber{from{transform:translateY(30px);opacity:0}20%{opacity:1}to{transform:translateY(-100px) translateX(15px);opacity:0}}
+.magma-sky-glow{position:absolute;left:-10%;right:-10%;top:-14%;height:46%;background:radial-gradient(circle at 50% 35%,rgba(255,235,176,.62),transparent 18%),radial-gradient(circle at 56% 48%,rgba(255,148,76,.42),transparent 26%),linear-gradient(180deg,rgba(255,255,255,.12),transparent);filter:blur(1px)}
+.volcano-range{position:absolute;left:-10%;right:-10%;bottom:18%;height:24%;background:linear-gradient(180deg,rgba(53,25,17,.0),rgba(38,12,9,.74) 48%,rgba(16,5,4,.92));clip-path:polygon(0 100%,10% 76%,18% 84%,28% 58%,37% 82%,50% 52%,60% 76%,71% 60%,82% 88%,92% 70%,100% 100%)}
+.magma-ground{position:absolute;left:-5%;right:-5%;bottom:-4%;height:30%;background:linear-gradient(180deg,rgba(110,37,19,.0),rgba(74,25,12,.34) 30%,rgba(29,8,6,.94) 100%)}
+.volcano-mountain{position:absolute;left:50%;bottom:15%;width:460px;height:290px;transform:translateX(-50%);background:linear-gradient(180deg,#34201d 0%,#241512 40%,#120807 100%);clip-path:polygon(50% 0,86% 34%,100% 100%,0 100%,14% 36%);filter:drop-shadow(0 12px 30px rgba(0,0,0,.32))}
+.volcano-mountain::before{content:"";position:absolute;left:50%;bottom:34px;width:18px;height:150px;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,255,255,.0),rgba(255,210,112,.0) 8%,#ffcc69 20%,#ff7724 55%,#7c130b 100%);box-shadow:0 0 18px rgba(255,117,28,.18)}
+.volcano-crater{position:absolute;left:50%;bottom:49%;width:122px;height:28px;transform:translateX(-50%);border-radius:50%;background:#1c0805;box-shadow:0 0 22px 7px rgba(255,65,15,.34),inset 0 0 14px #ff4b15}
+.volcano-lava{position:absolute;bottom:15%;width:28px;height:155px;border-radius:999px;background:linear-gradient(#fff1a3,#ff9b28 18%,#ff4d18 58%,#731109 100%);box-shadow:0 0 20px 6px rgba(255,72,20,.28);animation:lavaFlow 1.9s ease-in-out infinite alternate}
+.volcano-lava.main{left:50%;transform:translateX(-50%)}
+.volcano-lava.left{left:calc(50% - 78px);height:132px;transform:rotate(16deg)}
+.volcano-lava.right{left:calc(50% + 56px);height:128px;transform:rotate(-12deg)}
+@keyframes lavaFlow{to{filter:brightness(1.18);height:168px}}
+.volcano-smoke{position:absolute;left:50%;bottom:50%;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 40% 42%,rgba(255,219,177,.55),rgba(90,36,38,.60) 42%,rgba(40,16,27,.10) 70%,transparent 78%);filter:blur(6px);opacity:.84;mix-blend-mode:screen;animation:volcanoSmoke 8s ease-out infinite}
+.volcano-smoke.plume-1{transform:translateX(-50%);animation-delay:0s}
+.volcano-smoke.plume-2{transform:translateX(-60%);animation-delay:-2.5s;opacity:.7}
+.volcano-smoke.plume-3{transform:translateX(-40%);animation-delay:-5s;opacity:.62}
+@keyframes volcanoSmoke{0%{transform:translate(-50%,10px) scale(.45);opacity:0}18%{opacity:.8}100%{transform:translate(-50%,-180px) scale(1.75);opacity:0}}
+.volcano-burst{position:absolute;left:50%;bottom:52%;width:9px;height:9px;border-radius:50%;background:#ffd064;box-shadow:0 0 18px #ff4d16;animation:volcanoBurst var(--d) cubic-bezier(.2,.7,.2,1) var(--delay) infinite}
+@keyframes volcanoBurst{0%{transform:translate(0,0) scale(.7);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx),-190px) scale(.20);opacity:0}}
+.magma-ember{position:absolute;left:var(--x);top:var(--y);width:4px;height:4px;border-radius:50%;background:#ffb23b;box-shadow:0 0 10px #ff491a;animation:magmaEmber var(--d) linear var(--delay) infinite}
+@keyframes magmaEmber{from{transform:translateY(30px);opacity:0}20%{opacity:1}to{transform:translateY(-110px) translateX(15px);opacity:0}}
 
 /* MUNDO 4 - GELO */
-.reward-world-stage[data-theme="frost"] .reward-path::before{background:linear-gradient(180deg,rgba(126,222,255,.13),rgba(34,98,137,.25));box-shadow:inset 0 0 0 2px rgba(176,239,255,.16),0 0 70px rgba(75,197,255,.10)}
-.reward-world-stage[data-theme="frost"] .reward-node{border-color:rgba(142,225,255,.25);background:linear-gradient(145deg,rgba(21,61,84,.76),rgba(6,25,39,.88));box-shadow:inset 0 1px 0 rgba(210,249,255,.08)}
+.reward-world-stage[data-theme="frost"]{
+    background:
+        radial-gradient(circle at 50% 0%,rgba(196,242,255,.22),transparent 40%),
+        linear-gradient(180deg,#12355c 0%,#4a8dc4 18%,#bfe7ff 34%,#d8f4ff 42%,#0a1d2a 100%);
+}
+.reward-world-stage[data-theme="frost"] .reward-path::before{background:linear-gradient(180deg,rgba(126,222,255,.14),rgba(34,98,137,.28));box-shadow:inset 0 0 0 2px rgba(176,239,255,.16),0 0 78px rgba(75,197,255,.12)}
+.reward-world-stage[data-theme="frost"] .reward-node{border-color:rgba(142,225,255,.25);background:linear-gradient(145deg,rgba(21,61,84,.78),rgba(6,25,39,.90));box-shadow:inset 0 1px 0 rgba(210,249,255,.10)}
 .reward-world-stage[data-theme="frost"] .reward-node::after{height:3px;background:linear-gradient(90deg,#73ddff,#e9fdff);box-shadow:0 0 13px rgba(144,232,255,.48)}
-.frost-aurora{position:absolute;left:-12%;right:-12%;top:-10%;height:54%;background:linear-gradient(110deg,transparent 15%,rgba(75,255,210,.17) 34%,rgba(89,160,255,.22) 51%,rgba(181,102,255,.14) 65%,transparent 82%);filter:blur(18px);transform:skewY(-7deg);animation:frostAurora 8s ease-in-out infinite alternate}
-@keyframes frostAurora{to{transform:translateX(7%) skewY(4deg) scaleY(1.15);opacity:.7}}
-.frost-mountain{position:absolute;left:var(--x);bottom:-20px;width:var(--w);height:170px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(135deg,#aeeeff 0 18%,#397ba2 19% 45%,#0b2c42 46%);opacity:.35}
-.frost-snow{position:absolute;left:var(--x);top:-20px;width:var(--s);height:var(--s);border-radius:50%;background:#eaffff;box-shadow:0 0 8px rgba(205,248,255,.55);animation:frostSnow var(--d) linear var(--delay) infinite}
+.frost-sky-glow{position:absolute;left:-12%;right:-12%;top:-8%;height:44%;background:radial-gradient(circle at 50% 18%,rgba(255,255,255,.36),transparent 22%),linear-gradient(180deg,rgba(255,255,255,.16),transparent 80%)}
+.frost-aurora{position:absolute;left:-12%;right:-12%;top:-10%;height:54%;background:linear-gradient(110deg,transparent 15%,rgba(75,255,210,.19) 34%,rgba(89,160,255,.25) 51%,rgba(181,102,255,.14) 65%,transparent 82%);filter:blur(18px);transform:skewY(-7deg);animation:frostAurora 8s ease-in-out infinite alternate}
+@keyframes frostAurora{to{transform:translateX(7%) skewY(4deg) scaleY(1.15);opacity:.75}}
+.frost-plain{position:absolute;left:-8%;right:-8%;bottom:-2%;height:32%;background:linear-gradient(180deg,rgba(232,249,255,.0),rgba(232,249,255,.26) 18%,rgba(211,239,251,.92) 68%,rgba(180,220,242,.98));border-radius:40% 40% 0 0/22% 22% 0 0}
+.frost-mountain{position:absolute;left:var(--x);bottom:7%;width:var(--w);height:190px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(135deg,#ebfcff 0 18%,#6eb5de 19% 45%,#19425f 46%);opacity:.62;filter:drop-shadow(0 18px 20px rgba(0,0,0,.10))}
+.frost-snow{position:absolute;left:var(--x);top:-20px;width:var(--s);height:var(--s);border-radius:50%;background:#f5ffff;box-shadow:0 0 8px rgba(205,248,255,.55);animation:frostSnow var(--d) linear var(--delay) infinite}
 @keyframes frostSnow{to{transform:translate(var(--drift),650px) rotate(220deg);opacity:.15}}
 
-/* MUNDO 5 - VAZIO / BURACO NEGRO */
+/* MUNDO 5 - VAZIO */
 .reward-world-stage[data-theme="void"] .reward-path::before{background:linear-gradient(180deg,rgba(91,41,145,.15),rgba(8,3,18,.48));box-shadow:inset 0 0 0 2px rgba(159,92,255,.12),0 0 80px rgba(129,58,255,.09)}
-.reward-world-stage[data-theme="void"] .reward-node{border-color:rgba(169,101,255,.24);background:linear-gradient(145deg,rgba(40,18,64,.78),rgba(9,4,18,.90));box-shadow:0 0 30px rgba(122,66,255,.05)}
+.reward-world-stage[data-theme="void"] .reward-node{border-color:rgba(169,101,255,.24);background:linear-gradient(145deg,rgba(40,18,64,.80),rgba(9,4,18,.92));box-shadow:0 0 30px rgba(122,66,255,.05)}
 .reward-world-stage[data-theme="void"] .reward-node::after{height:3px;background:linear-gradient(90deg,#7b4dff,#ef78ff);box-shadow:0 0 14px rgba(163,82,255,.52)}
-.void-black-hole{position:absolute;left:50%;top:48%;width:170px;height:170px;transform:translate(-50%,-50%);border-radius:50%;background:#000;box-shadow:0 0 0 10px rgba(75,35,105,.22),0 0 45px 16px rgba(160,62,255,.22),0 0 120px 28px rgba(89,48,255,.10)}
+.void-black-hole{position:absolute;left:50%;top:42%;width:180px;height:180px;transform:translate(-50%,-50%);border-radius:50%;background:#000;box-shadow:0 0 0 10px rgba(75,35,105,.22),0 0 48px 18px rgba(160,62,255,.22),0 0 128px 30px rgba(89,48,255,.10)}
 .void-black-hole::before{content:"";position:absolute;inset:-35px;border:10px solid transparent;border-top-color:#f0a3ff;border-right-color:#7c66ff;border-radius:50%;filter:blur(2px) drop-shadow(0 0 12px #d56cff);animation:voidRing 4s linear infinite}
 .void-black-hole::after{content:"";position:absolute;inset:-62px;border:7px solid transparent;border-bottom-color:rgba(119,96,255,.65);border-left-color:rgba(255,106,236,.45);border-radius:50%;animation:voidRing 7s linear reverse infinite}
 @keyframes voidRing{to{transform:rotate(360deg)}}
 .void-star{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(177,157,255,.8);animation:voidStar var(--d) ease-in-out var(--delay) infinite alternate}
-@keyframes voidStar{to{transform:translate(calc((50vw - var(--x))*0.06),calc((50vh - var(--y))*0.06)) scale(.35);opacity:.16}}
+@keyframes voidStar{to{transform:translate(calc((50vw - var(--x))*0.06),calc((42vh - var(--y))*0.06)) scale(.35);opacity:.16}}
 .void-comet{position:absolute;left:-140px;top:22%;width:100px;height:2px;background:linear-gradient(90deg,transparent,#c7bdff);box-shadow:0 0 10px #8b70ff;transform:rotate(-18deg);animation:voidComet 10s linear infinite}
 @keyframes voidComet{to{transform:translate(calc(100vw + 300px),330px) rotate(-18deg)}}
 
+@media(max-width:900px){
+    .reward-world-music-toggle{padding:7px 10px;font-size:9px}
+    .jungle-cow{left:8%;transform:scale(.9)}
+    .jungle-capybara{transform:scale(.88)}
+    .volcano-mountain{width:390px;height:245px}
+    .volcano-crater{bottom:46%}
+}
 @media(max-width:600px){
-    .jungle-capybara{transform:scale(.76)}
-    .volcano-mountain{width:340px;height:190px}
-    .volcano-crater{bottom:125px}
-    .volcano-lava{height:155px}
-    .alien-ship{width:88px;height:31px}
-    .void-black-hole{width:125px;height:125px}
+    .jungle-tree{width:98px;height:170px}
+    .jungle-cow{width:90px;height:42px;bottom:19%}
+    .jungle-capybara{width:98px;height:44px;bottom:18%}
+    .volcano-mountain{width:300px;height:200px;bottom:16%}
+    .volcano-crater{width:88px;height:20px;bottom:46%}
+    .volcano-lava{width:20px;height:120px}
+    .alien-ship{width:94px;height:31px}
+    .cosmic-planet{width:86px;height:86px}
+    .void-black-hole{width:132px;height:132px}
 }
 @media(prefers-reduced-motion:reduce){
     .reward-theme-scene *{animation-duration:0.001ms!important;animation-iteration-count:1!important}
@@ -9365,6 +9503,19 @@ body.mobile-mode .skin-grid{
     .gift-box-stage{transform:scale(.92);margin-top:18px;margin-bottom:4px}
 }
 
+
+.server-smart-fill-note{
+    margin:0 0 12px;
+    padding:10px 12px;
+    border:1px solid rgba(53,230,155,.13);
+    border-radius:12px;
+    background:rgba(53,230,155,.055);
+    color:#8ea29a;
+    font-size:9px;
+    font-weight:800;
+    line-height:1.45;
+    letter-spacing:.25px;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -9671,9 +9822,10 @@ body.mobile-mode .skin-grid{
 
 <div class="account-bar">
 
-    <div class="account-chip">
-        <span class="level-circle" id="menuLevel">1</span>
-        NÍVEL
+    <div class="account-chip reward-path-cta" title="Abrir caminho de recompensas">
+        <span class="reward-path-gift" aria-hidden="true">🎁</span>
+        <span class="reward-path-label">VER CAMINHO DE RECOMPENSAS</span>
+        <span class="level-circle reward-level-badge">NV. <b id="menuLevel">1</b></span>
     </div>
 
     <div class="account-chip coin">
@@ -10265,17 +10417,15 @@ body.mobile-mode .skin-grid{
         <div class="shop-top"> 
  
  
-            <div class="shop-wallet level"> 
+            <div class="shop-wallet level reward-path-shop-cta" title="Abrir caminho de recompensas"> 
  
                 <div class="wallet-icon"> 
-                    ★ 
+                    🎁 
                 </div> 
  
                 <div class="wallet-content"> 
-                    <small>NÍVEL</small> 
-                    <strong id="shopLevel"> 
-                        1 
-                    </strong> 
+                    <small>VER CAMINHO DE RECOMPENSAS</small> 
+                    <strong>NV. <span id="shopLevel">1</span></strong> 
                 </div> 
  
             </div> 
@@ -11269,6 +11419,7 @@ body.mobile-mode .skin-grid{
                 <span>🪙 <b id="rewardHeaderCoins">0</b></span>
                 <span>💎 <b id="rewardHeaderGems">0</b></span>
                 <span>⭐ <b id="rewardHeaderXp">0 XP</b></span>
+                <button id="rewardWorldMusicToggle" class="reward-world-music-toggle" type="button">🎵 MÚSICA: ON</button>
             </div>
         </div>
 
@@ -18300,14 +18451,14 @@ document.querySelectorAll(
 let latestServerStatus=null;
 
 const FALLBACK_PUBLIC_SERVERS=[
-    {id:"BR-001",name:"Brasil #1",region:"BR",flag:"🇧🇷",max:24},
-    {id:"BR-002",name:"Brasil #2",region:"BR",flag:"🇧🇷",max:24},
-    {id:"BR-003",name:"Brasil #3",region:"BR",flag:"🇧🇷",max:24},
-    {id:"US-001",name:"US East #1",region:"US",flag:"🇺🇸",max:24},
-    {id:"US-002",name:"US West #1",region:"US",flag:"🇺🇸",max:24},
-    {id:"EU-001",name:"Europa #1",region:"EU",flag:"🇪🇺",max:24},
-    {id:"EU-002",name:"Europa #2",region:"EU",flag:"🇪🇺",max:24},
-    {id:"AS-001",name:"Ásia #1",region:"AS",flag:"🌏",max:24}
+    {id:"BR-001",name:"Brasil #1",region:"BR",flag:"🇧🇷",max:35},
+    {id:"BR-002",name:"Brasil #2",region:"BR",flag:"🇧🇷",max:35},
+    {id:"BR-003",name:"Brasil #3",region:"BR",flag:"🇧🇷",max:35},
+    {id:"US-001",name:"US East #1",region:"US",flag:"🇺🇸",max:35},
+    {id:"US-002",name:"US West #1",region:"US",flag:"🇺🇸",max:35},
+    {id:"EU-001",name:"Europa #1",region:"EU",flag:"🇪🇺",max:35},
+    {id:"EU-002",name:"Europa #2",region:"EU",flag:"🇪🇺",max:35},
+    {id:"AS-001",name:"Ásia #1",region:"AS",flag:"🌏",max:35}
 ];
 
 async function fetchServerStatus(){
@@ -18407,27 +18558,43 @@ function updateServerRow(row,server){
         ? Number(server.bots)
         : null;
 
-    const humanText=
-        humans===null ? "status indisponível"
-        : humans===1 ? "1 pessoa"
-        : `${humans} pessoas`;
+    const total=
+        Number.isFinite(Number(server.displayedPlayers))
+        ? Number(server.displayedPlayers)
+        : (
+            Number.isFinite(Number(server.total))
+            ? Number(server.total)
+            : (
+                humans===null
+                ? null
+                : humans + Math.max(0,botsCount||0)
+            )
+        );
 
-    const botText=botsCount===null ? "IA —" : `${botsCount} IA`;
+    const maxPlayers=
+        Number.isFinite(Number(server.max))
+        ? Number(server.max)
+        : 35;
 
     row.querySelector(".server-main-label").textContent=
         `${server.flag || "🌐"} ${server.name || server.id}`;
 
     row.querySelector(".server-region-chip").textContent=server.region || "--";
 
+    const activityText=
+        server.statusUnavailable
+        ? "Servidor configurado • aguardando status"
+        : total>0
+            ? (server.botAssisted ? "Arena ativa • preenchimento inteligente" : "Arena ativa")
+            : "Arena disponível";
+
     row.querySelector(".server-meta").textContent=
-        `${
-            server.statusUnavailable
-            ? "Servidor configurado • aguardando status"
-            : humans>0 ? "Arena ativa" : "Arena disponível"
-        } • ${server.id} • ${gameVersion}`;
+        `${activityText} • ${server.id} • ${gameVersion}`;
 
     row.querySelector(".server-count").textContent=
-        `👤 ${humanText} • 🤖 ${botText}`;
+        total===null
+        ? `👥 -- / ${maxPlayers}`
+        : `👥 ${total} / ${maxPlayers} NA ARENA`;
 }
 
 function applyServerStatus(status){
@@ -20137,7 +20304,7 @@ async function enterWithLoading(
     );
 
     status.textContent =
-        "Sincronizando jogadores...";
+        "Sincronizando jogadores e preenchendo a arena...";
 
     await wait(
         950
@@ -21176,31 +21343,14 @@ function bindSocketEvents(){
     socket.on(
         "publicSoloState",
         data=>{
-            if(data?.version){
-                gameVersion = data.version;
-            }
+            // Compatibilidade com servidor antigo: na V13.20 não pausamos arena pública.
+            if(data?.version){ gameVersion=data.version; }
             if(data?.server){
-                currentPublicServerId = data.server.id || currentPublicServerId;
-                currentPublicServerName = data.server.name || currentPublicServerName;
+                currentPublicServerId=data.server.id || currentPublicServerId;
+                currentPublicServerName=data.server.name || currentPublicServerName;
             }
+            pendingPublicSoloData=null;
             updateServerFooter();
-
-            pendingPublicSoloData = data;
-
-            const connectionVisible =
-                !document.getElementById("connectionScreen")
-                    .classList.contains("hidden");
-
-            if(
-                entryInProgress
-                ||
-                connectionVisible
-            ){
-                return;
-            }
-
-            pendingPublicSoloData = null;
-            showPublicSoloModal(data);
         }
     );
 
@@ -38105,6 +38255,16 @@ let rewardGiftClicks = 0;
 let rewardGiftBusy = false;
 let rewardSkinRolling = false;
 let rewardThemeRendered = null;
+let rewardWorldMusicTheme = null;
+let rewardWorldMusicNodes = [];
+let rewardWorldMusicEnabled = (()=>{
+    try{
+        const raw = localStorage.getItem("WS_REWARD_WORLD_MUSIC");
+        return raw===null ? true : raw!=="0";
+    }catch{
+        return true;
+    }
+})();
 
 function rewardSceneParticle(className,styles={}){
     const span=document.createElement("i");
@@ -38148,17 +38308,32 @@ function renderRewardThemeScene(theme){
 
     if(theme==="jungle"){
         scene.innerHTML=`
-            <div class="jungle-canopy"></div>
-            <div class="jungle-ground"></div>
-            <div class="jungle-bird">🦜</div>
+            <div class="jungle-sky-glow"></div>
+            <div class="jungle-sun-haze"></div>
+            <div class="jungle-hills layer-1"></div>
+            <div class="jungle-hills layer-2"></div>
+            <div class="jungle-meadow"></div>
+            <div class="jungle-path-band"></div>
+            <div class="jungle-tree left"></div>
+            <div class="jungle-tree right"></div>
+            <div class="jungle-cow"></div>
             <div class="jungle-capybara"></div>
+            <div class="jungle-bird"></div>
         `;
         for(let i=0;i<count(18,8);i++){
             scene.appendChild(rewardSceneParticle("jungle-firefly",{
                 "--x":`${5+Math.random()*90}%`,
-                "--y":`${12+Math.random()*76}%`,
+                "--y":`${14+Math.random()*72}%`,
                 "--d":`${1.8+Math.random()*2.8}s`,
                 "--delay":`${-Math.random()*3}s`
+            }));
+        }
+        for(let i=0;i<count(15,7);i++){
+            scene.appendChild(rewardSceneParticle("jungle-leaf",{
+                "--x":`${Math.random()*100}%`,
+                "--y":`${6+Math.random()*36}%`,
+                "--d":`${6+Math.random()*4.5}s`,
+                "--delay":`${-Math.random()*7}s`
             }));
         }
         return;
@@ -38166,15 +38341,17 @@ function renderRewardThemeScene(theme){
 
     if(theme==="cosmic"){
         scene.innerHTML=`
+            <div class="cosmic-gradient"></div>
             <div class="cosmic-nebula"></div>
+            <div class="cosmic-planet"></div>
             <div class="alien-ship"></div>
             <div class="alien-ship second"></div>
         `;
-        for(let i=0;i<count(54,22);i++){
+        for(let i=0;i<count(66,26);i++){
             scene.appendChild(rewardSceneParticle("cosmic-star",{
                 "--x":`${Math.random()*100}%`,
                 "--y":`${Math.random()*100}%`,
-                "--s":`${1+Math.random()*2.4}px`,
+                "--s":`${1+Math.random()*2.6}px`,
                 "--d":`${.8+Math.random()*2.6}s`,
                 "--delay":`${-Math.random()*3}s`
             }));
@@ -38184,22 +38361,30 @@ function renderRewardThemeScene(theme){
 
     if(theme==="magma"){
         scene.innerHTML=`
+            <div class="magma-sky-glow"></div>
+            <div class="volcano-range"></div>
+            <div class="magma-ground"></div>
             <div class="volcano-mountain"></div>
             <div class="volcano-crater"></div>
-            <div class="volcano-lava"></div>
+            <div class="volcano-lava main"></div>
+            <div class="volcano-lava left"></div>
+            <div class="volcano-lava right"></div>
+            <div class="volcano-smoke plume-1"></div>
+            <div class="volcano-smoke plume-2"></div>
+            <div class="volcano-smoke plume-3"></div>
         `;
-        for(let i=0;i<count(14,6);i++){
+        for(let i=0;i<count(18,8);i++){
             scene.appendChild(rewardSceneParticle("volcano-burst",{
                 "--dx":`${-90+Math.random()*180}px`,
                 "--d":`${1.5+Math.random()*1.8}s`,
                 "--delay":`${-Math.random()*2.6}s`
             }));
         }
-        for(let i=0;i<count(24,10);i++){
+        for(let i=0;i<count(28,12);i++){
             scene.appendChild(rewardSceneParticle("magma-ember",{
                 "--x":`${5+Math.random()*90}%`,
-                "--y":`${35+Math.random()*60}%`,
-                "--d":`${1.6+Math.random()*3.1}s`,
+                "--y":`${38+Math.random()*56}%`,
+                "--d":`${1.8+Math.random()*3.2}s`,
                 "--delay":`${-Math.random()*4}s`
             }));
         }
@@ -38207,14 +38392,14 @@ function renderRewardThemeScene(theme){
     }
 
     if(theme==="frost"){
-        scene.innerHTML=`<div class="frost-aurora"></div>`;
-        [8,30,66].forEach((x,index)=>{
+        scene.innerHTML=`<div class="frost-sky-glow"></div><div class="frost-aurora"></div><div class="frost-plain"></div>`;
+        [6,28,58,78].forEach((x,index)=>{
             scene.appendChild(rewardSceneParticle("frost-mountain",{
                 "--x":`${x}%`,
-                "--w":`${210+index*65}px`
+                "--w":`${200+index*45}px`
             }));
         });
-        for(let i=0;i<count(42,18);i++){
+        for(let i=0;i<count(52,22);i++){
             scene.appendChild(rewardSceneParticle("frost-snow",{
                 "--x":`${Math.random()*100}%`,
                 "--s":`${2+Math.random()*5}px`,
@@ -38230,7 +38415,7 @@ function renderRewardThemeScene(theme){
         <div class="void-black-hole"></div>
         <div class="void-comet"></div>
     `;
-    for(let i=0;i<count(44,18);i++){
+    for(let i=0;i<count(48,20);i++){
         scene.appendChild(rewardSceneParticle("void-star",{
             "--x":`${Math.random()*100}%`,
             "--y":`${Math.random()*100}%`,
@@ -38238,6 +38423,189 @@ function renderRewardThemeScene(theme){
             "--d":`${1.5+Math.random()*4}s`,
             "--delay":`${-Math.random()*4}s`
         }));
+    }
+}
+
+
+function rewardMusicButton(){
+    return document.getElementById("rewardWorldMusicToggle");
+}
+
+function updateRewardMusicButton(){
+    const button=rewardMusicButton();
+    if(!button) return;
+
+    const canPlay = !!settings.sound;
+    button.classList.toggle("off", !rewardWorldMusicEnabled || !canPlay);
+
+    if(!canPlay){
+        button.textContent="🔇 SOM DESATIVADO";
+        return;
+    }
+
+    button.textContent = rewardWorldMusicEnabled ? "🎵 MÚSICA: ON" : "🎵 MÚSICA: OFF";
+}
+
+function cleanupRewardMusicNodes(){
+    rewardWorldMusicNodes.forEach(node=>{
+        try{ node.stop?.(); }catch{}
+        try{ node.disconnect?.(); }catch{}
+    });
+    rewardWorldMusicNodes=[];
+}
+
+function stopRewardWorldMusic(fade=.35){
+    const ac = ensureAudio();
+    const nodes = rewardWorldMusicNodes.slice();
+    rewardWorldMusicNodes=[];
+    rewardWorldMusicTheme=null;
+
+    if(!nodes.length) return;
+
+    const gains = nodes.filter(node=>typeof node?.gain?.setValueAtTime === "function");
+    if(ac && gains.length){
+        const now = ac.currentTime;
+        gains.forEach(gain=>{
+            try{
+                gain.gain.cancelScheduledValues(now);
+                gain.gain.setValueAtTime(gain.gain.value || 0.0001, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + fade);
+            }catch{}
+        });
+        setTimeout(()=>{
+            nodes.forEach(node=>{
+                try{ node.stop?.(); }catch{}
+                try{ node.disconnect?.(); }catch{}
+            });
+        }, Math.round(fade*1000)+80);
+        return;
+    }
+
+    nodes.forEach(node=>{
+        try{ node.stop?.(); }catch{}
+        try{ node.disconnect?.(); }catch{}
+    });
+}
+
+function rewardAmbientNoise(ac, seconds=2.4){
+    const length=Math.max(1,Math.floor(ac.sampleRate*seconds));
+    const buffer=ac.createBuffer(1,length,ac.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<length;i++) data[i]=(Math.random()*2-1)*0.65;
+    const source=ac.createBufferSource();
+    source.buffer=buffer;
+    source.loop=true;
+    return source;
+}
+
+function startRewardWorldMusic(theme){
+    updateRewardMusicButton();
+    if(!rewardWorldMusicEnabled || !settings.sound) return;
+    if(rewardWorldMusicTheme===theme && rewardWorldMusicNodes.length) return;
+
+    stopRewardWorldMusic(.18);
+    const ac=ensureAudio();
+    if(!ac) return;
+
+    const master=ac.createGain();
+    master.gain.value=0.0001;
+    master.connect(ac.destination);
+    master.gain.exponentialRampToValueAtTime(0.022, ac.currentTime + .45);
+
+    const nodes=[master];
+
+    const makeOsc=(type,freq,volume,detune=0,lfoRate=0,lfoDepth=0)=>{
+        const osc=ac.createOscillator();
+        const gain=ac.createGain();
+        osc.type=type;
+        osc.frequency.value=freq;
+        if(detune) osc.detune.value=detune;
+        gain.gain.value=volume;
+        osc.connect(gain).connect(master);
+        osc.start();
+        nodes.push(osc,gain);
+        if(lfoRate && lfoDepth){
+            const lfo=ac.createOscillator();
+            const lfoGain=ac.createGain();
+            lfo.type="sine";
+            lfo.frequency.value=lfoRate;
+            lfoGain.gain.value=lfoDepth;
+            lfo.connect(lfoGain).connect(gain.gain);
+            lfo.start();
+            nodes.push(lfo,lfoGain);
+        }
+        return osc;
+    };
+
+    const makeNoise=(filterType, frequency, q, volume)=>{
+        const source=rewardAmbientNoise(ac);
+        const filter=ac.createBiquadFilter();
+        const gain=ac.createGain();
+        filter.type=filterType;
+        filter.frequency.value=frequency;
+        filter.Q.value=q;
+        gain.gain.value=volume;
+        source.connect(filter).connect(gain).connect(master);
+        source.start();
+        nodes.push(source,filter,gain);
+        return source;
+    };
+
+    switch(theme){
+        case "jungle":
+            makeOsc("sine",261.63,0.007,0,.08,0.002);
+            makeOsc("triangle",329.63,0.006,-4,.05,0.0018);
+            makeOsc("sine",392.00,0.004,3,.07,0.0015);
+            makeNoise("lowpass",760,0.4,0.005);
+            break;
+        case "cosmic":
+            makeOsc("sine",196.00,0.005,0,.04,0.002);
+            makeOsc("triangle",293.66,0.005,8,.03,0.0022);
+            makeOsc("sawtooth",440.00,0.0016,-8,.09,0.0014);
+            makeNoise("bandpass",1400,1.2,0.0025);
+            break;
+        case "magma":
+            makeOsc("triangle",130.81,0.007,0,.05,0.002);
+            makeOsc("sawtooth",164.81,0.0035,-3,.07,0.0016);
+            makeOsc("sine",220.00,0.0028,4,.03,0.0012);
+            makeNoise("lowpass",520,0.8,0.0075);
+            break;
+        case "frost":
+            makeOsc("sine",293.66,0.0058,0,.06,0.0016);
+            makeOsc("triangle",440.00,0.0035,4,.09,0.0018);
+            makeOsc("sine",587.33,0.0026,-6,.11,0.0012);
+            makeNoise("highpass",2400,0.5,0.0018);
+            break;
+        default:
+            makeOsc("sine",110.00,0.0065,0,.03,0.0026);
+            makeOsc("triangle",164.81,0.0040,2,.04,0.0022);
+            makeOsc("sine",246.94,0.0030,-5,.05,0.0016);
+            makeNoise("bandpass",880,1.8,0.0030);
+            break;
+    }
+
+    rewardWorldMusicTheme=theme;
+    rewardWorldMusicNodes=nodes;
+}
+
+function syncRewardWorldMusic(theme){
+    updateRewardMusicButton();
+    const isOpen = !document.getElementById("rewardWorldPage")?.classList.contains("hidden");
+    if(!isOpen){
+        stopRewardWorldMusic(.25);
+        return;
+    }
+    startRewardWorldMusic(theme || rewardWorldMusicTheme || "jungle");
+}
+
+function toggleRewardWorldMusic(){
+    rewardWorldMusicEnabled=!rewardWorldMusicEnabled;
+    try{ localStorage.setItem("WS_REWARD_WORLD_MUSIC", rewardWorldMusicEnabled?"1":"0"); }catch{}
+    updateRewardMusicButton();
+    if(rewardWorldMusicEnabled){
+        syncRewardWorldMusic(rewardSelectedWorldId ? (rewardProgressionState?.worlds||[]).find(item=>item.id===rewardSelectedWorldId)?.theme : "jungle");
+    }else{
+        stopRewardWorldMusic(.18);
     }
 }
 
@@ -38322,17 +38690,21 @@ async function openRewardWorlds(){
     page.classList.remove("hidden");
     document.body.style.overflow="hidden";
 
+    updateRewardMusicButton();
+
     const loaded=await loadRewardProgression({preserveWorld:false});
 
     if(!loaded){
         page.classList.add("hidden");
         document.body.style.overflow="";
+        stopRewardWorldMusic(.18);
     }
 }
 
 function closeRewardWorlds(){
     document.getElementById("rewardWorldPage")?.classList.add("hidden");
     document.body.style.overflow="";
+    stopRewardWorldMusic(.22);
 }
 
 function rewardNodeStateText(node){
@@ -38422,6 +38794,7 @@ function renderRewardProgression(){
     const rewardPage=document.getElementById("rewardWorldPage");
     if(rewardPage) rewardPage.dataset.theme=selected.theme || "jungle";
     renderRewardThemeScene(selected.theme || "jungle");
+    syncRewardWorldMusic(selected.theme || "jungle");
 
     document.getElementById("rewardWorldKicker").textContent=`MUNDO ${selected.index}`;
     document.getElementById("rewardWorldTitle").textContent=`${selected.icon} ${selected.name}`;
@@ -38870,6 +39243,19 @@ if(rewardMenuChip){
     rewardMenuChip.title="Abrir caminho de recompensas";
     rewardMenuChip.addEventListener("click",openRewardWorlds);
 }
+
+const rewardMusicToggle=document.getElementById("rewardWorldMusicToggle");
+if(rewardMusicToggle){
+    rewardMusicToggle.addEventListener("click",toggleRewardWorldMusic);
+    updateRewardMusicButton();
+}
+
+document.addEventListener("visibilitychange",()=>{
+    if(document.hidden) stopRewardWorldMusic(.15);
+    else if(!document.getElementById("rewardWorldPage")?.classList.contains("hidden")){
+        syncRewardWorldMusic((rewardProgressionState?.worlds||[]).find(item=>item.id===rewardSelectedWorldId)?.theme || "jungle");
+    }
+});
 
 const rewardShopChip=document.querySelector("#shopPage .shop-wallet.level");
 if(rewardShopChip){
