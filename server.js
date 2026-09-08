@@ -77,8 +77,8 @@ const io = new Server(httpServer, {
 ========================================================= */
 
 const PORT = Number(process.env.PORT || 3000);
-const GAME_VERSION = 'v13.17.0';
-const BUILD = 'wildsnake-v13.17.0-worlds-skins-economy';
+const GAME_VERSION = 'v13.20.0';
+const BUILD = 'wildsnake-v13.20.0-smart-public-bots-35-slots';
 
 const WORLD_RADIUS = 4200;
 const SAFE_RADIUS = 3900;
@@ -94,7 +94,8 @@ const FOOD_BROADCAST_RATE = 2;
 
 const FOOD_TARGET = 180;
 const FOOD_HARD_LIMIT = 340;
-const MAX_ROOM_PLAYERS = 24;
+const MAX_ROOM_PLAYERS = 35;
+const PUBLIC_BOT_TARGET_TOTAL = 10;
 const SOLO_NOTICE_DELAY_MS = 2200;
 const HUMAN_INPUT_TIMEOUT_MS = 1500;
 
@@ -1877,6 +1878,326 @@ async function progressionLedgerRows(accountId) {
   });
 }
 
+function rewardRpcUnavailable(error) {
+  const raw = String(error?.message || error || '').toLowerCase();
+  return error?.status === 404
+    || String(error?.code || '').toUpperCase() === 'PGRST202'
+    || raw.includes('could not find the function')
+    || raw.includes('function public.ws_claim_progression')
+    || raw.includes('schema cache');
+}
+
+async function secureClaimProgressionCurrency(accountId, node) {
+  if (!accountId) throw new Error('ACCOUNT_REQUIRED');
+  if (!node?.id) throw new Error('RECOMPENSA_INVALIDA');
+  if (!secureDbReady()) throw new Error('SUPABASE_SERVER_NOT_CONFIGURED');
+
+  const reward = node.reward || {};
+
+  try {
+    const claim = await dbRpc('ws_claim_progression_currency', {
+      p_account_id:accountId,
+      p_node_id:node.id,
+      p_coins:Math.max(0,Math.floor(Number(reward.coins) || 0)),
+      p_gems:Math.max(0,Math.floor(Number(reward.gems) || 0)),
+      p_metadata:{
+        nodeId:node.id,
+        worldId:node.worldId,
+        worldIndex:node.worldIndex,
+        level:node.level,
+        xpRequired:node.xpRequired,
+        final:!!node.final,
+        kind:reward.kind,
+        label:reward.label,
+        skinChoice:Array.isArray(reward.skinChoice) ? reward.skinChoice : null
+      }
+    });
+    return { reused:!!claim?.alreadyClaimed, reward, claim };
+  } catch (error) {
+    if (!rewardRpcUnavailable(error)) throw error;
+    console.warn('reward claim RPC indisponível; usando fallback REST seguro:', error?.message || error);
+  }
+
+  return withMatchRewardLock(accountId, async () => {
+    const idempotencyKey = `progression:${accountId}:${node.id}`;
+
+    const previous = await dbSelect(SECURE_DB_TABLES.ledger, {
+      select:'id,metadata,amount,currency,created_at',
+      idempotency_key:`eq.${idempotencyKey}`,
+      limit:1
+    });
+
+    if (previous.length) {
+      return { reused:true, reward, claim:previous[0] };
+    }
+
+    const stateBefore = await loadSecureGameState(accountId);
+    if (!stateBefore?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const wallet = stateBefore.wallet;
+    const oldCoins = Math.max(0, Number(wallet.coins || 0));
+    const oldGems = Math.max(0, Number(wallet.wildgems || 0));
+    const coinsToAdd = Math.max(0, Math.floor(Number(reward.coins) || 0));
+    const gemsToAdd = Math.max(0, Math.floor(Number(reward.gems) || 0));
+
+    await dbUpdate(
+      SECURE_DB_TABLES.wallets,
+      { account_id:`eq.${accountId}` },
+      {
+        coins:oldCoins + coinsToAdd,
+        wildgems:oldGems + gemsToAdd,
+        updated_at:new Date().toISOString()
+      }
+    );
+
+    let claim = null;
+    try {
+      const inserted = await dbInsert(SECURE_DB_TABLES.ledger, {
+        account_id:accountId,
+        event_type:'progression_reward',
+        currency:'mixed',
+        amount:coinsToAdd,
+        idempotency_key:idempotencyKey,
+        metadata:{
+          nodeId:node.id,
+          worldId:node.worldId,
+          worldIndex:node.worldIndex,
+          level:node.level,
+          xpRequired:node.xpRequired,
+          final:!!node.final,
+          kind:reward.kind,
+          label:reward.label,
+          coins:coinsToAdd,
+          gems:gemsToAdd,
+          skinChoice:Array.isArray(reward.skinChoice) ? reward.skinChoice : null,
+          creditedAt:new Date().toISOString()
+        }
+      });
+      claim = inserted?.[0] || inserted || null;
+    } catch (error) {
+      if (error?.status === 409) {
+        claim = (await dbSelect(SECURE_DB_TABLES.ledger, {
+          select:'id,metadata,amount,currency,created_at',
+          idempotency_key:`eq.${idempotencyKey}`,
+          limit:1
+        }))[0] || null;
+      } else {
+        await dbUpdate(
+          SECURE_DB_TABLES.wallets,
+          { account_id:`eq.${accountId}` },
+          { coins:oldCoins, wildgems:oldGems, updated_at:new Date().toISOString() }
+        ).catch(() => {});
+        throw error;
+      }
+    }
+
+    return { reused:false, reward, claim };
+  });
+}
+
+async function secureClaimProgressionSkin(accountId, node, chosen) {
+  if (!accountId) throw new Error('ACCOUNT_REQUIRED');
+  if (!node?.id || !chosen?.skin_id) throw new Error('SKIN_INVALIDA');
+  if (!secureDbReady()) throw new Error('SUPABASE_SERVER_NOT_CONFIGURED');
+
+  try {
+    const claim = await dbRpc('ws_claim_progression_skin', {
+      p_account_id:accountId,
+      p_node_id:node.id,
+      p_skin_id:chosen.skin_id,
+      p_metadata:{
+        nodeId:node.id,
+        worldId:node.worldId,
+        worldIndex:node.worldIndex,
+        level:node.level,
+        xpRequired:node.xpRequired,
+        kind:'skin_roll',
+        skinId:chosen.skin_id,
+        skinName:chosen.name,
+        rarity:chosen.rarity
+      }
+    });
+    return { reused:!!claim?.alreadyClaimed, claim, result:chosen };
+  } catch (error) {
+    if (!rewardRpcUnavailable(error)) throw error;
+    console.warn('reward skin RPC indisponível; usando fallback REST:', error?.message || error);
+  }
+
+  return withMatchRewardLock(accountId, async () => {
+    const idempotencyKey = `progression:${accountId}:${node.id}`;
+
+    const previous = await dbSelect(SECURE_DB_TABLES.ledger, {
+      select:'id,skin_id,metadata,created_at',
+      idempotency_key:`eq.${idempotencyKey}`,
+      limit:1
+    });
+
+    if (previous.length) {
+      return {
+        reused:true,
+        claim:previous[0],
+        result:{
+          skin_id:String(previous[0]?.skin_id || previous[0]?.metadata?.skinId || chosen.skin_id),
+          name:previous[0]?.metadata?.skinName || chosen.name,
+          rarity:previous[0]?.metadata?.rarity || chosen.rarity
+        }
+      };
+    }
+
+    const stateBefore = await loadSecureGameState(accountId);
+    if (!stateBefore?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const owned = new Set(Array.isArray(stateBefore.ownedSkins) ? stateBefore.ownedSkins : []);
+    if (owned.has(String(chosen.skin_id || ''))) throw new Error('SKIN_JA_POSSUI');
+
+    await dbInsert(SECURE_DB_TABLES.skins, {
+      account_id:accountId,
+      skin_id:chosen.skin_id,
+      source:'progression_roll'
+    });
+
+    let claim = null;
+    try {
+      const inserted = await dbInsert(SECURE_DB_TABLES.ledger, {
+        account_id:accountId,
+        event_type:'progression_skin_roll',
+        currency:null,
+        amount:0,
+        skin_id:chosen.skin_id,
+        idempotency_key:idempotencyKey,
+        metadata:{
+          nodeId:node.id,
+          worldId:node.worldId,
+          worldIndex:node.worldIndex,
+          level:node.level,
+          xpRequired:node.xpRequired,
+          kind:'skin_roll',
+          skinId:chosen.skin_id,
+          skinName:chosen.name,
+          rarity:chosen.rarity,
+          grantedAt:new Date().toISOString()
+        }
+      });
+      claim = inserted?.[0] || inserted || null;
+    } catch (error) {
+      if (error?.status === 409) {
+        claim = (await dbSelect(SECURE_DB_TABLES.ledger, {
+          select:'id,skin_id,metadata,created_at',
+          idempotency_key:`eq.${idempotencyKey}`,
+          limit:1
+        }))[0] || null;
+      } else {
+        await supabaseAdminRequest(
+          `/rest/v1/${encodeURIComponent(SECURE_DB_TABLES.skins)}?account_id=eq.${encodeURIComponent(accountId)}&skin_id=eq.${encodeURIComponent(chosen.skin_id)}`,
+          { method:'DELETE', headers:{ Prefer:'return=minimal' } }
+        ).catch(() => {});
+        throw error;
+      }
+    }
+
+    return { reused:false, claim, result:chosen };
+  });
+}
+
+async function secureClaimProgressionGiftSkin(accountId, node, skin) {
+  if (!accountId) throw new Error('ACCOUNT_REQUIRED');
+  if (!node?.id || !skin?.skin_id) throw new Error('SKIN_INVALIDA');
+  if (!secureDbReady()) throw new Error('SUPABASE_SERVER_NOT_CONFIGURED');
+
+  try {
+    const claim = await dbRpc('ws_claim_progression_gift_skin', {
+      p_account_id:accountId,
+      p_node_id:node.id,
+      p_skin_id:skin.skin_id,
+      p_metadata:{
+        nodeId:node.id,
+        worldId:node.worldId,
+        worldIndex:node.worldIndex,
+        kind:'gift_skin_choice',
+        skinId:skin.skin_id,
+        skinName:skin.name,
+        rarity:skin.rarity
+      }
+    });
+    return { reused:!!claim?.alreadyClaimed, claim, result:skin };
+  } catch (error) {
+    if (!rewardRpcUnavailable(error)) throw error;
+    console.warn('reward gift skin RPC indisponível; usando fallback REST:', error?.message || error);
+  }
+
+  return withMatchRewardLock(accountId, async () => {
+    const rewardKey = `progression:${accountId}:${node.id}`;
+    const giftKey = `gift-skin:${accountId}:${node.id}`;
+
+    const rewardClaim = await dbSelect(SECURE_DB_TABLES.ledger, {
+      select:'id,metadata',
+      idempotency_key:`eq.${rewardKey}`,
+      limit:1
+    });
+    if (!rewardClaim.length) throw new Error('PRESENTE_NAO_RESGATADO');
+
+    const previous = await dbSelect(SECURE_DB_TABLES.ledger, {
+      select:'id,skin_id,metadata,created_at',
+      idempotency_key:`eq.${giftKey}`,
+      limit:1
+    });
+    if (previous.length) {
+      return { reused:true, claim:previous[0], result:skin };
+    }
+
+    const stateBefore = await loadSecureGameState(accountId);
+    if (!stateBefore?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const owned = new Set(Array.isArray(stateBefore.ownedSkins) ? stateBefore.ownedSkins : []);
+    if (owned.has(String(skin.skin_id || ''))) throw new Error('SKIN_JA_POSSUI');
+
+    await dbInsert(SECURE_DB_TABLES.skins, {
+      account_id:accountId,
+      skin_id:skin.skin_id,
+      source:'progression_gift'
+    });
+
+    let claim = null;
+    try {
+      const inserted = await dbInsert(SECURE_DB_TABLES.ledger, {
+        account_id:accountId,
+        event_type:'progression_gift_skin',
+        currency:null,
+        amount:0,
+        skin_id:skin.skin_id,
+        idempotency_key:giftKey,
+        metadata:{
+          nodeId:node.id,
+          worldId:node.worldId,
+          worldIndex:node.worldIndex,
+          kind:'gift_skin_choice',
+          skinId:skin.skin_id,
+          skinName:skin.name,
+          rarity:skin.rarity,
+          grantedAt:new Date().toISOString()
+        }
+      });
+      claim = inserted?.[0] || inserted || null;
+    } catch (error) {
+      if (error?.status === 409) {
+        claim = (await dbSelect(SECURE_DB_TABLES.ledger, {
+          select:'id,skin_id,metadata,created_at',
+          idempotency_key:`eq.${giftKey}`,
+          limit:1
+        }))[0] || null;
+      } else {
+        await supabaseAdminRequest(
+          `/rest/v1/${encodeURIComponent(SECURE_DB_TABLES.skins)}?account_id=eq.${encodeURIComponent(accountId)}&skin_id=eq.${encodeURIComponent(skin.skin_id)}`,
+          { method:'DELETE', headers:{ Prefer:'return=minimal' } }
+        ).catch(() => {});
+        throw error;
+      }
+    }
+
+    return { reused:false, claim, result:skin };
+  });
+}
+
 function progressionClaimsFromRows(rows) {
   const claimed = new Set();
   const giftSkinClaimed = new Set();
@@ -3003,6 +3324,8 @@ function secureErrorMessage(error) {
   if (raw.includes('RECOMPENSA_JA_RESGATADA')) return 'Esta recompensa já foi resgatada.';
   if (raw.includes('XP_INSUFICIENTE')) return 'Você ainda não possui XP suficiente.';
   if (raw.includes('PRESENTE_NAO_RESGATADO')) return 'Abra o presente antes de escolher a skin.';
+  if (raw.includes('ACCOUNT_REQUIRED')) return 'Entre na sua conta para receber esta recompensa.';
+  if (raw.includes('RECOMPENSA_INVALIDA')) return 'Recompensa inválida.';
   if (raw.includes('SKIN_FORA_DA_FAIXA')) return 'Esta skin não pode ser escolhida neste presente.';
   if (raw.includes('SUPABASE_SERVER_NOT_CONFIGURED')) {
     return 'Servidor seguro ainda não está conectado ao Supabase.';
@@ -3096,7 +3419,10 @@ function buildServerMatchRewardPreview(room, snake) {
     kills,
     timeMs,
     roomId: room.code,
-    roomType: room.type
+    roomType: room.type,
+    botAssisted: room.type === 'public' && room.botIds.size > 0,
+    humansInRoom: room.players.size,
+    botsInRoom: room.botIds.size
   };
 }
 
@@ -3510,14 +3836,52 @@ function normalizePerformanceTier(
 
 
 function networkProfileForPlayer(
-  player
+  player,
+  room = null
 ){
 
-  return NETWORK_PROFILES[
+  const base = NETWORK_PROFILES[
     normalizePerformanceTier(
       player.performanceTier
     )
   ];
+
+  if (!room) return base;
+
+  const totalSnakes = Math.max(0, room.players.size + room.botIds.size);
+
+  // Com arenas grandes, reduzimos um pouco a rede sem mexer na física de 30 Hz.
+  // Isso torna 35 jogadores por servidor mais seguro para PC e principalmente mobile.
+  if (totalSnakes >= 28) {
+    return {
+      ...base,
+      worldHz:Math.min(base.worldHz,7),
+      segmentLimit:Math.min(base.segmentLimit,38),
+      foodHz:Math.min(base.foodHz,1),
+      interpolationHint:Math.max(base.interpolationHint,0.14)
+    };
+  }
+
+  if (totalSnakes >= 20) {
+    return {
+      ...base,
+      worldHz:Math.min(base.worldHz,8),
+      segmentLimit:Math.min(base.segmentLimit,46),
+      foodHz:Math.min(base.foodHz,1),
+      interpolationHint:Math.max(base.interpolationHint,0.12)
+    };
+  }
+
+  if (totalSnakes >= 14) {
+    return {
+      ...base,
+      worldHz:Math.min(base.worldHz,10),
+      segmentLimit:Math.min(base.segmentLimit,58),
+      interpolationHint:Math.max(base.interpolationHint,0.10)
+    };
+  }
+
+  return base;
 
 }
 
@@ -4201,8 +4565,10 @@ function serializePublicRoom(room) {
     humans: room.players.size,
     bots: room.botIds.size,
     total: room.players.size + room.botIds.size,
+    displayedPlayers: room.players.size + room.botIds.size,
+    botAssisted: room.botIds.size > 0,
     active: room.players.size > 0,
-    waitingForPlayers: room.waitingForPlayers,
+    waitingForPlayers: false,
     max: MAX_ROOM_PLAYERS,
     leaderId: room.leaderId,
     version: GAME_VERSION
@@ -4278,19 +4644,18 @@ function removeAllBots(room) {
 }
 
 /*
-  Regras:
-  - abaixo de 7 humanos SEMPRE há bots;
-  - 8/9 humanos ainda ficam com poucos bots, como combinado antes;
-  - quanto mais humanos, menos IA.
+  V13.20 - Bots públicos inteligentes por servidor:
+  - 0 humanos: 0 bots (servidor fica em repouso até alguém entrar);
+  - 1..9 humanos: completa a arena até 10 participantes;
+  - 7 humanos => 3 bots, 8 => 2, 9 => 1;
+  - 10+ humanos: 0 bots;
+  - bots nunca ocupam as 35 vagas humanas do servidor.
 */
 function desiredPublicBots(humans) {
-  if (humans <= 1) return 10;
-  if (humans <= 2) return 9;
-  if (humans <= 4) return 7;
-  if (humans <= 6) return 5;
-  if (humans <= 9) return 4;
-  if (humans <= 12) return 2;
-  return 0;
+  const count = Math.max(0, Math.floor(Number(humans) || 0));
+  if (count <= 0) return 0;
+  if (count >= PUBLIC_BOT_TARGET_TOTAL) return 0;
+  return Math.max(0, PUBLIC_BOT_TARGET_TOTAL - count);
 }
 
 function rebalancePublicBots(room) {
@@ -4916,7 +5281,8 @@ function emitWorld(room) {
 
     const profile =
       networkProfileForPlayer(
-        receiver
+        receiver,
+        room
       );
 
     const interval =
@@ -5127,7 +5493,8 @@ function emitFoods(
 
     const profile =
       networkProfileForPlayer(
-        receiver
+        receiver,
+        room
       );
 
     const interval =
@@ -5176,17 +5543,23 @@ function chooseAutoPublicServer(excludeId = null) {
     room.code !== excludeId && room.players.size < MAX_ROOM_PLAYERS
   );
 
+  if (!all.length) return null;
+
   const occupied = all.filter(room => room.players.size > 0);
-  const pool = occupied.length ? occupied : all;
 
-  // Entre servidores com gente, vai no menos cheio.
-  pool.sort((a, b) =>
-    a.players.size - b.players.size
-    || a.botIds.size - b.botIds.size
-    || a.code.localeCompare(b.code)
-  );
+  if (occupied.length) {
+    // JOGAR AGORA concentra jogadores reais no servidor mais populado.
+    // Isso faz os bots desaparecerem naturalmente mais cedo.
+    occupied.sort((a, b) =>
+      b.players.size - a.players.size
+      || a.botIds.size - b.botIds.size
+      || a.code.localeCompare(b.code)
+    );
+    return occupied[0];
+  }
 
-  return pool[0] || null;
+  // Se todos estão vazios, começa pelo Brasil #1 quando disponível.
+  return all.find(room => room.code === 'BR-001') || all[0];
 }
 
 function chooseAlternativePublicServer(currentId) {
@@ -5196,8 +5569,10 @@ function chooseAlternativePublicServer(currentId) {
     && room.players.size < MAX_ROOM_PLAYERS
   );
 
+  // Alternativa também prioriza gente real, não servidor quase vazio.
   rooms.sort((a, b) =>
-    a.players.size - b.players.size
+    b.players.size - a.players.size
+    || a.botIds.size - b.botIds.size
     || a.code.localeCompare(b.code)
   );
 
@@ -5250,63 +5625,26 @@ function updatePublicSoloState(room, force = false) {
 
   const humans = roomHumans(room);
   const count = humans.length;
-  const now = Date.now();
 
-  if (count === 0) {
-    room.waitingForPlayers = false;
-    room.soloSince = 0;
-    room.lastHumanCount = 0;
-    room.soloNoticeSent = false;
-    return;
-  }
-
-  if (count >= 2) {
-    const waiting = humans.filter(p => p.waitingSolo || p.pendingPublicResume);
-
-    room.waitingForPlayers = false;
-    room.soloSince = 0;
-    room.soloNoticeSent = false;
-
-    for (const player of waiting) {
-      player.pendingPublicResume = true;
-      const socket = io.sockets.sockets.get(player.id);
-
-      if (socket) {
-        socket.emit('publicMatchFound', {
-          server: serializePublicRoom(room),
-          version: GAME_VERSION
-        });
-      }
-    }
-
-    room.lastHumanCount = count;
-    return;
-  }
-
-  // Um único humano: AVISA, mas não mata nem congela invisivelmente.
-  // O jogador só entra em espera quando clicar em "ESPERAR JOGADOR".
-  if (!room.soloSince) room.soloSince = now;
-
-  if ((force || now - room.soloSince >= SOLO_NOTICE_DELAY_MS) && !room.soloNoticeSent) {
-    room.waitingForPlayers = false;
-    room.soloNoticeSent = true;
-
-    const only = humans[0];
-
-    if (only) {
-      const socket = io.sockets.sockets.get(only.id);
-
-      if (socket) {
-        socket.emit('publicSoloState', {
-          server: serializePublicRoom(room),
-          version: GAME_VERSION,
-          message: 'Só tem você online neste servidor.'
-        });
-      }
-    }
-  }
-
+  room.waitingForPlayers = false;
+  room.soloSince = 0;
+  room.soloNoticeSent = false;
   room.lastHumanCount = count;
+
+  if (count === 0) return;
+
+  // V13.20: arena pública nunca pausa só porque há um único humano.
+  // Os bots completam a partida, então o jogador continua jogando e
+  // recebendo XP/WildCoins normalmente pelo backend autoritativo.
+  for (const player of humans) {
+    if (player.waitingSolo || player.pendingPublicResume) {
+      player.waitingSolo = false;
+      player.pendingPublicResume = false;
+      if (!player.alive || player.inArena === false) {
+        prepareSnake(player, room);
+      }
+    }
+  }
 }
 
 /* =========================================================
@@ -5647,15 +5985,18 @@ io.on('connection', socket => {
     const action = String(data.action || '');
 
     if (action === 'wait') {
-      player.waitingSolo = true;
-      player.inArena = false;
-      player.alive = true;
-      player.boost = false;
-      room.waitingForPlayers = true;
+      // V13.20: não existe mais espera por segundo humano em servidor público.
+      // Mantemos o evento apenas por compatibilidade com clientes antigos.
+      rebalancePublicBots(room);
+      player.waitingSolo = false;
+      player.pendingPublicResume = false;
+      player.inArena = true;
+      if (!player.alive) prepareSnake(player, room);
 
       return safeAck(ack, {
         ok: true,
-        waiting: true,
+        waiting: false,
+        botAssisted: room.botIds.size > 0,
         server: serializePublicRoom(room),
         version: GAME_VERSION
       });
@@ -5681,9 +6022,11 @@ io.on('connection', socket => {
 
     const room = publicRooms.get(player.roomId);
 
-    if (!room || room.players.size < 2) {
-      return safeAck(ack, { ok: false, error: 'Ainda não há outro jogador disponível.' });
+    if (!room) {
+      return safeAck(ack, { ok: false, error: 'Servidor público não encontrado.' });
     }
+
+    rebalancePublicBots(room);
 
     prepareSnake(player, room);
     player.pendingPublicResume = false;
@@ -5930,15 +6273,8 @@ io.on('connection', socket => {
       return safeAck(ack, { ok: false, error: 'Não há partida ativa.' });
     }
 
-    if (room.type === 'public' && room.players.size === 1) {
-      player.waitingSolo = true;
-      player.alive = false;
-      updatePublicSoloState(room, true);
-      return safeAck(ack, {
-        ok: false,
-        waiting: true,
-        error: 'Você está sozinho nesta arena. Aguarde outro jogador ou procure outro servidor.'
-      });
+    if (room.type === 'public') {
+      rebalancePublicBots(room);
     }
 
     prepareSnake(player, room);
@@ -6654,29 +6990,14 @@ app.post('/api/rewards/claim', async (req, res) => {
       });
     }
 
+    const claimResult = await secureClaimProgressionCurrency(session.accountId, node);
     const reward = node.reward || {};
-    const result = await dbRpc('ws_claim_progression_currency', {
-      p_account_id:session.accountId,
-      p_node_id:node.id,
-      p_coins:Math.max(0,Math.floor(Number(reward.coins) || 0)),
-      p_gems:Math.max(0,Math.floor(Number(reward.gems) || 0)),
-      p_metadata:{
-        nodeId:node.id,
-        worldId:node.worldId,
-        level:node.level,
-        xpRequired:node.xpRequired,
-        final:!!node.final,
-        kind:reward.kind,
-        label:reward.label,
-        skinChoice:Array.isArray(reward.skinChoice) ? reward.skinChoice : null
-      }
-    });
-
     const progression = await secureProgressionState(session.accountId);
 
     return res.json({
       ok:true,
-      claim:result,
+      reused:!!claimResult?.reused,
+      claim:claimResult?.claim || null,
       reward,
       node,
       progression,
@@ -6719,7 +7040,6 @@ app.post('/api/rewards/roll-skin', async (req, res) => {
       });
     }
 
-    // Se já foi rodada, devolve exatamente o resultado anterior.
     const previous = await dbSelect(SECURE_DB_TABLES.ledger, {
       select:'skin_id,metadata',
       account_id:`eq.${session.accountId}`,
@@ -6753,7 +7073,6 @@ app.post('/api/rewards/roll-skin', async (req, res) => {
     }
 
     let pool = await progressionSkinPool(session.accountId);
-
     if (!pool.length) {
       return res.status(409).json({
         ok:false,
@@ -6769,23 +7088,8 @@ app.post('/api/rewards/roll-skin', async (req, res) => {
     for (let attempt = 0; attempt < 4; attempt++) {
       chosen = chooseProgressionSkin(pool);
       if (!chosen) break;
-
       try {
-        result = await dbRpc('ws_claim_progression_skin', {
-          p_account_id:session.accountId,
-          p_node_id:node.id,
-          p_skin_id:chosen.skin_id,
-          p_metadata:{
-            nodeId:node.id,
-            worldId:node.worldId,
-            level:node.level,
-            xpRequired:node.xpRequired,
-            kind:'skin_roll',
-            skinId:chosen.skin_id,
-            skinName:chosen.name,
-            rarity:chosen.rarity
-          }
-        });
+        result = await secureClaimProgressionSkin(session.accountId, node, chosen);
         break;
       } catch (error) {
         lastError = error;
@@ -6801,9 +7105,9 @@ app.post('/api/rewards/roll-skin', async (req, res) => {
 
     return res.json({
       ok:true,
-      reused:false,
-      claim:result,
-      result:chosen,
+      reused:!!result?.reused,
+      claim:result?.claim || null,
+      result:result?.result || chosen,
       progression,
       account:progression?.account || null
     });
@@ -6836,17 +7140,6 @@ app.post('/api/rewards/gift/skin', async (req, res) => {
       throw new Error('XP_INSUFICIENTE');
     }
 
-    const claimRows = await dbSelect(SECURE_DB_TABLES.ledger, {
-      select:'id,metadata',
-      account_id:`eq.${session.accountId}`,
-      idempotency_key:`eq.progression:${session.accountId}:${node.id}`,
-      limit:1
-    });
-
-    if (!claimRows.length) {
-      throw new Error('PRESENTE_NAO_RESGATADO');
-    }
-
     const allowed = await dbSelect(SECURE_DB_TABLES.catalog, {
       select:'skin_id,name,rarity,limited,active',
       skin_id:`eq.${skinId}`,
@@ -6856,37 +7149,18 @@ app.post('/api/rewards/gift/skin', async (req, res) => {
     });
 
     const skin = allowed[0];
-
-    if (
-      !skin
-      ||
-      !['rare','epic'].includes(String(skin.rarity || ''))
-      ||
-      COMBO_ONLY_SKIN_IDS.has(String(skin.skin_id || ''))
-    ) {
+    if (!skin || !['rare','epic'].includes(String(skin.rarity || '')) || COMBO_ONLY_SKIN_IDS.has(String(skin.skin_id || ''))) {
       throw new Error('SKIN_FORA_DA_FAIXA');
     }
 
-    const result = await dbRpc('ws_claim_progression_gift_skin', {
-      p_account_id:session.accountId,
-      p_node_id:node.id,
-      p_skin_id:skin.skin_id,
-      p_metadata:{
-        nodeId:node.id,
-        worldId:node.worldId,
-        kind:'gift_skin_choice',
-        skinId:skin.skin_id,
-        skinName:skin.name,
-        rarity:skin.rarity
-      }
-    });
-
+    const result = await secureClaimProgressionGiftSkin(session.accountId, node, skin);
     const progression = await secureProgressionState(session.accountId);
 
     return res.json({
       ok:true,
-      claim:result,
-      result:skin,
+      reused:!!result?.reused,
+      claim:result?.claim || null,
+      result:result?.result || skin,
       progression,
       account:progression?.account || null
     });
