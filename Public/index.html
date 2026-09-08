@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
 >
-<title>WILDSNAKE — Premium Snake Arena • v13.14.0</title>
+<title>WILDSNAKE — Premium Snake Arena • v13.17.0</title>
 
 <style>
 *{
@@ -8323,7 +8323,7 @@ body.mobile-mode .skin-grid{
 .combo-modal-overlay{
     position:fixed;
     inset:0;
-    z-index:950;
+    z-index:12050;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -8462,6 +8462,907 @@ body.mobile-mode .skin-grid{
     .combo-prices,
     .combo-modal-buy{grid-template-columns:1fr}
     .combo-skins-grid{grid-template-columns:1fr 1fr}
+}
+
+
+
+/* =========================================================
+   V13.16 - CAMINHO DE RECOMPENSAS / MUNDOS
+========================================================= */
+
+.account-chip.reward-entry,
+.shop-wallet.level.reward-entry{
+    cursor:pointer;
+    user-select:none;
+    transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+
+.account-chip.reward-entry:hover,
+.shop-wallet.level.reward-entry:hover{
+    transform:translateY(-2px);
+    border-color:rgba(53,230,155,.34);
+    box-shadow:0 0 28px rgba(53,230,155,.08);
+}
+
+.reward-world-page{
+    position:fixed;
+    inset:0;
+    z-index:12100;
+    overflow:auto;
+    padding:max(14px,env(safe-area-inset-top)) 14px max(24px,env(safe-area-inset-bottom));
+    background:
+        radial-gradient(circle at 18% 8%,rgba(53,230,155,.13),transparent 32%),
+        radial-gradient(circle at 86% 22%,rgba(90,98,255,.12),transparent 30%),
+        #020609;
+    color:#eef7f4;
+}
+
+.reward-world-page.hidden{display:none!important}
+
+.reward-world-shell{
+    width:min(1240px,100%);
+    min-height:calc(100dvh - 28px);
+    margin:0 auto;
+    padding:20px;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:26px;
+    background:linear-gradient(180deg,rgba(12,21,25,.96),rgba(5,10,13,.98));
+    box-shadow:0 35px 110px rgba(0,0,0,.58);
+}
+
+.reward-world-header{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:16px;
+    margin-bottom:15px;
+}
+
+.reward-world-back{
+    min-height:42px;
+    padding:0 14px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:12px;
+    background:#0d171b;
+    color:#d2dee2;
+    font-weight:1000;
+}
+
+.reward-world-heading{text-align:center}
+.reward-world-kicker{
+    color:#65efb2;
+    font-size:8px;
+    font-weight:1000;
+    letter-spacing:2.4px;
+}
+.reward-world-heading h2{
+    margin:5px 0 3px;
+    font-size:clamp(27px,4vw,44px);
+    line-height:1;
+    letter-spacing:-1.6px;
+}
+.reward-world-heading p{
+    color:#7b8c93;
+    font-size:10px;
+}
+
+.reward-world-balance{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+}
+.reward-world-balance span{
+    padding:7px 9px;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:10px;
+    background:rgba(255,255,255,.025);
+    color:#b8c8ce;
+    font-size:9px;
+    font-weight:900;
+}
+
+.reward-progress-card{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:14px;
+    align-items:center;
+    margin-bottom:14px;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:16px;
+    background:rgba(255,255,255,.025);
+}
+.reward-progress-main strong{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+}
+.reward-progress-main small{
+    display:block;
+    margin-top:6px;
+    color:#788a91;
+    font-size:8px;
+}
+.reward-progress-track{
+    height:9px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#071015;
+}
+.reward-progress-fill{
+    width:0%;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#35e69b,#6fd8ff);
+    box-shadow:0 0 18px rgba(53,230,155,.25);
+    transition:width .45s ease;
+}
+.reward-progress-total{
+    min-width:124px;
+    text-align:right;
+}
+.reward-progress-total strong{
+    display:block;
+    color:#7effbf;
+    font-size:18px;
+}
+.reward-progress-total small{
+    color:#74858d;
+    font-size:8px;
+}
+
+.reward-world-tabs{
+    display:flex;
+    gap:9px;
+    overflow-x:auto;
+    padding:4px 2px 10px;
+    scrollbar-width:thin;
+}
+.reward-world-tab{
+    flex:0 0 190px;
+    min-height:82px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:15px;
+    background:#091216;
+    color:#bcc9ce;
+    text-align:left;
+    transition:.2s;
+}
+.reward-world-tab:hover{transform:translateY(-2px)}
+.reward-world-tab.active{
+    border-color:rgba(53,230,155,.38);
+    box-shadow:0 0 26px rgba(53,230,155,.08);
+}
+.reward-world-tab.locked{opacity:.62}
+.reward-world-tab .world-tab-top{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    align-items:center;
+}
+.reward-world-tab b{font-size:11px}
+.reward-world-tab em{
+    font-style:normal;
+    font-size:17px;
+}
+.reward-world-tab span{
+    display:block;
+    margin-top:6px;
+    color:#708188;
+    font-size:8px;
+    line-height:1.35;
+}
+
+.reward-world-stage{
+    position:relative;
+    overflow:hidden;
+    min-height:520px;
+    padding:18px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:22px;
+    background:
+        radial-gradient(circle at 50% 10%,rgba(53,230,155,.08),transparent 34%),
+        #061014;
+}
+.reward-world-stage[data-theme="cosmic"]{
+    background:
+        radial-gradient(circle at 25% 20%,rgba(90,94,255,.19),transparent 34%),
+        radial-gradient(circle at 80% 35%,rgba(173,81,255,.13),transparent 28%),
+        linear-gradient(#08091a,#03050d);
+}
+.reward-world-stage[data-theme="magma"]{
+    background:
+        radial-gradient(circle at 18% 30%,rgba(255,99,48,.18),transparent 35%),
+        radial-gradient(circle at 78% 16%,rgba(255,190,60,.10),transparent 30%),
+        linear-gradient(#1a0905,#080504);
+}
+.reward-world-stage[data-theme="frost"]{
+    background:
+        radial-gradient(circle at 50% 0%,rgba(119,224,255,.20),transparent 40%),
+        linear-gradient(#071522,#03080d);
+}
+.reward-world-stage[data-theme="void"]{
+    background:
+        radial-gradient(circle at 50% 35%,rgba(135,76,255,.20),transparent 20%),
+        radial-gradient(circle at 50% 35%,#000 0 8%,transparent 8.5%),
+        linear-gradient(#07040e,#010102);
+}
+
+.reward-world-stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.23;
+    background-image:
+        radial-gradient(circle,rgba(255,255,255,.58) 0 1px,transparent 1.2px);
+    background-size:48px 48px;
+}
+
+.reward-stage-head{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:17px;
+}
+.reward-stage-title h3{
+    margin:3px 0 4px;
+    font-size:25px;
+}
+.reward-stage-title p{
+    color:#809198;
+    font-size:9px;
+}
+.reward-stage-lock{
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;
+    background:rgba(0,0,0,.28);
+    color:#aebac0;
+    font-size:8px;
+    font-weight:1000;
+}
+.reward-stage-lock.open{color:#72f4b9;border-color:rgba(53,230,155,.22)}
+
+.reward-path{
+    position:relative;
+    z-index:2;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:34px 18px;
+    padding:14px 4px 22px;
+}
+.reward-node{
+    position:relative;
+    min-height:150px;
+    padding:13px;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:18px;
+    background:rgba(4,10,13,.76);
+    backdrop-filter:blur(7px);
+    text-align:center;
+    transition:.2s;
+}
+.reward-node::after{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    top:50%;
+    left:100%;
+    width:22px;
+    height:2px;
+    background:rgba(255,255,255,.09);
+}
+.reward-node:nth-child(4n)::after,
+.reward-node:last-child::after{display:none}
+.reward-node.available{
+    cursor:pointer;
+    border-color:rgba(255,211,90,.38);
+    box-shadow:0 0 28px rgba(255,211,90,.08);
+    animation:rewardNodePulse 1.8s ease-in-out infinite;
+}
+.reward-node.claimed{
+    border-color:rgba(53,230,155,.28);
+    background:rgba(53,230,155,.055);
+}
+.reward-node.locked{
+    opacity:.52;
+    filter:saturate(.45);
+}
+.reward-node.final{
+    border-color:rgba(168,121,255,.32);
+    background:linear-gradient(145deg,rgba(168,121,255,.10),rgba(53,230,155,.035));
+}
+@keyframes rewardNodePulse{
+    0%,100%{transform:translateY(0);box-shadow:0 0 18px rgba(255,211,90,.05)}
+    50%{transform:translateY(-3px);box-shadow:0 0 34px rgba(255,211,90,.13)}
+}
+.reward-node-level{
+    color:#7d8f97;
+    font-size:7px;
+    font-weight:1000;
+    letter-spacing:1px;
+}
+.reward-node-icon{
+    width:54px;
+    height:54px;
+    display:grid;
+    place-items:center;
+    margin:9px auto 8px;
+    border-radius:16px;
+    background:rgba(255,255,255,.055);
+    font-size:25px;
+}
+.reward-node.available .reward-node-icon{
+    background:rgba(255,211,90,.10);
+    box-shadow:0 0 24px rgba(255,211,90,.12);
+}
+.reward-node strong{
+    display:block;
+    font-size:10px;
+    line-height:1.3;
+}
+.reward-node small{
+    display:block;
+    margin-top:5px;
+    color:#72838a;
+    font-size:8px;
+}
+.reward-node-state{
+    margin-top:10px;
+    padding:5px 7px;
+    border-radius:8px;
+    background:rgba(255,255,255,.04);
+    color:#7f9097;
+    font-size:7px;
+    font-weight:1000;
+}
+.reward-node.available .reward-node-state{color:#ffe37c}
+.reward-node.claimed .reward-node-state{color:#75f3b9}
+
+.reward-preview-note{
+    position:relative;
+    z-index:2;
+    margin-top:10px;
+    padding:10px 12px;
+    border:1px solid rgba(255,255,255,.065);
+    border-radius:12px;
+    background:rgba(0,0,0,.24);
+    color:#75868d;
+    font-size:8px;
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   V13.17 - CENÁRIOS VIVOS DOS MUNDOS
+========================================================= */
+.reward-theme-scene{
+    --scene-x:0px;
+    --scene-y:0px;
+    position:absolute;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+    transform:translate3d(var(--scene-x),var(--scene-y),0) scale(1.015);
+    transition:transform .18s ease-out;
+}
+.reward-stage-head,.reward-path,.reward-preview-note{position:relative;z-index:3}
+.reward-path{isolation:isolate}
+.reward-path::before{
+    content:"";
+    position:absolute;
+    z-index:-2;
+    inset:4px 0 10px;
+    border-radius:32px;
+    opacity:.50;
+    pointer-events:none;
+}
+
+/* abas também contam a história visual */
+.reward-world-tab[data-theme="jungle"]{background:linear-gradient(145deg,rgba(48,88,42,.50),#091216)}
+.reward-world-tab[data-theme="cosmic"]{background:linear-gradient(145deg,rgba(45,47,120,.55),#080b17)}
+.reward-world-tab[data-theme="magma"]{background:linear-gradient(145deg,rgba(111,36,19,.52),#150905)}
+.reward-world-tab[data-theme="frost"]{background:linear-gradient(145deg,rgba(35,92,122,.50),#07121a)}
+.reward-world-tab[data-theme="void"]{background:linear-gradient(145deg,rgba(62,36,105,.52),#06030b)}
+
+/* MUNDO 1 - NATUREZA / BARRO */
+.reward-world-stage[data-theme="jungle"]{
+    background:
+        linear-gradient(180deg,rgba(8,48,28,.26),rgba(15,21,10,.34)),
+        radial-gradient(circle at 50% 10%,rgba(137,255,112,.14),transparent 34%),
+        linear-gradient(#0a2a19,#07140d 55%,#161109);
+}
+.reward-world-stage[data-theme="jungle"] .reward-path::before{
+    background:
+        radial-gradient(circle at 10% 20%,rgba(255,214,137,.10),transparent 9%),
+        radial-gradient(circle at 82% 66%,rgba(255,214,137,.08),transparent 10%),
+        linear-gradient(180deg,rgba(101,66,34,.20),rgba(83,50,26,.42));
+    box-shadow:inset 0 0 0 4px rgba(88,55,30,.20),0 0 55px rgba(40,92,45,.13);
+}
+.reward-world-stage[data-theme="jungle"] .reward-node{
+    border-color:rgba(126,94,58,.34);
+    background:linear-gradient(145deg,rgba(65,48,28,.88),rgba(20,37,22,.86));
+    box-shadow:inset 0 1px 0 rgba(255,229,176,.05),0 12px 26px rgba(0,0,0,.18);
+}
+.reward-world-stage[data-theme="jungle"] .reward-node::after{height:5px;background:#76512e;box-shadow:0 2px 0 rgba(32,18,8,.28);border-radius:999px}
+.reward-world-stage[data-theme="jungle"] .reward-node-icon{background:linear-gradient(145deg,rgba(139,102,58,.34),rgba(41,74,42,.45))}
+.jungle-canopy{
+    position:absolute;left:-4%;right:-4%;top:-5%;height:36%;opacity:.72;
+    background:
+      radial-gradient(ellipse at 8% 6%,#1e6b3a 0 7%,transparent 7.6%),
+      radial-gradient(ellipse at 24% 8%,#2b7c42 0 9%,transparent 9.7%),
+      radial-gradient(ellipse at 44% 2%,#175b34 0 10%,transparent 10.7%),
+      radial-gradient(ellipse at 67% 5%,#27783d 0 8%,transparent 8.7%),
+      radial-gradient(ellipse at 88% 7%,#15552f 0 11%,transparent 11.7%);
+    filter:blur(.3px) drop-shadow(0 12px 25px rgba(0,0,0,.25));
+}
+.jungle-ground{position:absolute;left:-5%;right:-5%;bottom:-20px;height:34%;background:linear-gradient(transparent,rgba(30,50,20,.45) 28%,rgba(35,26,13,.72));border-radius:50% 50% 0 0/25% 25% 0 0}
+.jungle-firefly{position:absolute;width:4px;height:4px;border-radius:50%;background:#d9ff7d;left:var(--x);top:var(--y);box-shadow:0 0 12px 4px rgba(210,255,106,.45);animation:jungleFirefly var(--d) ease-in-out var(--delay) infinite alternate}
+@keyframes jungleFirefly{from{transform:translate(-8px,8px) scale(.7);opacity:.22}to{transform:translate(18px,-17px) scale(1.25);opacity:1}}
+.jungle-bird{position:absolute;top:16%;left:-90px;font-size:34px;filter:drop-shadow(0 8px 9px rgba(0,0,0,.35));animation:jungleBird 14s linear infinite}
+@keyframes jungleBird{0%{transform:translateX(-80px) translateY(10px) rotate(-4deg)}45%{transform:translateX(52vw) translateY(-22px) rotate(2deg)}100%{transform:translateX(calc(100vw + 180px)) translateY(18px) rotate(-2deg)}}
+.jungle-capybara{position:absolute;right:-150px;bottom:32px;width:116px;height:48px;border-radius:55% 45% 45% 42%;background:#765038;box-shadow:inset 0 -9px 0 rgba(48,29,19,.24),0 12px 24px rgba(0,0,0,.25);animation:jungleCapy 18s linear infinite}
+.jungle-capybara::before{content:"";position:absolute;right:-23px;top:8px;width:42px;height:34px;border-radius:54% 58% 48% 52%;background:#8c6244}
+.jungle-capybara::after{content:"";position:absolute;right:-13px;top:2px;width:9px;height:9px;border-radius:50%;background:#3a241a;box-shadow:-22px 1px 0 #3a241a}
+@keyframes jungleCapy{0%{transform:translateX(0)}100%{transform:translateX(calc(-100vw - 260px))}}
+
+/* MUNDO 2 - ESPAÇO */
+.reward-world-stage[data-theme="cosmic"] .reward-path::before{background:linear-gradient(180deg,rgba(38,44,99,.15),rgba(45,20,92,.33));box-shadow:inset 0 0 0 2px rgba(112,116,255,.13),0 0 60px rgba(88,70,255,.12)}
+.reward-world-stage[data-theme="cosmic"] .reward-node{border-color:rgba(117,123,255,.25);background:linear-gradient(145deg,rgba(24,27,62,.84),rgba(15,12,40,.82));box-shadow:0 0 26px rgba(86,73,255,.06)}
+.reward-world-stage[data-theme="cosmic"] .reward-node::after{background:linear-gradient(90deg,#556fff,#bf62ff);height:3px;box-shadow:0 0 12px rgba(114,100,255,.5)}
+.cosmic-nebula{position:absolute;inset:-20%;background:radial-gradient(circle at 30% 38%,rgba(73,104,255,.22),transparent 20%),radial-gradient(circle at 68% 30%,rgba(198,72,255,.16),transparent 18%),radial-gradient(circle at 52% 72%,rgba(45,219,255,.09),transparent 24%);filter:blur(22px);animation:cosmicNebula 14s ease-in-out infinite alternate}
+@keyframes cosmicNebula{to{transform:translate3d(3%,-2%,0) scale(1.06);filter:blur(28px)}}
+.cosmic-star{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(173,222,255,.8);animation:cosmicTwinkle var(--d) ease-in-out var(--delay) infinite alternate}
+@keyframes cosmicTwinkle{from{opacity:.12;transform:scale(.5)}to{opacity:1;transform:scale(1.5)}}
+.alien-ship{position:absolute;left:-180px;top:22%;width:112px;height:38px;border-radius:50%;background:linear-gradient(#d3f9ff,#5ed8de 48%,#274a68 52%,#151c34);box-shadow:0 0 25px rgba(71,255,223,.35);animation:alienShip 11s linear infinite}
+.alien-ship::before{content:"";position:absolute;left:31px;top:-20px;width:50px;height:28px;border-radius:50% 50% 35% 35%;background:rgba(133,255,227,.50);border:1px solid rgba(191,255,245,.75);box-shadow:inset 0 0 18px rgba(82,255,210,.32)}
+.alien-ship::after{content:"";position:absolute;left:15px;right:15px;bottom:-7px;height:8px;border-radius:50%;background:#89ffbb;box-shadow:0 0 18px 5px rgba(99,255,167,.48)}
+@keyframes alienShip{0%{transform:translate(-120px,30px) rotate(-5deg) scale(.72)}45%{transform:translate(55vw,-18px) rotate(2deg) scale(1)}100%{transform:translate(calc(100vw + 260px),36px) rotate(5deg) scale(.72)}}
+.alien-ship.second{top:66%;animation-duration:16s;animation-delay:-7s;transform:scale(.62);filter:hue-rotate(70deg)}
+
+/* MUNDO 3 - VULCÃO / LAVA */
+.reward-world-stage[data-theme="magma"] .reward-path::before{background:linear-gradient(180deg,rgba(122,24,12,.18),rgba(71,8,3,.44));box-shadow:inset 0 0 0 2px rgba(255,93,31,.16),0 0 70px rgba(255,62,20,.09)}
+.reward-world-stage[data-theme="magma"] .reward-node{border-color:rgba(255,96,43,.27);background:linear-gradient(145deg,rgba(76,19,11,.88),rgba(26,8,6,.88));box-shadow:0 10px 28px rgba(0,0,0,.24),inset 0 0 22px rgba(255,70,20,.04)}
+.reward-world-stage[data-theme="magma"] .reward-node::after{height:5px;background:linear-gradient(90deg,#ff3b16,#ffb239);box-shadow:0 0 15px rgba(255,72,16,.55);border-radius:999px}
+.volcano-mountain{position:absolute;left:50%;bottom:-52px;width:480px;height:250px;transform:translateX(-50%);clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(135deg,#2a1714,#0d0807 65%);filter:drop-shadow(0 -10px 28px rgba(255,57,18,.11))}
+.volcano-crater{position:absolute;left:50%;bottom:178px;width:105px;height:24px;transform:translateX(-50%);border-radius:50%;background:#1c0805;box-shadow:0 0 18px 6px rgba(255,55,15,.28),inset 0 0 14px #ff4b15}
+.volcano-lava{position:absolute;left:50%;bottom:-20px;width:26px;height:205px;transform:translateX(-50%) rotate(2deg);border-radius:45%;background:linear-gradient(#fff1a3,#ff9b28 20%,#ff3b16 64%,#6c1008);box-shadow:0 0 20px 6px rgba(255,72,20,.26);animation:lavaFlow 1.6s ease-in-out infinite alternate}
+@keyframes lavaFlow{to{width:35px;filter:brightness(1.25)}}
+.volcano-burst{position:absolute;left:50%;bottom:185px;width:8px;height:8px;border-radius:50%;background:#ffb02f;box-shadow:0 0 16px #ff4d16;animation:volcanoBurst var(--d) cubic-bezier(.2,.7,.2,1) var(--delay) infinite}
+@keyframes volcanoBurst{0%{transform:translate(0,0) scale(.7);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx),-180px) scale(.18);opacity:0}}
+.magma-ember{position:absolute;left:var(--x);top:var(--y);width:4px;height:4px;border-radius:50%;background:#ff9a31;box-shadow:0 0 10px #ff491a;animation:magmaEmber var(--d) linear var(--delay) infinite}
+@keyframes magmaEmber{from{transform:translateY(30px);opacity:0}20%{opacity:1}to{transform:translateY(-100px) translateX(15px);opacity:0}}
+
+/* MUNDO 4 - GELO */
+.reward-world-stage[data-theme="frost"] .reward-path::before{background:linear-gradient(180deg,rgba(126,222,255,.13),rgba(34,98,137,.25));box-shadow:inset 0 0 0 2px rgba(176,239,255,.16),0 0 70px rgba(75,197,255,.10)}
+.reward-world-stage[data-theme="frost"] .reward-node{border-color:rgba(142,225,255,.25);background:linear-gradient(145deg,rgba(21,61,84,.76),rgba(6,25,39,.88));box-shadow:inset 0 1px 0 rgba(210,249,255,.08)}
+.reward-world-stage[data-theme="frost"] .reward-node::after{height:3px;background:linear-gradient(90deg,#73ddff,#e9fdff);box-shadow:0 0 13px rgba(144,232,255,.48)}
+.frost-aurora{position:absolute;left:-12%;right:-12%;top:-10%;height:54%;background:linear-gradient(110deg,transparent 15%,rgba(75,255,210,.17) 34%,rgba(89,160,255,.22) 51%,rgba(181,102,255,.14) 65%,transparent 82%);filter:blur(18px);transform:skewY(-7deg);animation:frostAurora 8s ease-in-out infinite alternate}
+@keyframes frostAurora{to{transform:translateX(7%) skewY(4deg) scaleY(1.15);opacity:.7}}
+.frost-mountain{position:absolute;left:var(--x);bottom:-20px;width:var(--w);height:170px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(135deg,#aeeeff 0 18%,#397ba2 19% 45%,#0b2c42 46%);opacity:.35}
+.frost-snow{position:absolute;left:var(--x);top:-20px;width:var(--s);height:var(--s);border-radius:50%;background:#eaffff;box-shadow:0 0 8px rgba(205,248,255,.55);animation:frostSnow var(--d) linear var(--delay) infinite}
+@keyframes frostSnow{to{transform:translate(var(--drift),650px) rotate(220deg);opacity:.15}}
+
+/* MUNDO 5 - VAZIO / BURACO NEGRO */
+.reward-world-stage[data-theme="void"] .reward-path::before{background:linear-gradient(180deg,rgba(91,41,145,.15),rgba(8,3,18,.48));box-shadow:inset 0 0 0 2px rgba(159,92,255,.12),0 0 80px rgba(129,58,255,.09)}
+.reward-world-stage[data-theme="void"] .reward-node{border-color:rgba(169,101,255,.24);background:linear-gradient(145deg,rgba(40,18,64,.78),rgba(9,4,18,.90));box-shadow:0 0 30px rgba(122,66,255,.05)}
+.reward-world-stage[data-theme="void"] .reward-node::after{height:3px;background:linear-gradient(90deg,#7b4dff,#ef78ff);box-shadow:0 0 14px rgba(163,82,255,.52)}
+.void-black-hole{position:absolute;left:50%;top:48%;width:170px;height:170px;transform:translate(-50%,-50%);border-radius:50%;background:#000;box-shadow:0 0 0 10px rgba(75,35,105,.22),0 0 45px 16px rgba(160,62,255,.22),0 0 120px 28px rgba(89,48,255,.10)}
+.void-black-hole::before{content:"";position:absolute;inset:-35px;border:10px solid transparent;border-top-color:#f0a3ff;border-right-color:#7c66ff;border-radius:50%;filter:blur(2px) drop-shadow(0 0 12px #d56cff);animation:voidRing 4s linear infinite}
+.void-black-hole::after{content:"";position:absolute;inset:-62px;border:7px solid transparent;border-bottom-color:rgba(119,96,255,.65);border-left-color:rgba(255,106,236,.45);border-radius:50%;animation:voidRing 7s linear reverse infinite}
+@keyframes voidRing{to{transform:rotate(360deg)}}
+.void-star{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(177,157,255,.8);animation:voidStar var(--d) ease-in-out var(--delay) infinite alternate}
+@keyframes voidStar{to{transform:translate(calc((50vw - var(--x))*0.06),calc((50vh - var(--y))*0.06)) scale(.35);opacity:.16}}
+.void-comet{position:absolute;left:-140px;top:22%;width:100px;height:2px;background:linear-gradient(90deg,transparent,#c7bdff);box-shadow:0 0 10px #8b70ff;transform:rotate(-18deg);animation:voidComet 10s linear infinite}
+@keyframes voidComet{to{transform:translate(calc(100vw + 300px),330px) rotate(-18deg)}}
+
+@media(max-width:600px){
+    .jungle-capybara{transform:scale(.76)}
+    .volcano-mountain{width:340px;height:190px}
+    .volcano-crater{bottom:125px}
+    .volcano-lava{height:155px}
+    .alien-ship{width:88px;height:31px}
+    .void-black-hole{width:125px;height:125px}
+}
+@media(prefers-reduced-motion:reduce){
+    .reward-theme-scene *{animation-duration:0.001ms!important;animation-iteration-count:1!important}
+}
+
+/* ROLETAS */
+.skin-roll-overlay,
+.reward-gift-overlay,
+.gift-skin-overlay{
+    position:fixed;
+    inset:0;
+    z-index:13000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    background:rgba(0,2,5,.91);
+    backdrop-filter:blur(18px);
+}
+.reward-gift-overlay{z-index:14000}
+.gift-skin-overlay{z-index:14500}
+.skin-roll-overlay.hidden,
+.reward-gift-overlay.hidden,
+.gift-skin-overlay.hidden{display:none!important}
+
+.skin-roll-card,
+.gift-skin-card{
+    width:min(1040px,96vw);
+    max-height:94dvh;
+    overflow:auto;
+    padding:22px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:24px;
+    background:linear-gradient(145deg,#0d171c,#050a0d);
+    box-shadow:0 40px 120px rgba(0,0,0,.65);
+}
+.skin-roll-head,
+.gift-skin-head{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+}
+.skin-roll-head h3,
+.gift-skin-head h3{
+    margin:4px 0;
+    font-size:28px;
+}
+.skin-roll-head p,
+.gift-skin-head p{
+    color:#7a8c93;
+    font-size:9px;
+}
+.reward-close-x{
+    width:42px;
+    height:42px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:12px;
+    background:#10191e;
+    color:#dbe5e8;
+    font-size:18px;
+}
+
+.skin-roll-odds{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin:13px 0;
+}
+.skin-roll-odds span{
+    padding:6px 8px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:999px;
+    background:rgba(255,255,255,.025);
+    color:#91a2aa;
+    font-size:7px;
+    font-weight:900;
+}
+
+.skin-reel-window{
+    position:relative;
+    overflow:hidden;
+    height:190px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    background:
+        linear-gradient(90deg,rgba(0,0,0,.74),transparent 17%,transparent 83%,rgba(0,0,0,.74)),
+        #03080b;
+}
+.skin-reel-pointer{
+    position:absolute;
+    z-index:5;
+    top:0;
+    bottom:0;
+    left:50%;
+    width:3px;
+    transform:translateX(-50%);
+    background:linear-gradient(transparent,#ffe06c 18%,#ffe06c 82%,transparent);
+    box-shadow:0 0 16px rgba(255,224,108,.55);
+}
+.skin-reel-track{
+    position:absolute;
+    left:50%;
+    top:10px;
+    display:flex;
+    gap:10px;
+    transform:translateX(0);
+    will-change:transform;
+}
+.skin-reel-item{
+    flex:0 0 150px;
+    height:168px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    background:#0a1317;
+}
+.skin-reel-item canvas{
+    display:block;
+    width:100%;
+    height:118px;
+}
+.skin-reel-item div{
+    padding:6px 8px;
+    text-align:center;
+}
+.skin-reel-item strong{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:9px;
+}
+.skin-reel-item small{
+    color:#7c8e95;
+    font-size:7px;
+}
+.skin-roll-actions{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:9px;
+    margin-top:14px;
+}
+.skin-roll-button{
+    min-height:50px;
+    border:0;
+    border-radius:13px;
+    background:linear-gradient(135deg,#ffe36d,#ff9b3d);
+    color:#201200;
+    font-weight:1000;
+}
+.skin-roll-button:disabled{opacity:.48}
+.skin-roll-status{
+    min-width:230px;
+    display:grid;
+    place-items:center;
+    padding:0 12px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:13px;
+    color:#819198;
+    font-size:9px;
+}
+
+/* PRESENTE 3 CLIQUES */
+.reward-gift-card{
+    width:min(760px,96vw);
+    text-align:center;
+}
+.gift-kicker{
+    color:#ffd86b;
+    font-size:8px;
+    font-weight:1000;
+    letter-spacing:2px;
+}
+.reward-gift-card h3{
+    margin:8px 0 4px;
+    font-size:clamp(29px,5vw,48px);
+}
+.reward-gift-card p{
+    color:#87979e;
+    font-size:10px;
+}
+.gift-box-stage{
+    position:relative;
+    width:240px;
+    height:220px;
+    margin:30px auto 18px;
+    cursor:pointer;
+    perspective:900px;
+}
+.gift-box{
+    position:absolute;
+    left:30px;
+    bottom:10px;
+    width:180px;
+    height:135px;
+    border-radius:12px 12px 18px 18px;
+    background:linear-gradient(135deg,#6d4cff,#35e69b);
+    box-shadow:0 25px 65px rgba(0,0,0,.45),0 0 35px rgba(104,84,255,.18);
+    transition:.5s cubic-bezier(.2,.8,.2,1);
+}
+.gift-lid{
+    position:absolute;
+    z-index:3;
+    left:18px;
+    bottom:130px;
+    width:204px;
+    height:48px;
+    border-radius:13px;
+    background:linear-gradient(135deg,#8c70ff,#4ceeb1);
+    box-shadow:0 12px 24px rgba(0,0,0,.26);
+    transition:.6s cubic-bezier(.2,.8,.2,1);
+}
+.gift-ribbon-v,
+.gift-ribbon-h{
+    position:absolute;
+    z-index:4;
+    background:#ffd968;
+    transition:.45s ease;
+}
+.gift-ribbon-v{
+    left:108px;
+    bottom:10px;
+    width:24px;
+    height:168px;
+}
+.gift-ribbon-h{
+    left:18px;
+    bottom:142px;
+    width:204px;
+    height:20px;
+}
+.gift-bow{
+    position:absolute;
+    z-index:5;
+    left:88px;
+    bottom:170px;
+    width:64px;
+    height:42px;
+    transition:.45s ease;
+}
+.gift-bow::before,
+.gift-bow::after{
+    content:"";
+    position:absolute;
+    top:5px;
+    width:34px;
+    height:26px;
+    border:9px solid #ffd968;
+    border-radius:60% 45% 60% 45%;
+}
+.gift-bow::before{left:-11px;transform:rotate(-24deg)}
+.gift-bow::after{right:-11px;transform:rotate(24deg) scaleX(-1)}
+.gift-paper{
+    position:absolute;
+    z-index:6;
+    inset:22px 24px 4px;
+    border:2px dashed rgba(255,255,255,.34);
+    border-radius:14px;
+    opacity:.6;
+    transition:.55s ease;
+}
+.gift-box-stage.stage-1 .gift-bow{transform:translateY(-28px) rotate(18deg);opacity:0}
+.gift-box-stage.stage-1 .gift-ribbon-v{transform:scaleY(.1);opacity:0}
+.gift-box-stage.stage-1 .gift-ribbon-h{transform:scaleX(.1);opacity:0}
+.gift-box-stage.stage-2 .gift-paper{
+    transform:scale(1.22) rotate(8deg);
+    opacity:0;
+}
+.gift-box-stage.stage-2 .gift-box{filter:brightness(1.15)}
+.gift-box-stage.stage-3 .gift-lid{
+    transform:translateY(-110px) rotateX(35deg) rotateZ(8deg);
+    opacity:0;
+}
+.gift-box-stage.stage-3 .gift-box{
+    transform:scale(1.08);
+    box-shadow:0 0 100px rgba(255,225,111,.35);
+}
+.gift-click-message{
+    min-height:22px;
+    color:#ffe37b;
+    font-size:10px;
+    font-weight:1000;
+    letter-spacing:.8px;
+}
+.gift-result{
+    margin-top:16px;
+    padding:15px;
+    border:1px solid rgba(53,230,155,.16);
+    border-radius:16px;
+    background:rgba(53,230,155,.05);
+}
+.gift-result.hidden{display:none!important}
+.gift-result strong{
+    display:block;
+    font-size:17px;
+}
+.gift-result p{
+    margin-top:7px;
+    color:#afc0c5;
+}
+.gift-result button{
+    min-height:45px;
+    margin-top:12px;
+    padding:0 16px;
+    border:0;
+    border-radius:12px;
+    background:#35e69b;
+    color:#03120d;
+    font-weight:1000;
+}
+
+/* ESCOLHA DE SKIN DO PRESENTE */
+.gift-skin-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+    margin-top:16px;
+}
+.gift-skin-option{
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:15px;
+    background:#091216;
+}
+.gift-skin-option canvas{
+    width:100%;
+    height:105px;
+    display:block;
+}
+.gift-skin-option div{padding:9px}
+.gift-skin-option strong{
+    display:block;
+    font-size:9px;
+}
+.gift-skin-option span{
+    display:block;
+    margin-top:3px;
+    color:#7d8d94;
+    font-size:7px;
+}
+.gift-skin-option button{
+    width:100%;
+    min-height:36px;
+    margin-top:7px;
+    border:1px solid rgba(53,230,155,.22);
+    border-radius:9px;
+    background:rgba(53,230,155,.08);
+    color:#77f5ba;
+    font-size:8px;
+    font-weight:1000;
+}
+
+@media(max-width:850px){
+    .reward-world-header{
+        grid-template-columns:1fr auto;
+    }
+    .reward-world-heading{
+        grid-column:1/-1;
+        grid-row:1;
+        text-align:left;
+    }
+    .reward-world-back{grid-row:2}
+    .reward-world-balance{grid-row:2}
+    .reward-path{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .reward-node:nth-child(4n)::after{display:block}
+    .reward-node:nth-child(3n)::after{display:none}
+    .gift-skin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:600px){
+    .reward-world-page{padding:0}
+    .reward-world-shell{
+        min-height:100dvh;
+        padding:max(12px,env(safe-area-inset-top)) 10px max(18px,env(safe-area-inset-bottom));
+        border:0;
+        border-radius:0;
+    }
+    .reward-world-balance span{font-size:7px;padding:6px 7px}
+    .reward-progress-card{grid-template-columns:1fr}
+    .reward-progress-total{text-align:left}
+    .reward-world-tab{flex-basis:155px;min-height:72px}
+    .reward-world-stage{padding:12px;min-height:480px;border-radius:18px}
+    .reward-stage-head{display:block}
+    .reward-stage-lock{width:max-content;margin-top:9px}
+    .reward-path{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 10px}
+    .reward-node{min-height:140px;padding:10px}
+    .reward-node:nth-child(3n)::after{display:block}
+    .reward-node:nth-child(2n)::after{display:none}
+    .skin-roll-card,.gift-skin-card{width:100%;padding:14px;border-radius:18px}
+    .skin-roll-actions{grid-template-columns:1fr}
+    .skin-roll-status{min-width:0;min-height:38px}
+    .gift-skin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .gift-box-stage{transform:scale(.92);margin-top:18px;margin-bottom:4px}
 }
 
 </style>
@@ -9458,8 +10359,8 @@ body.mobile-mode .skin-grid{
                 </strong> 
  
                 <span> 
-                    Use com sabedoria. Todas as skins são 
-                    exclusivamente cosméticas e não oferecem 
+                    1 WildGem equivale a 100 WildCoins. Use com sabedoria. 
+                    Todas as skins são exclusivamente cosméticas e não oferecem 
                     vantagem de velocidade, colisão ou gameplay. 
                 </span> 
  
@@ -9568,7 +10469,7 @@ body.mobile-mode .skin-grid{
                 🪙 COMPRAR • 50.000 WILDCOINS
             </button>
             <button class="combo-buy-button gem" id="buyComboGems" type="button">
-                💎 COMPRAR • 2.000 WILDGEMS
+                💎 COMPRAR • 500 WILDGEMS
             </button>
         </div>
 
@@ -10349,6 +11250,135 @@ body.mobile-mode .skin-grid{
 
 </section>
 
+
+<!-- ======================================================
+     V13.16 - CAMINHO DE RECOMPENSAS / MUNDOS
+====================================================== -->
+<section id="rewardWorldPage" class="reward-world-page hidden" aria-label="Caminho de recompensas">
+    <div class="reward-world-shell">
+        <div class="reward-world-header">
+            <button id="closeRewardWorlds" class="reward-world-back" type="button">← VOLTAR</button>
+
+            <div class="reward-world-heading">
+                <div class="reward-world-kicker">WILDSNAKE • CAMINHO DE CONQUISTAS</div>
+                <h2>MUNDOS DE <span style="color:#35e69b">RECOMPENSAS</span></h2>
+                <p>Ganhe um prêmio a cada nível. Mundos futuros podem ser vistos antes de desbloquear.</p>
+            </div>
+
+            <div class="reward-world-balance">
+                <span>🪙 <b id="rewardHeaderCoins">0</b></span>
+                <span>💎 <b id="rewardHeaderGems">0</b></span>
+                <span>⭐ <b id="rewardHeaderXp">0 XP</b></span>
+            </div>
+        </div>
+
+        <div class="reward-progress-card">
+            <div class="reward-progress-main">
+                <strong id="rewardProgressTitle">Carregando progresso...</strong>
+                <div class="reward-progress-track">
+                    <div class="reward-progress-fill" id="rewardProgressFill"></div>
+                </div>
+                <small id="rewardProgressCaption">Seu XP acumulado desbloqueia novos mundos.</small>
+            </div>
+            <div class="reward-progress-total">
+                <strong id="rewardProgressTotal">0 XP</strong>
+                <small>XP TOTAL ACUMULADO</small>
+            </div>
+        </div>
+
+        <div class="reward-world-tabs" id="rewardWorldTabs"></div>
+
+        <div class="reward-world-stage" id="rewardWorldStage" data-theme="jungle">
+            <div class="reward-theme-scene" id="rewardThemeScene" aria-hidden="true"></div>
+            <div class="reward-stage-head">
+                <div class="reward-stage-title">
+                    <div class="reward-world-kicker" id="rewardWorldKicker">MUNDO 1</div>
+                    <h3 id="rewardWorldTitle">Selva do Despertar</h3>
+                    <p id="rewardWorldSubtitle">Recompensas rápidas para começar forte.</p>
+                </div>
+                <div class="reward-stage-lock" id="rewardWorldLock">CARREGANDO...</div>
+            </div>
+
+            <div class="reward-path" id="rewardPath"></div>
+
+            <div class="reward-preview-note">
+                🔎 Você pode visitar qualquer mundo para ver as recompensas futuras. O resgate só libera quando o XP necessário for alcançado.
+                Skins limitadas e exclusivas de combos nunca entram nas roletas.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ROLETA DE SKIN -->
+<div id="skinRollOverlay" class="skin-roll-overlay hidden">
+    <div class="skin-roll-card">
+        <div class="skin-roll-head">
+            <div>
+                <div class="reward-world-kicker">🎰 RECOMPENSA DE SKIN</div>
+                <h3>ROLETA WILDSNAKE</h3>
+                <p>O servidor decide o resultado. A animação apenas revela a skin sorteada.</p>
+            </div>
+            <button id="closeSkinRoll" class="reward-close-x" type="button">✕</button>
+        </div>
+
+        <div class="skin-roll-odds" id="skinRollOdds"></div>
+
+        <div class="skin-reel-window">
+            <div class="skin-reel-pointer"></div>
+            <div class="skin-reel-track" id="skinReelTrack"></div>
+        </div>
+
+        <div class="skin-roll-actions">
+            <button id="spinRewardSkin" class="skin-roll-button" type="button">RODAR</button>
+            <div class="skin-roll-status" id="skinRollStatus">Clique em RODAR.</div>
+        </div>
+    </div>
+</div>
+
+<!-- PRESENTE EM 3 CLIQUES -->
+<div id="rewardGiftOverlay" class="reward-gift-overlay hidden">
+    <div class="reward-gift-card">
+        <div class="gift-kicker">🎁 RECOMPENSA ESPECIAL</div>
+        <h3>UM PRESENTE PARA VOCÊ</h3>
+        <p id="giftRewardDescription">Abra em três etapas.</p>
+
+        <div id="giftBoxStage" class="gift-box-stage" role="button" tabindex="0" aria-label="Abrir presente">
+            <div class="gift-box"></div>
+            <div class="gift-lid"></div>
+            <div class="gift-ribbon-v"></div>
+            <div class="gift-ribbon-h"></div>
+            <div class="gift-bow"></div>
+            <div class="gift-paper"></div>
+        </div>
+
+        <div id="giftClickMessage" class="gift-click-message">CLIQUE PARA ABRIR • 1/3</div>
+
+        <div id="giftRewardResult" class="gift-result hidden">
+            <strong id="giftRewardTitle">RECOMPENSA ABERTA!</strong>
+            <p id="giftRewardText"></p>
+            <button id="giftChooseSkinButton" type="button">ESCOLHER MINHA SKIN</button>
+        </div>
+
+        <button id="closeGiftReward" class="reward-world-back" style="margin-top:14px" type="button">FECHAR</button>
+    </div>
+</div>
+
+<!-- ESCOLHA DE SKIN RARA / ÉPICA -->
+<div id="giftSkinOverlay" class="gift-skin-overlay hidden">
+    <div class="gift-skin-card">
+        <div class="gift-skin-head">
+            <div>
+                <div class="reward-world-kicker">🎁 ESCOLHA GARANTIDA</div>
+                <h3>ESCOLHA UMA SKIN</h3>
+                <p>Somente skins RARAS ou ÉPICAS elegíveis. Limitadas e combos ficam de fora.</p>
+            </div>
+            <button id="closeGiftSkin" class="reward-close-x" type="button">✕</button>
+        </div>
+
+        <div id="giftSkinGrid" class="gift-skin-grid"></div>
+    </div>
+</div>
+
 <div id="toast"></div>
 
 
@@ -10496,8 +11526,30 @@ function wildSyncOrientationOverlay(){
 
 async function wildPrepareMobileOrientation(){
 
+    /*
+       V13.16:
+       Fullscreen é solicitado para PC e mobile durante o clique do usuário.
+       O lock de orientação continua exclusivo do mobile.
+    */
+    try{
+        if(
+            !document.fullscreenElement
+            &&
+            document.documentElement.requestFullscreen
+        ){
+            await document.documentElement.requestFullscreen();
+        }
+    }
+    catch(error){
+        console.debug(
+            "WildSnake fullscreen:",
+            error
+        );
+    }
+
     if(platform !== "mobile"){
         wildMobileOrientationRequested = false;
+        wildAndroidOrientationLockFailed = false;
         wildHideOrientationOverlay();
         return;
     }
@@ -10509,61 +11561,26 @@ async function wildPrepareMobileOrientation(){
         wildDetectMobileOS();
 
     if(os === "ios"){
-        /* O aviso é mostrado depois das verificações pré-jogo. */
+        /*
+           iOS/Safari pode recusar fullscreen/orientation.lock.
+           Mantemos o jogo em 100dvh e mostramos o aviso de rotação
+           somente quando a tela ainda estiver em retrato.
+        */
         wildHideOrientationOverlay();
         return;
     }
 
-    if(os === "android"){
-
-        try{
-            if(
-                !document.fullscreenElement
-                &&
-                document.documentElement.requestFullscreen
-            ){
-                await document.documentElement.requestFullscreen();
-            }
-        }
-        catch(error){
-            console.debug(
-                "WildSnake fullscreen Android:",
-                error
-            );
-        }
-
-        try{
-            if(screen.orientation?.lock){
-                await screen.orientation.lock("landscape");
-            }
-        }
-        catch(error){
-            wildAndroidOrientationLockFailed = true;
-            console.debug(
-                "WildSnake landscape Android:",
-                error
-            );
-        }
-
-        return;
-    }
-
-    /* Outros aparelhos/navegadores mobile: tenta o mesmo recurso. */
     try{
-        if(
-            !document.fullscreenElement
-            &&
-            document.documentElement.requestFullscreen
-        ){
-            await document.documentElement.requestFullscreen();
-        }
-
         if(screen.orientation?.lock){
             await screen.orientation.lock("landscape");
         }
     }
     catch(error){
         wildAndroidOrientationLockFailed = true;
+        console.debug(
+            "WildSnake landscape:",
+            error
+        );
     }
 
 }
@@ -10671,7 +11688,7 @@ const SKINS = {
         name:"Peixe Tropical",
         description:"Criatura aquática tropical.",
         currency:"coin",
-        price:5000,
+        price:7000,
         rarity:"rare",
         color:"#1bb9ff"
     },
@@ -10679,9 +11696,9 @@ const SKINS = {
     shark:{
         id:"shark",
         name:"Tubarão Azul",
-        description:"Predador marinho com barbatana.",
+        description:"Predador marinho com barbatana e silhueta própria.",
         currency:"coin",
-        price:7000,
+        price:15000,
         rarity:"epic",
         color:"#4b819c"
     },
@@ -10689,9 +11706,9 @@ const SKINS = {
     venom:{
         id:"venom",
         name:"Cobra Venenosa",
-        description:"Visual verde tóxico e preto.",
+        description:"Visual verde tóxico, preto e agressivo.",
         currency:"coin",
-        price:7000,
+        price:16000,
         rarity:"epic",
         color:"#8bd014"
     },
@@ -10699,27 +11716,27 @@ const SKINS = {
     dragon:{
         id:"dragon",
         name:"Dragão Verde",
-        description:"Dragão com chifres e espinhos.",
+        description:"Dragão com chifres, espinhos e modelo bem diferente.",
         currency:"coin",
-        price:10000,
-        rarity:"legendary",
+        price:18000,
+        rarity:"epic",
         color:"#21c951"
     },
 
     lion:{
         id:"lion",
         name:"Rei Leão",
-        description:"Juba dourada e rosto de leão.",
-        currency:"gem",
-        price:300,
-        rarity:"legendary",
+        description:"Juba dourada e rosto de leão com modelo próprio.",
+        currency:"coin",
+        price:16000,
+        rarity:"epic",
         color:"#e99a1b"
     },
 
     robot:{
         id:"robot",
         name:"Cyber Snake",
-        description:"Robô azul com energia neon.",
+        description:"Robô azul com energia neon e brilho tecnológico.",
         currency:"gem",
         price:300,
         rarity:"legendary",
@@ -10729,7 +11746,7 @@ const SKINS = {
     robotPink:{
         id:"robotPink",
         name:"Cyber Pink",
-        description:"Robô rosa e vermelho com energia neon.",
+        description:"Robô rosa e vermelho com energia neon e brilho próprio.",
         currency:"gem",
         price:300,
         rarity:"legendary",
@@ -10739,29 +11756,29 @@ const SKINS = {
     retro:{
         id:"retro",
         name:"Retro Wave",
-        description:"Rosa, roxo e azul no estilo anos 80.",
+        description:"Rosa, roxo e azul no estilo anos 80; foco em cores e padrão.",
         currency:"coin",
-        price:7000,
-        rarity:"epic",
+        price:8000,
+        rarity:"rare",
         color:"#ff54d9"
     },
 
     rainbow:{
         id:"rainbow",
         name:"Rainbow 90s",
-        description:"Uma explosão de cores retrô.",
-        currency:"gem",
-        price:300,
-        rarity:"legendary",
+        description:"Uma explosão de cores retrô sem efeitos premium pesados.",
+        currency:"coin",
+        price:10000,
+        rarity:"rare",
         color:"#ff5b69"
     },
 
     arcade:{
         id:"arcade",
         name:"Arcade Neon",
-        description:"Visual inspirado nos fliperamas.",
+        description:"Visual inspirado nos fliperamas com detalhes neon.",
         currency:"coin",
-        price:7000,
+        price:15000,
         rarity:"epic",
         color:"#00f5ff"
     },
@@ -10769,10 +11786,10 @@ const SKINS = {
     disco:{
         id:"disco",
         name:"Disco Snake",
-        description:"Cores brilhantes de pista de dança.",
-        currency:"gem",
-        price:300,
-        rarity:"legendary",
+        description:"Cores brilhantes de pista de dança e acabamento elaborado.",
+        currency:"coin",
+        price:18000,
+        rarity:"epic",
         color:"#ff42e6"
     }
 
@@ -10791,7 +11808,7 @@ Object.assign(
             name:"Tigre Imperial",
             description:"Listras negras, orelhas e focinho felino.",
             currency:"coin",
-            price:7000,
+            price:15000,
             rarity:"epic",
             color:"#f18a24",
             animal:true
@@ -10800,10 +11817,10 @@ Object.assign(
         wolf:{
             id:"wolf",
             name:"Lobo Lunar",
-            description:"Lobo cinza-prateado com olhar azul.",
-            currency:"gem",
-            price:300,
-            rarity:"legendary",
+            description:"Lobo cinza-prateado com olhar azul e silhueta própria.",
+            currency:"coin",
+            price:18000,
+            rarity:"epic",
             color:"#718899",
             animal:true
         },
@@ -10813,8 +11830,8 @@ Object.assign(
             name:"Panda Real",
             description:"Visual branco e preto com orelhas arredondadas.",
             currency:"coin",
-            price:7000,
-            rarity:"epic",
+            price:8000,
+            rarity:"rare",
             color:"#f0f0ea",
             animal:true
         },
@@ -10822,10 +11839,10 @@ Object.assign(
         axolotl:{
             id:"axolotl",
             name:"Axolote Rosa",
-            description:"Brânquias externas e tons suaves de rosa.",
-            currency:"gem",
-            price:300,
-            rarity:"legendary",
+            description:"Brânquias externas e formato de cabeça bem diferente.",
+            currency:"coin",
+            price:15000,
+            rarity:"epic",
             color:"#ff8fbd",
             animal:true
         },
@@ -10833,10 +11850,10 @@ Object.assign(
         peacock:{
             id:"peacock",
             name:"Pavão Esmeralda",
-            description:"Azul profundo, esmeralda e detalhes de penas.",
+            description:"Azul profundo, esmeralda, cauda detalhada e brilho premium.",
             currency:"gem",
-            price:690,
-            rarity:"mythic",
+            price:330,
+            rarity:"legendary",
             color:"#0fc1a8",
             animal:true
         },
@@ -10844,9 +11861,9 @@ Object.assign(
         unicorn:{
             id:"unicorn",
             name:"Unicórnio Aurora",
-            description:"Crina pastel, orelhas delicadas e chifre luminoso.",
+            description:"Crina pastel animada, aura e chifre luminoso.",
             currency:"gem",
-            price:780,
+            price:650,
             rarity:"mythic",
             color:"#f1e8ff",
             animal:true
@@ -10918,10 +11935,10 @@ Object.assign(
         iceDragon:{
             id:"iceDragon",
             name:"Dragão de Gelo",
-            description:"Dragão congelado com chifres de cristal.",
+            description:"Dragão congelado com cristais, glow ciano e partículas de gelo.",
             currency:"gem",
-            price:750,
-            rarity:"mythic",
+            price:300,
+            rarity:"legendary",
             color:"#66d9ff",
             animal:true,
             soldSeparately:true
@@ -10930,9 +11947,9 @@ Object.assign(
         horse:{
             id:"horse",
             name:"Cavalo Selvagem",
-            description:"Cavalo veloz com crina escura.",
+            description:"Cavalo veloz com crina escura e cabeça própria.",
             currency:"coin",
-            price:7000,
+            price:14000,
             rarity:"epic",
             color:"#a86f42",
             animal:true,
@@ -10944,7 +11961,7 @@ Object.assign(
             name:"Porquinho Rosa",
             description:"Porquinho simpático com focinho rosado.",
             currency:"coin",
-            price:5000,
+            price:7000,
             rarity:"rare",
             color:"#ff9eb5",
             animal:true,
@@ -10955,10 +11972,70 @@ Object.assign(
             id:"crow",
             name:"Corvo Sombrio",
             description:"Corvo misterioso com penas negras e olhos violetas.",
-            currency:"gem",
-            price:300,
-            rarity:"legendary",
+            currency:"coin",
+            price:18000,
+            rarity:"epic",
             color:"#25263a",
+            animal:true,
+            soldSeparately:true
+        },
+
+        capybara:{
+            id:"capybara",
+            name:"Capivara do Pantanal",
+            description:"Capivara carismática com focinho largo, orelhas pequenas e tons naturais.",
+            currency:"coin",
+            price:8500,
+            rarity:"rare",
+            color:"#9a6b45",
+            animal:true,
+            soldSeparately:true
+        },
+
+        alien:{
+            id:"alien",
+            name:"Alien Nebuloso",
+            description:"Extraterrestre com antenas, olhos luminosos e aura neon pulsante.",
+            currency:"gem",
+            price:320,
+            rarity:"legendary",
+            color:"#8cff7a",
+            animal:true,
+            soldSeparately:true
+        },
+
+        octopus:{
+            id:"octopus",
+            name:"Polvo Abissal",
+            description:"Polvo com tentáculos ondulantes, ventosas e corpo profundo do oceano.",
+            currency:"coin",
+            price:18000,
+            rarity:"epic",
+            color:"#7d55c7",
+            animal:true,
+            soldSeparately:true
+        },
+
+        crab:{
+            id:"crab",
+            name:"Caranguejo Rubi",
+            description:"Carapaça rubi, pinças grandes e movimento lateral característico.",
+            currency:"coin",
+            price:15000,
+            rarity:"epic",
+            color:"#e45b4e",
+            animal:true,
+            soldSeparately:true
+        },
+
+        lizard:{
+            id:"lizard",
+            name:"Lagarto Esmeralda",
+            description:"Lagarto escamado com crista dorsal, olhos vivos e cauda marcada.",
+            currency:"coin",
+            price:16000,
+            rarity:"epic",
+            color:"#4fbf6a",
             animal:true,
             soldSeparately:true
         },
@@ -11037,7 +12114,7 @@ const SKIN_COMBOS = {
         name:"Combo Animais Selvagens",
         description:"6 skins exclusivas em um único pacote.",
         coinPrice:50000,
-        gemPrice:2000,
+        gemPrice:500,
         skins:[
             "crocodile",
             "bat",
@@ -14769,8 +15846,300 @@ function drawCockatielPearlSkin(
 
 
 
+
+/* =========================================================
+   V13.17 - NOVAS SKINS CANVAS
+   Capivara, Alien, Polvo, Caranguejo e Lagarto.
+   Sem imagens externas; detalhes pesados ficam na cabeça para
+   preservar FPS quando há muitas cobras na arena.
+========================================================= */
+
+function wsSkinCircle(ctx,x,y,r,fill,stroke=null,lineWidth=1){
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=fill;
+    ctx.fill();
+    if(stroke){
+        ctx.strokeStyle=stroke;
+        ctx.lineWidth=lineWidth;
+        ctx.stroke();
+    }
+}
+
+function drawCapybaraSkin(ctx,x,y,radius,angle,isHead){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle||0);
+
+    const body="#9a6b45";
+    const dark="#66452f";
+    const light="#c28a5c";
+
+    ctx.shadowBlur=isHead?7:3;
+    ctx.shadowColor="rgba(189,132,83,.28)";
+    wsSkinCircle(ctx,0,0,radius,body,"rgba(45,25,14,.32)",1);
+
+    ctx.globalAlpha=.22;
+    wsSkinCircle(ctx,-radius*.26,-radius*.22,radius*.34,light);
+    ctx.globalAlpha=1;
+
+    if(isHead){
+        wsSkinCircle(ctx,-radius*.28,-radius*.78,radius*.27,dark);
+        wsSkinCircle(ctx,radius*.12,-radius*.82,radius*.25,dark);
+        wsSkinCircle(ctx,-radius*.28,-radius*.78,radius*.13,"#b9845d");
+        wsSkinCircle(ctx,radius*.12,-radius*.82,radius*.12,"#b9845d");
+
+        ctx.fillStyle=light;
+        ctx.beginPath();
+        ctx.ellipse(radius*.56,0,radius*.63,radius*.48,0,0,Math.PI*2);
+        ctx.fill();
+
+        wsSkinCircle(ctx,radius*.92,0,radius*.23,"#3a2920");
+        wsSkinCircle(ctx,radius*.16,-radius*.30,radius*.13,"#111");
+        wsSkinCircle(ctx,radius*.16,radius*.30,radius*.13,"#111");
+        wsSkinCircle(ctx,radius*.20,-radius*.34,radius*.04,"#fff");
+        wsSkinCircle(ctx,radius*.20,radius*.26,radius*.04,"#fff");
+
+        ctx.strokeStyle="#493124";
+        ctx.lineWidth=Math.max(1,radius*.08);
+        ctx.lineCap="round";
+        ctx.beginPath();
+        ctx.moveTo(radius*.75,-radius*.07);
+        ctx.lineTo(radius*.75,radius*.07);
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
+function drawAlienSkin(ctx,x,y,radius,angle,isHead){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle||0);
+
+    const pulse=.55+.45*Math.sin(performance.now()/340);
+    const green="#8cff7a";
+    const deep="#214d3d";
+
+    ctx.shadowBlur=isHead?16+8*pulse:7;
+    ctx.shadowColor=`rgba(104,255,190,${.45+.25*pulse})`;
+    wsSkinCircle(ctx,0,0,radius,deep,"rgba(143,255,204,.55)",1.2);
+
+    ctx.globalAlpha=.22+.12*pulse;
+    wsSkinCircle(ctx,-radius*.18,-radius*.20,radius*.52,green);
+    ctx.globalAlpha=1;
+
+    if(isHead){
+        ctx.fillStyle="#5fdc82";
+        ctx.beginPath();
+        ctx.ellipse(radius*.12,0,radius*1.0,radius*.78,0,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.strokeStyle="#9dffad";
+        ctx.lineWidth=Math.max(1.4,radius*.09);
+        ctx.lineCap="round";
+        for(const side of [-1,1]){
+            ctx.beginPath();
+            ctx.moveTo(-radius*.10,side*radius*.55);
+            ctx.quadraticCurveTo(radius*.16,side*radius*1.04,radius*.47,side*radius*1.15);
+            ctx.stroke();
+            wsSkinCircle(ctx,radius*.47,side*radius*1.15,radius*.12,"#d3ff72");
+        }
+
+        ctx.save();
+        ctx.shadowBlur=14;
+        ctx.shadowColor="#aaffff";
+        ctx.fillStyle="#07110f";
+        ctx.beginPath();
+        ctx.ellipse(radius*.36,-radius*.31,radius*.23,radius*.38,-.25,0,Math.PI*2);
+        ctx.ellipse(radius*.36,radius*.31,radius*.23,radius*.38,.25,0,Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle=`rgba(150,255,255,${.62+.3*pulse})`;
+        ctx.beginPath();
+        ctx.ellipse(radius*.42,-radius*.31,radius*.07,radius*.17,-.25,0,Math.PI*2);
+        ctx.ellipse(radius*.42,radius*.31,radius*.07,radius*.17,.25,0,Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+
+        for(let i=0;i<3;i++){
+            const t=performance.now()/700+i*2.1;
+            const px=-radius*.25+Math.cos(t)*radius*(.75+i*.15);
+            const py=Math.sin(t*1.3)*radius*(.7+i*.12);
+            wsSkinCircle(ctx,px,py,Math.max(1.2,radius*.055),`rgba(174,255,225,${.55-.1*i})`);
+        }
+    }
+    ctx.restore();
+}
+
+function drawOctopusSkin(ctx,x,y,radius,angle,isHead){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle||0);
+
+    const violet="#7d55c7";
+    const dark="#4a2f7d";
+    ctx.shadowBlur=isHead?9:4;
+    ctx.shadowColor="rgba(132,87,210,.38)";
+    wsSkinCircle(ctx,0,0,radius,violet,"rgba(35,20,66,.35)",1);
+
+    ctx.globalAlpha=.24;
+    for(let i=0;i<4;i++){
+        wsSkinCircle(ctx,-radius*.35+i*radius*.22,(i%2?1:-1)*radius*.28,radius*.10,"#f2b6ff");
+    }
+    ctx.globalAlpha=1;
+
+    if(isHead){
+        ctx.fillStyle=violet;
+        ctx.beginPath();
+        ctx.ellipse(radius*.18,0,radius*.96,radius*.76,0,0,Math.PI*2);
+        ctx.fill();
+
+        const t=performance.now()/420;
+        ctx.strokeStyle=dark;
+        ctx.lineWidth=Math.max(2,radius*.22);
+        ctx.lineCap="round";
+        for(let i=0;i<6;i++){
+            const a=-1.25+i*.5;
+            const sy=Math.sin(t+i)*radius*.18;
+            ctx.beginPath();
+            ctx.moveTo(-radius*.25,Math.sin(a)*radius*.60);
+            ctx.bezierCurveTo(
+                -radius*.78,Math.sin(a)*radius*.82+sy,
+                -radius*1.10,Math.sin(a)*radius*1.02-sy,
+                -radius*1.26,Math.sin(a)*radius*1.15
+            );
+            ctx.stroke();
+        }
+
+        wsSkinCircle(ctx,radius*.37,-radius*.27,radius*.17,"#f8f6ff");
+        wsSkinCircle(ctx,radius*.37,radius*.27,radius*.17,"#f8f6ff");
+        wsSkinCircle(ctx,radius*.43,-radius*.27,radius*.08,"#1a1129");
+        wsSkinCircle(ctx,radius*.43,radius*.27,radius*.08,"#1a1129");
+    }
+    ctx.restore();
+}
+
+function drawCrabSkin(ctx,x,y,radius,angle,isHead){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle||0);
+
+    const red="#e45b4e";
+    const dark="#9f342f";
+    ctx.shadowBlur=isHead?7:3;
+    ctx.shadowColor="rgba(239,78,66,.34)";
+    wsSkinCircle(ctx,0,0,radius,red,"rgba(70,16,16,.30)",1);
+
+    if(isHead){
+        ctx.fillStyle=red;
+        ctx.beginPath();
+        ctx.ellipse(radius*.05,0,radius*.92,radius*.70,0,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.strokeStyle=dark;
+        ctx.lineWidth=Math.max(1.5,radius*.12);
+        ctx.lineCap="round";
+        for(const side of [-1,1]){
+            for(let i=0;i<3;i++){
+                const yy=side*radius*(.27+i*.20);
+                ctx.beginPath();
+                ctx.moveTo(-radius*.42,yy*.72);
+                ctx.lineTo(-radius*.88,yy);
+                ctx.stroke();
+            }
+        }
+
+        for(const side of [-1,1]){
+            ctx.save();
+            ctx.translate(radius*.35,side*radius*.72);
+            ctx.rotate(side*.22);
+            wsSkinCircle(ctx,0,0,radius*.34,red);
+            ctx.fillStyle=dark;
+            ctx.beginPath();
+            ctx.moveTo(radius*.05,0);
+            ctx.lineTo(radius*.43,-side*radius*.18);
+            ctx.lineTo(radius*.34,side*radius*.18);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        ctx.strokeStyle=dark;
+        ctx.lineWidth=Math.max(1,radius*.09);
+        for(const side of [-1,1]){
+            ctx.beginPath();
+            ctx.moveTo(radius*.18,side*radius*.28);
+            ctx.lineTo(radius*.34,side*radius*.52);
+            ctx.stroke();
+            wsSkinCircle(ctx,radius*.37,side*radius*.58,radius*.13,"#fff");
+            wsSkinCircle(ctx,radius*.41,side*radius*.58,radius*.06,"#171111");
+        }
+    }
+    ctx.restore();
+}
+
+function drawLizardSkin(ctx,x,y,radius,angle,isHead){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle||0);
+
+    const green="#4fbf6a";
+    const dark="#20633a";
+    ctx.shadowBlur=isHead?6:2;
+    ctx.shadowColor="rgba(74,214,119,.30)";
+    wsSkinCircle(ctx,0,0,radius,green,"rgba(16,64,35,.35)",1);
+
+    ctx.fillStyle="rgba(24,92,48,.38)";
+    for(let i=-1;i<=1;i++){
+        wsSkinCircle(ctx,-radius*.18+i*radius*.30,(i%2)*radius*.24,radius*.12,"rgba(24,92,48,.42)");
+    }
+
+    if(isHead){
+        ctx.fillStyle=green;
+        ctx.beginPath();
+        ctx.ellipse(radius*.16,0,radius*.98,radius*.68,0,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.fillStyle="#83e58d";
+        for(let i=0;i<4;i++){
+            const px=-radius*.42+i*radius*.30;
+            ctx.beginPath();
+            ctx.moveTo(px,-radius*.58);
+            ctx.lineTo(px+radius*.13,-radius*(.92+(i%2)*.08));
+            ctx.lineTo(px+radius*.25,-radius*.55);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        wsSkinCircle(ctx,radius*.45,-radius*.25,radius*.15,"#e7ff8e");
+        wsSkinCircle(ctx,radius*.45,radius*.25,radius*.15,"#e7ff8e");
+        ctx.fillStyle="#111";
+        ctx.fillRect(radius*.43,-radius*.35,radius*.045,radius*.20);
+        ctx.fillRect(radius*.43,radius*.15,radius*.045,radius*.20);
+
+        ctx.strokeStyle="#ff6c86";
+        ctx.lineWidth=Math.max(1.2,radius*.065);
+        ctx.lineCap="round";
+        ctx.beginPath();
+        ctx.moveTo(radius*.83,0);
+        ctx.lineTo(radius*1.24,0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(radius*1.24,0);
+        ctx.lineTo(radius*1.38,-radius*.11);
+        ctx.moveTo(radius*1.24,0);
+        ctx.lineTo(radius*1.38,radius*.11);
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
 const CUSTOM_WILD_ANIMAL_SKINS = new Set([
     "iceDragon",
+    "capybara",
+    "alien",
+    "octopus",
+    "crab",
+    "lizard",
     "horse",
     "pig",
     "crow",
@@ -14803,6 +16172,21 @@ function drawWildAnimalSkin(
             return true;
         case "crow":
             drawCrowSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "capybara":
+            drawCapybaraSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "alien":
+            drawAlienSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "octopus":
+            drawOctopusSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "crab":
+            drawCrabSkin(context,x,y,radius,angle,isHead);
+            return true;
+        case "lizard":
+            drawLizardSkin(context,x,y,radius,angle,isHead);
             return true;
         case "crocodile":
             drawCrocodileSkin(context,x,y,radius,angle,isHead);
@@ -16156,58 +17540,53 @@ function closeComboModal(){
     document.getElementById("comboDetailsModal")?.classList.add("hidden");
 }
 
-function buySkinCombo(comboId,currency){
+async function buySkinCombo(comboId,currency){
     const combo = SKIN_COMBOS[comboId];
 
     if(!combo || ownsCombo(comboId)) return;
 
-    if(currency==="coin"){
-        if(account.coins < combo.coinPrice){
-            document.getElementById("comboModalStatus").textContent =
-                "🪙 WildCoins insuficientes para comprar este combo.";
-            toast("🪙 WildCoins insuficientes.");
-            return;
-        }
+    const status = document.getElementById("comboModalStatus");
+    const coinButton = document.getElementById("buyComboCoins");
+    const gemButton = document.getElementById("buyComboGems");
 
-        account.coins -= combo.coinPrice;
-    }
-    else if(currency==="gem"){
-        if(account.gems < combo.gemPrice){
-            document.getElementById("comboModalStatus").textContent =
-                "💎 WildGems insuficientes para comprar este combo.";
-            toast("💎 WildGems insuficientes.");
-            return;
-        }
-
-        account.gems -= combo.gemPrice;
-    }
-    else{
+    if(!v13Auth?.token || v13Auth.mode==="guest"){
+        if(status) status.textContent = "🔐 Entre em uma conta WildSnake para comprar este combo.";
+        toast("🔐 Entre em uma conta para comprar combos.");
         return;
     }
 
-    if(!Array.isArray(account.ownedCombos)){
-        account.ownedCombos = [];
-    }
+    if(!["coin","gem"].includes(currency)) return;
 
-    account.ownedCombos.push(comboId);
+    if(coinButton) coinButton.disabled = true;
+    if(gemButton) gemButton.disabled = true;
+    if(status) status.textContent = "Processando compra com segurança...";
 
-    if(!Array.isArray(account.ownedSkins)){
-        account.ownedSkins = ["basic"];
-    }
-
-    for(const skinId of combo.skins){
-        if(!account.ownedSkins.includes(skinId)){
-            account.ownedSkins.push(skinId);
+    const {data}=await v13FetchJson(
+        "/api/shop/combo/purchase",
+        {
+            method:"POST",
+            body:JSON.stringify({
+                comboId,
+                currency
+            })
         }
+    );
+
+    if(!data?.ok){
+        if(status) status.textContent = data?.error || "Não foi possível comprar este combo.";
+        toast(data?.error || "Não foi possível comprar este combo.");
+        await v13SyncSecureAccount();
+        renderComboShop();
+        openComboModal(comboId);
+        return;
     }
 
-    saveAccount();
+    v13ApplyServerAccount(data.account);
     renderMySkins();
+    renderShop();
     playSound("buy");
     toast("✅ Combo Animais Selvagens adquirido!");
-
     openComboModal(comboId);
-    renderComboShop();
 }
 
 document.getElementById("closeComboModal")?.addEventListener("click",closeComboModal);
@@ -28911,6 +30290,9 @@ function v13ApplyServerAccount(serverAccount){
         ownedSkins:Array.isArray(serverAccount.ownedSkins)
             ? [...new Set(serverAccount.ownedSkins)]
             : ["basic"],
+        ownedCombos:Array.isArray(serverAccount.ownedCombos)
+            ? [...new Set(serverAccount.ownedCombos)]
+            : [],
         equippedSkin:serverAccount.equippedSkin || "basic",
         totalMatches:Number(serverAccount.totalMatches ?? account.totalMatches ?? 0),
         totalKills:Number(serverAccount.totalKills ?? account.totalKills ?? 0),
@@ -36709,6 +38091,843 @@ updateServerFooter();
 
 })();
 
+
+
+
+/* =========================================================
+   V13.16 - CAMINHO DE RECOMPENSAS / MUNDOS
+========================================================= */
+
+let rewardProgressionState = null;
+let rewardSelectedWorldId = null;
+let rewardActiveNode = null;
+let rewardGiftClicks = 0;
+let rewardGiftBusy = false;
+let rewardSkinRolling = false;
+let rewardThemeRendered = null;
+
+function rewardSceneParticle(className,styles={}){
+    const span=document.createElement("i");
+    span.className=className;
+    Object.entries(styles).forEach(([key,value])=>span.style.setProperty(key,value));
+    return span;
+}
+
+function installRewardSceneParallax(stage,scene){
+    if(!stage || !scene || stage.dataset.parallaxBound==="1") return;
+    stage.dataset.parallaxBound="1";
+
+    stage.addEventListener("pointermove",event=>{
+        if(matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+        const rect=stage.getBoundingClientRect();
+        const nx=((event.clientX-rect.left)/Math.max(1,rect.width)-.5);
+        const ny=((event.clientY-rect.top)/Math.max(1,rect.height)-.5);
+        scene.style.setProperty("--scene-x",`${(-nx*8).toFixed(1)}px`);
+        scene.style.setProperty("--scene-y",`${(-ny*6).toFixed(1)}px`);
+    });
+
+    stage.addEventListener("pointerleave",()=>{
+        scene.style.setProperty("--scene-x","0px");
+        scene.style.setProperty("--scene-y","0px");
+    });
+}
+
+function renderRewardThemeScene(theme){
+    const stage=document.getElementById("rewardWorldStage");
+    const scene=document.getElementById("rewardThemeScene");
+    if(!stage || !scene) return;
+
+    installRewardSceneParallax(stage,scene);
+
+    if(rewardThemeRendered===theme && scene.childElementCount) return;
+    rewardThemeRendered=theme;
+    scene.innerHTML="";
+
+    const weak=(runtimePerf?.tier==="weak") || innerWidth<460;
+    const count=(full,light)=>weak?light:full;
+
+    if(theme==="jungle"){
+        scene.innerHTML=`
+            <div class="jungle-canopy"></div>
+            <div class="jungle-ground"></div>
+            <div class="jungle-bird">🦜</div>
+            <div class="jungle-capybara"></div>
+        `;
+        for(let i=0;i<count(18,8);i++){
+            scene.appendChild(rewardSceneParticle("jungle-firefly",{
+                "--x":`${5+Math.random()*90}%`,
+                "--y":`${12+Math.random()*76}%`,
+                "--d":`${1.8+Math.random()*2.8}s`,
+                "--delay":`${-Math.random()*3}s`
+            }));
+        }
+        return;
+    }
+
+    if(theme==="cosmic"){
+        scene.innerHTML=`
+            <div class="cosmic-nebula"></div>
+            <div class="alien-ship"></div>
+            <div class="alien-ship second"></div>
+        `;
+        for(let i=0;i<count(54,22);i++){
+            scene.appendChild(rewardSceneParticle("cosmic-star",{
+                "--x":`${Math.random()*100}%`,
+                "--y":`${Math.random()*100}%`,
+                "--s":`${1+Math.random()*2.4}px`,
+                "--d":`${.8+Math.random()*2.6}s`,
+                "--delay":`${-Math.random()*3}s`
+            }));
+        }
+        return;
+    }
+
+    if(theme==="magma"){
+        scene.innerHTML=`
+            <div class="volcano-mountain"></div>
+            <div class="volcano-crater"></div>
+            <div class="volcano-lava"></div>
+        `;
+        for(let i=0;i<count(14,6);i++){
+            scene.appendChild(rewardSceneParticle("volcano-burst",{
+                "--dx":`${-90+Math.random()*180}px`,
+                "--d":`${1.5+Math.random()*1.8}s`,
+                "--delay":`${-Math.random()*2.6}s`
+            }));
+        }
+        for(let i=0;i<count(24,10);i++){
+            scene.appendChild(rewardSceneParticle("magma-ember",{
+                "--x":`${5+Math.random()*90}%`,
+                "--y":`${35+Math.random()*60}%`,
+                "--d":`${1.6+Math.random()*3.1}s`,
+                "--delay":`${-Math.random()*4}s`
+            }));
+        }
+        return;
+    }
+
+    if(theme==="frost"){
+        scene.innerHTML=`<div class="frost-aurora"></div>`;
+        [8,30,66].forEach((x,index)=>{
+            scene.appendChild(rewardSceneParticle("frost-mountain",{
+                "--x":`${x}%`,
+                "--w":`${210+index*65}px`
+            }));
+        });
+        for(let i=0;i<count(42,18);i++){
+            scene.appendChild(rewardSceneParticle("frost-snow",{
+                "--x":`${Math.random()*100}%`,
+                "--s":`${2+Math.random()*5}px`,
+                "--d":`${4+Math.random()*7}s`,
+                "--delay":`${-Math.random()*8}s`,
+                "--drift":`${-45+Math.random()*90}px`
+            }));
+        }
+        return;
+    }
+
+    scene.innerHTML=`
+        <div class="void-black-hole"></div>
+        <div class="void-comet"></div>
+    `;
+    for(let i=0;i<count(44,18);i++){
+        scene.appendChild(rewardSceneParticle("void-star",{
+            "--x":`${Math.random()*100}%`,
+            "--y":`${Math.random()*100}%`,
+            "--s":`${1+Math.random()*2.5}px`,
+            "--d":`${1.5+Math.random()*4}s`,
+            "--delay":`${-Math.random()*4}s`
+        }));
+    }
+}
+
+function rewardFmt(value){
+    return formatNumber(Math.max(0,Math.floor(Number(value)||0)));
+}
+
+function rewardSkinData(id,pool=[]){
+    return (
+        pool.find(item=>item.skin_id===id)
+        ||
+        (
+            SKINS[id]
+            ? {
+                skin_id:id,
+                name:SKINS[id].name,
+                rarity:SKINS[id].rarity
+            }
+            : {
+                skin_id:id,
+                name:id,
+                rarity:"rare"
+            }
+        )
+    );
+}
+
+function rewardCurrentWorld(progression){
+    const worlds = progression?.worlds || [];
+    if(!worlds.length) return null;
+
+    const totalXp = Number(progression?.totalXp || 0);
+
+    return (
+        [...worlds]
+            .reverse()
+            .find(world=>totalXp>=Number(world.unlockXp||0))
+        ||
+        worlds[0]
+    );
+}
+
+async function loadRewardProgression({
+    preserveWorld=true
+}={}){
+    const {data}=await v13FetchJson(
+        "/api/rewards/progression",
+        {method:"GET"}
+    );
+
+    if(!data?.ok || !data.progression){
+        toast(data?.error || "Não foi possível carregar as recompensas.");
+        return false;
+    }
+
+    rewardProgressionState=data.progression;
+
+    if(data.progression.account){
+        v13ApplyServerAccount(data.progression.account);
+    }
+
+    const current=rewardCurrentWorld(rewardProgressionState);
+
+    if(
+        !preserveWorld
+        ||
+        !rewardSelectedWorldId
+        ||
+        !rewardProgressionState.worlds.some(world=>world.id===rewardSelectedWorldId)
+    ){
+        rewardSelectedWorldId=current?.id || rewardProgressionState.worlds?.[0]?.id || null;
+    }
+
+    renderRewardProgression();
+    return true;
+}
+
+async function openRewardWorlds(){
+    const page=document.getElementById("rewardWorldPage");
+    if(!page) return;
+
+    page.classList.remove("hidden");
+    document.body.style.overflow="hidden";
+
+    const loaded=await loadRewardProgression({preserveWorld:false});
+
+    if(!loaded){
+        page.classList.add("hidden");
+        document.body.style.overflow="";
+    }
+}
+
+function closeRewardWorlds(){
+    document.getElementById("rewardWorldPage")?.classList.add("hidden");
+    document.body.style.overflow="";
+}
+
+function rewardNodeStateText(node){
+    if(node.claimed){
+        if(node.reward?.kind==="gift" && !node.giftSkinClaimed){
+            return "🎁 ESCOLHA SUA SKIN";
+        }
+        return "RESGATADO ✓";
+    }
+
+    if(node.status==="available"){
+        if(node.reward?.kind==="skin_roll") return "RODAR AGORA";
+        if(node.reward?.kind==="gift") return "ABRIR PRESENTE";
+        return "RESGATAR";
+    }
+
+    return `🔒 ${rewardFmt(node.xpRequired)} XP`;
+}
+
+function renderRewardProgression(){
+    const progression=rewardProgressionState;
+    if(!progression) return;
+
+    document.getElementById("rewardHeaderCoins").textContent=rewardFmt(account.coins);
+    document.getElementById("rewardHeaderGems").textContent=rewardFmt(account.gems);
+    document.getElementById("rewardHeaderXp").textContent=`${rewardFmt(progression.totalXp)} XP`;
+    document.getElementById("rewardProgressTotal").textContent=`${rewardFmt(progression.totalXp)} XP`;
+
+    const current=rewardCurrentWorld(progression);
+    const tabs=document.getElementById("rewardWorldTabs");
+    tabs.innerHTML="";
+
+    progression.worlds.forEach(world=>{
+        const button=document.createElement("button");
+        button.type="button";
+        button.className=
+            "reward-world-tab"
+            +(world.id===rewardSelectedWorldId?" active":"")
+            +(world.unlocked?"":" locked");
+
+        button.dataset.theme=world.theme || "jungle";
+
+        button.innerHTML=`
+            <div class="world-tab-top">
+                <b>MUNDO ${world.index}</b>
+                <em>${world.unlocked?world.icon:"🔒"}</em>
+            </div>
+            <span>${world.name}<br>${rewardFmt(world.unlockXp)} → ${rewardFmt(world.endXp)} XP</span>
+        `;
+
+        button.onclick=()=>{
+            rewardSelectedWorldId=world.id;
+            renderRewardProgression();
+        };
+
+        tabs.appendChild(button);
+    });
+
+    const selected=
+        progression.worlds.find(world=>world.id===rewardSelectedWorldId)
+        ||
+        current
+        ||
+        progression.worlds[0];
+
+    if(!selected) return;
+
+    const totalXp=Number(progression.totalXp||0);
+    const span=Math.max(1,Number(selected.endXp)-Number(selected.unlockXp));
+    const within=Math.max(0,Math.min(span,totalXp-Number(selected.unlockXp)));
+    const percent=Math.max(0,Math.min(100,(within/span)*100));
+
+    document.getElementById("rewardProgressTitle").textContent=
+        selected.unlocked
+        ? `${selected.icon} ${selected.name} • ${selected.completed?"CONCLUÍDO":"EM PROGRESSO"}`
+        : `🔒 ${selected.name} • PRÉVIA`;
+
+    document.getElementById("rewardProgressFill").style.width=`${percent}%`;
+
+    document.getElementById("rewardProgressCaption").textContent=
+        selected.unlocked
+        ? `Faltam ${rewardFmt(Math.max(0,selected.endXp-totalXp))} XP para concluir este mundo.`
+        : `Este mundo abre com ${rewardFmt(selected.unlockXp)} XP. Você pode explorar os prêmios agora.`;
+
+    const stage=document.getElementById("rewardWorldStage");
+    stage.dataset.theme=selected.theme || "jungle";
+    const rewardPage=document.getElementById("rewardWorldPage");
+    if(rewardPage) rewardPage.dataset.theme=selected.theme || "jungle";
+    renderRewardThemeScene(selected.theme || "jungle");
+
+    document.getElementById("rewardWorldKicker").textContent=`MUNDO ${selected.index}`;
+    document.getElementById("rewardWorldTitle").textContent=`${selected.icon} ${selected.name}`;
+    document.getElementById("rewardWorldSubtitle").textContent=selected.subtitle || "";
+
+    const lock=document.getElementById("rewardWorldLock");
+    lock.classList.toggle("open",!!selected.unlocked);
+    lock.textContent=
+        selected.unlocked
+        ? (selected.completed?"CONCLUÍDO ✓":"DESBLOQUEADO")
+        : `🔒 REQUER ${rewardFmt(selected.unlockXp)} XP`;
+
+    const path=document.getElementById("rewardPath");
+    path.innerHTML="";
+
+    selected.nodes.forEach(node=>{
+        const item=document.createElement("article");
+        item.className=
+            `reward-node ${node.status}`
+            +(node.final?" final":"");
+
+        const label=
+            node.level
+            ? `NÍVEL ${node.level}`
+            : `FINAL DO MUNDO`;
+
+        item.innerHTML=`
+            <div class="reward-node-level">${label}</div>
+            <div class="reward-node-icon">${node.reward?.icon || "🎁"}</div>
+            <strong>${node.reward?.label || "Recompensa"}</strong>
+            <small>${rewardFmt(node.xpRequired)} XP total</small>
+            <div class="reward-node-state">${rewardNodeStateText(node)}</div>
+        `;
+
+        item.onclick=()=>handleRewardNodeClick(node);
+        path.appendChild(item);
+    });
+}
+
+async function handleRewardNodeClick(node){
+    if(!node) return;
+
+    if(node.status==="locked"){
+        toast(`🔒 Você precisa de ${rewardFmt(node.xpRequired)} XP total.`);
+        return;
+    }
+
+    if(node.claimed){
+        if(node.reward?.kind==="gift" && !node.giftSkinClaimed){
+            openGiftSkinChoice(node.id);
+            return;
+        }
+
+        toast("✅ Recompensa já resgatada.");
+        return;
+    }
+
+    if(!v13Auth?.token || v13Auth.mode==="guest"){
+        toast("🔐 Entre em uma conta WildSnake para resgatar recompensas.");
+        return;
+    }
+
+    if(node.reward?.kind==="skin_roll"){
+        openSkinRewardRoll(node);
+        return;
+    }
+
+    if(node.reward?.kind==="gift"){
+        openRewardGift(node);
+        return;
+    }
+
+    await claimSimpleReward(node);
+}
+
+async function claimSimpleReward(node){
+    const {data}=await v13FetchJson(
+        "/api/rewards/claim",
+        {
+            method:"POST",
+            body:JSON.stringify({nodeId:node.id})
+        }
+    );
+
+    if(!data?.ok){
+        toast(data?.error || "Não foi possível resgatar.");
+        await loadRewardProgression();
+        return;
+    }
+
+    if(data.account){
+        v13ApplyServerAccount(data.account);
+    }
+
+    if(data.progression){
+        rewardProgressionState=data.progression;
+    }
+
+    playSound("buy");
+
+    const reward=node.reward || {};
+    const pieces=[];
+    if(reward.coins) pieces.push(`🪙 +${rewardFmt(reward.coins)}`);
+    if(reward.gems) pieces.push(`💎 +${rewardFmt(reward.gems)}`);
+
+    toast(`✅ ${pieces.join(" • ") || "Recompensa resgatada!"}`);
+    renderRewardProgression();
+}
+
+function renderSkinReel(items){
+    const track=document.getElementById("skinReelTrack");
+    if(!track) return;
+
+    track.style.transition="none";
+    track.style.transform="translateX(0px)";
+    track.innerHTML="";
+
+    items.forEach(item=>{
+        const skinId=item.skin_id || item.id;
+        const skin=rewardSkinData(skinId,rewardProgressionState?.rollPool||[]);
+
+        const card=document.createElement("div");
+        card.className="skin-reel-item";
+        card.innerHTML=`
+            <canvas width="300" height="220"></canvas>
+            <div>
+                <strong>${skin.name || skinId}</strong>
+                <small>${String(skin.rarity||"rare").toUpperCase()}</small>
+            </div>
+        `;
+        track.appendChild(card);
+
+        requestAnimationFrame(()=>{
+            drawSkinPreview(card.querySelector("canvas"),skinId);
+        });
+    });
+}
+
+function openSkinRewardRoll(node){
+    rewardActiveNode=node;
+    rewardSkinRolling=false;
+
+    const overlay=document.getElementById("skinRollOverlay");
+    const odds=document.getElementById("skinRollOdds");
+    const status=document.getElementById("skinRollStatus");
+    const button=document.getElementById("spinRewardSkin");
+
+    odds.innerHTML=(rewardProgressionState?.odds||[])
+        .map(item=>`<span>${item.label} ${item.percent}%</span>`)
+        .join("");
+
+    const pool=rewardProgressionState?.rollPool || [];
+    renderSkinReel(pool);
+
+    status.textContent=
+        pool.length
+        ? `${pool.length} skins elegíveis • clique em RODAR.`
+        : "Nenhuma skin elegível disponível.";
+
+    button.disabled=!pool.length;
+    button.textContent="RODAR";
+    overlay.classList.remove("hidden");
+}
+
+function closeSkinRewardRoll(){
+    if(rewardSkinRolling) return;
+    document.getElementById("skinRollOverlay")?.classList.add("hidden");
+    rewardActiveNode=null;
+}
+
+async function spinRewardSkin(){
+    if(rewardSkinRolling || !rewardActiveNode) return;
+
+    const button=document.getElementById("spinRewardSkin");
+    const status=document.getElementById("skinRollStatus");
+    const pool=rewardProgressionState?.rollPool || [];
+
+    rewardSkinRolling=true;
+    button.disabled=true;
+    status.textContent="O servidor está sorteando sua skin...";
+
+    const {data}=await v13FetchJson(
+        "/api/rewards/roll-skin",
+        {
+            method:"POST",
+            body:JSON.stringify({nodeId:rewardActiveNode.id})
+        }
+    );
+
+    if(!data?.ok || !data.result){
+        rewardSkinRolling=false;
+        button.disabled=false;
+        status.textContent=data?.error || "Não foi possível rodar.";
+        await loadRewardProgression();
+        return;
+    }
+
+    const chosen=data.result;
+    const chosenId=chosen.skin_id;
+    const visualPool=pool.length ? pool : [chosen];
+    const sequence=[];
+
+    for(let i=0;i<30;i++){
+        sequence.push(
+            visualPool[Math.floor(Math.random()*visualPool.length)]
+            ||
+            chosen
+        );
+    }
+
+    sequence.push(chosen);
+    renderSkinReel(sequence);
+
+    const track=document.getElementById("skinReelTrack");
+    const selectedIndex=sequence.length-1;
+    const itemStep=160;
+    const target=-(selectedIndex*itemStep+75);
+
+    requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+            track.style.transition="transform 5.2s cubic-bezier(.08,.72,.12,1)";
+            track.style.transform=`translateX(${target}px)`;
+        });
+    });
+
+    status.textContent="Girando...";
+
+    const finish=()=>{
+        track.removeEventListener("transitionend",finish);
+        rewardSkinRolling=false;
+
+        if(data.account){
+            v13ApplyServerAccount(data.account);
+        }
+
+        if(data.progression){
+            rewardProgressionState=data.progression;
+        }
+
+        status.textContent=`🎉 ${chosen.name} • ${String(chosen.rarity||"").toUpperCase()}`;
+        button.textContent="SKIN RESGATADA ✓";
+        button.disabled=true;
+
+        playSound("level");
+        renderRewardProgression();
+        renderMySkins();
+    };
+
+    track.addEventListener("transitionend",finish,{once:true});
+    setTimeout(()=>{
+        if(rewardSkinRolling) finish();
+    },5600);
+}
+
+function openRewardGift(node){
+    rewardActiveNode=node;
+    rewardGiftClicks=0;
+    rewardGiftBusy=false;
+
+    const overlay=document.getElementById("rewardGiftOverlay");
+    const stage=document.getElementById("giftBoxStage");
+    const result=document.getElementById("giftRewardResult");
+    const choose=document.getElementById("giftChooseSkinButton");
+
+    stage.className="gift-box-stage";
+    result.classList.add("hidden");
+    choose.style.display="";
+    document.getElementById("giftClickMessage").textContent="CLIQUE PARA ABRIR • 1/3";
+    document.getElementById("giftRewardDescription").textContent=
+        node.final
+        ? "O grande baú deste mundo. Abra em três etapas."
+        : "Abra em três etapas para revelar WildCoins, WildGems e sua escolha de skin.";
+
+    overlay.classList.remove("hidden");
+}
+
+async function clickRewardGift(){
+    if(rewardGiftBusy || !rewardActiveNode) return;
+
+    rewardGiftClicks=Math.min(3,rewardGiftClicks+1);
+    const stage=document.getElementById("giftBoxStage");
+    const message=document.getElementById("giftClickMessage");
+
+    if(rewardGiftClicks>=1) stage.classList.add("stage-1");
+
+    if(rewardGiftClicks===1){
+        message.textContent="LAÇO SOLTO! CLIQUE NOVAMENTE • 2/3";
+        playSound("click");
+        return;
+    }
+
+    if(rewardGiftClicks>=2) stage.classList.add("stage-2");
+
+    if(rewardGiftClicks===2){
+        message.textContent="EMBRULHO REMOVIDO! ÚLTIMO CLIQUE • 3/3";
+        playSound("click");
+        return;
+    }
+
+    stage.classList.add("stage-3");
+    message.textContent="ABRINDO...";
+    rewardGiftBusy=true;
+
+    const {data}=await v13FetchJson(
+        "/api/rewards/claim",
+        {
+            method:"POST",
+            body:JSON.stringify({nodeId:rewardActiveNode.id})
+        }
+    );
+
+    rewardGiftBusy=false;
+
+    if(!data?.ok){
+        message.textContent=data?.error || "NÃO FOI POSSÍVEL ABRIR.";
+        await loadRewardProgression();
+        return;
+    }
+
+    if(data.account){
+        v13ApplyServerAccount(data.account);
+    }
+
+    if(data.progression){
+        rewardProgressionState=data.progression;
+    }
+
+    const reward=data.reward || rewardActiveNode.reward || {};
+
+    document.getElementById("giftRewardText").innerHTML=
+        `🪙 <b>+${rewardFmt(reward.coins||0)} WildCoins</b><br>`
+        +`💎 <b>+${rewardFmt(reward.gems||0)} WildGems</b><br>`
+        +`🐍 <b>1 skin à sua escolha entre RARA e ÉPICA</b>`;
+
+    document.getElementById("giftRewardResult").classList.remove("hidden");
+    document.getElementById("giftClickMessage").textContent="PRESENTE ABERTO! ✨";
+
+    const giftPool=rewardProgressionState?.giftPool || [];
+    document.getElementById("giftChooseSkinButton").style.display=
+        giftPool.length ? "" : "none";
+
+    playSound("level");
+    renderRewardProgression();
+}
+
+function closeRewardGift(){
+    if(rewardGiftBusy) return;
+    document.getElementById("rewardGiftOverlay")?.classList.add("hidden");
+}
+
+function openGiftSkinChoice(nodeId=rewardActiveNode?.id){
+    if(!nodeId) return;
+
+    rewardActiveNode=
+        rewardProgressionState?.worlds
+            ?.flatMap(world=>world.nodes)
+            ?.find(node=>node.id===nodeId)
+        ||
+        rewardActiveNode;
+
+    const pool=rewardProgressionState?.giftPool || [];
+    const grid=document.getElementById("giftSkinGrid");
+    grid.innerHTML="";
+
+    if(!pool.length){
+        grid.innerHTML=`
+            <div style="grid-column:1/-1;padding:18px;text-align:center;color:#82939a">
+                Você já possui todas as skins Raras e Épicas elegíveis.
+            </div>
+        `;
+    }
+
+    pool.forEach(item=>{
+        const skinId=item.skin_id;
+        const card=document.createElement("article");
+        card.className="gift-skin-option";
+        card.innerHTML=`
+            <canvas width="320" height="190"></canvas>
+            <div>
+                <strong>${item.name || SKINS[skinId]?.name || skinId}</strong>
+                <span>${String(item.rarity||"rare").toUpperCase()}</span>
+                <button type="button">ESCOLHER ESTA</button>
+            </div>
+        `;
+
+        card.querySelector("button").onclick=()=>claimGiftSkin(nodeId,skinId,card);
+        grid.appendChild(card);
+
+        requestAnimationFrame(()=>{
+            drawSkinPreview(card.querySelector("canvas"),skinId);
+        });
+    });
+
+    document.getElementById("giftSkinOverlay")?.classList.remove("hidden");
+}
+
+function closeGiftSkinChoice(){
+    document.getElementById("giftSkinOverlay")?.classList.add("hidden");
+}
+
+async function claimGiftSkin(nodeId,skinId,card){
+    const button=card?.querySelector("button");
+    if(button){
+        button.disabled=true;
+        button.textContent="RESGATANDO...";
+    }
+
+    const {data}=await v13FetchJson(
+        "/api/rewards/gift/skin",
+        {
+            method:"POST",
+            body:JSON.stringify({nodeId,skinId})
+        }
+    );
+
+    if(!data?.ok){
+        if(button){
+            button.disabled=false;
+            button.textContent="ESCOLHER ESTA";
+        }
+        toast(data?.error || "Não foi possível escolher esta skin.");
+        await loadRewardProgression();
+        return;
+    }
+
+    if(data.account){
+        v13ApplyServerAccount(data.account);
+    }
+
+    if(data.progression){
+        rewardProgressionState=data.progression;
+    }
+
+    closeGiftSkinChoice();
+    closeRewardGift();
+    renderRewardProgression();
+    renderMySkins();
+    playSound("buy");
+    toast(`🐍 ${data.result?.name || "Skin"} adicionada à sua coleção!`);
+}
+
+/* entradas do sistema */
+const rewardMenuChip=document.getElementById("menuLevel")?.closest(".account-chip");
+if(rewardMenuChip){
+    rewardMenuChip.classList.add("reward-entry");
+    rewardMenuChip.title="Abrir caminho de recompensas";
+    rewardMenuChip.addEventListener("click",openRewardWorlds);
+}
+
+const rewardShopChip=document.querySelector("#shopPage .shop-wallet.level");
+if(rewardShopChip){
+    rewardShopChip.classList.add("reward-entry");
+    rewardShopChip.title="Abrir caminho de recompensas";
+    rewardShopChip.addEventListener("click",openRewardWorlds);
+}
+
+document.getElementById("closeRewardWorlds")?.addEventListener("click",closeRewardWorlds);
+document.getElementById("closeSkinRoll")?.addEventListener("click",closeSkinRewardRoll);
+document.getElementById("spinRewardSkin")?.addEventListener("click",spinRewardSkin);
+document.getElementById("giftBoxStage")?.addEventListener("click",clickRewardGift);
+document.getElementById("giftBoxStage")?.addEventListener("keydown",event=>{
+    if(event.key==="Enter" || event.key===" "){
+        event.preventDefault();
+        clickRewardGift();
+    }
+});
+document.getElementById("closeGiftReward")?.addEventListener("click",closeRewardGift);
+document.getElementById("giftChooseSkinButton")?.addEventListener("click",()=>{
+    openGiftSkinChoice(rewardActiveNode?.id);
+});
+document.getElementById("closeGiftSkin")?.addEventListener("click",closeGiftSkinChoice);
+
+document.addEventListener("keydown",event=>{
+    if(event.key!=="Escape") return;
+
+    if(!document.getElementById("giftSkinOverlay")?.classList.contains("hidden")){
+        closeGiftSkinChoice();
+        return;
+    }
+
+    if(!document.getElementById("rewardGiftOverlay")?.classList.contains("hidden")){
+        closeRewardGift();
+        return;
+    }
+
+    if(!document.getElementById("skinRollOverlay")?.classList.contains("hidden")){
+        closeSkinRewardRoll();
+        return;
+    }
+
+    if(!document.getElementById("rewardWorldPage")?.classList.contains("hidden")){
+        closeRewardWorlds();
+    }
+});
+
+/*
+   Em sala privada o convidado não controla o clique do host que inicia a
+   partida. Ao marcar "pronto", tentamos fullscreen enquanto ainda existe
+   uma ação direta do usuário; assim ele já permanece em tela cheia quando
+   o host iniciar.
+*/
+document.getElementById("toggleReadyButton")?.addEventListener(
+    "click",
+    ()=>{ void wildPrepareMobileOrientation(); },
+    {capture:true}
+);
 
 </script>
 
