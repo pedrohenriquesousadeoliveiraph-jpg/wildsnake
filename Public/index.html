@@ -38946,98 +38946,119 @@ function rewardSceneDrawSmokeBlob(ctx,x,y,r,alpha){
 }
 
 function rewardSceneDrawVolcano(ctx,w,h,elapsed){
-    const sky=rewardSceneGradient(ctx,0,0,0,h,[[0,"#ff9a72"],[.20,"#f1aa79"],[.42,"#7c3d32"],[.68,"#251116"],[1,"#090609"]]);
+    const sky=rewardSceneGradient(ctx,0,0,0,h,[[0,"#c98572"],[.20,"#a96960"],[.44,"#50343a"],[.70,"#1f1a22"],[1,"#0a090c"]]);
     ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
 
-    ctx.fillStyle=rewardSceneRadial(ctx,w*.48,h*.14,Math.max(w,h)*.33,[[0,"rgba(255,226,169,.35)"],[.4,"rgba(255,92,46,.12)"],[1,"rgba(0,0,0,0)"]]);ctx.fillRect(0,0,w,h);
+    // luz ambiente suave, sem brilho de lava
+    ctx.fillStyle=rewardSceneRadial(ctx,w*.48,h*.16,Math.max(w,h)*.36,[[0,"rgba(232,203,183,.16)"],[.45,"rgba(153,118,111,.05)"],[1,"rgba(0,0,0,0)"]]);
+    ctx.fillRect(0,0,w,h);
 
-    // montanhas distantes
-    ctx.fillStyle="rgba(31,24,31,.68)";ctx.beginPath();ctx.moveTo(0,h*.70);
-    for(let i=0;i<=9;i++){const x=w*i/9;ctx.lineTo(x,h*(.61+.07*rewardSceneHash(i+11)));}
+    // montanhas distantes para profundidade
+    ctx.fillStyle="rgba(35,31,38,.62)";
+    ctx.beginPath();ctx.moveTo(0,h*.70);
+    for(let i=0;i<=10;i++){
+        const x=w*i/10;
+        ctx.lineTo(x,h*(.60+.075*rewardSceneHash(i+11)));
+    }
     ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
 
     const cx=w*.5;
     const baseY=h*.88;
     const topY=h*.34;
     const half=w*.34;
-    const rock=ctx.createLinearGradient(cx-half,topY,cx+half,baseY);
-    rock.addColorStop(0,"#59322b");rock.addColorStop(.43,"#382322");rock.addColorStop(1,"#17151b");
-    ctx.fillStyle=rock;ctx.beginPath();ctx.moveTo(cx,topY);ctx.lineTo(cx+half*.34,h*.50);ctx.lineTo(cx+half,baseY);ctx.lineTo(cx-half,baseY);ctx.lineTo(cx-half*.28,h*.50);ctx.closePath();ctx.fill();
 
-    // ridges
-    ctx.strokeStyle="rgba(19,13,16,.55)";ctx.lineWidth=3;
-    [[-.02,.38,-.22,.69],[.02,.38,.24,.71],[-.07,.48,-.42,.82],[.08,.50,.43,.83]].forEach(([ax,ay,bx,by])=>{
-        ctx.beginPath();ctx.moveTo(cx+w*ax,h*ay);ctx.lineTo(cx+w*bx,h*by);ctx.stroke();
+    // corpo principal do vulcão mais escuro e natural
+    const rock=ctx.createLinearGradient(cx-half,topY,cx+half,baseY);
+    rock.addColorStop(0,"#62504d");
+    rock.addColorStop(.28,"#4b3a39");
+    rock.addColorStop(.60,"#30272b");
+    rock.addColorStop(1,"#18161b");
+    ctx.fillStyle=rock;
+    ctx.beginPath();
+    ctx.moveTo(cx,topY);
+    ctx.lineTo(cx+half*.31,h*.49);
+    ctx.lineTo(cx+half*.72,h*.70);
+    ctx.lineTo(cx+half,baseY);
+    ctx.lineTo(cx-half,baseY);
+    ctx.lineTo(cx-half*.72,h*.69);
+    ctx.lineTo(cx-half*.29,h*.49);
+    ctx.closePath();
+    ctx.fill();
+
+    // sombras/rugosidade nas encostas
+    ctx.strokeStyle="rgba(18,15,19,.45)";
+    ctx.lineWidth=3;
+    ctx.lineCap="round";
+    [[-.02,.38,-.22,.69],[.02,.38,.24,.71],[-.07,.48,-.42,.82],[.08,.50,.43,.83],[-.01,.45,-.12,.62],[.03,.47,.16,.64]].forEach(([ax,ay,bx,by])=>{
+        ctx.beginPath();
+        ctx.moveTo(cx+w*ax,h*ay);
+        ctx.quadraticCurveTo(cx+w*(ax+bx)*.5,h*((ay+by)*.5)-8,cx+w*bx,h*by);
+        ctx.stroke();
     });
 
-    // cratera
-    ctx.fillStyle="#17080a";ctx.beginPath();ctx.ellipse(cx,topY+8,w*.083,h*.025,0,0,Math.PI*2);ctx.fill();
-
-    // fumaça começa antes da lava
-    if(elapsed>1.0){
-        const smokeAge=elapsed-1;
-        const smoke=rewardSceneData?.smoke||[];
-        smoke.forEach((p,i)=>{
-            const t=(smokeAge*.10+p.phase)%1;
-            const lift=rewardSceneEase(t);
-            const x=cx+p.x*w*.11+Math.sin(elapsed*.5+i)*12*p.scale;
-            const y=topY-15-lift*h*.33;
-            const r=(24+lift*72)*p.scale;
-            rewardSceneDrawSmokeBlob(ctx,x,y,r,Math.max(0,.75*(1-t)));
-        });
+    // pequenas texturas de rocha para tirar aspecto liso/artificial
+    ctx.fillStyle="rgba(118,98,92,.12)";
+    const rockCount=runtimePerf?.tier==="weak"?18:36;
+    for(let i=0;i<rockCount;i++){
+        const px=cx+(rewardSceneHash(i+520)-.5)*half*1.55;
+        const py=topY+h*.10+rewardSceneHash(i+820)*(baseY-topY-h*.12);
+        const spread=(py-topY)/(baseY-topY);
+        if(Math.abs(px-cx)>half*spread*.95) continue;
+        ctx.beginPath();
+        ctx.ellipse(px,py,2+rewardSceneHash(i+1040)*5,1+rewardSceneHash(i+1140)*2.8,rewardSceneHash(i+1240)*Math.PI,0,Math.PI*2);
+        ctx.fill();
     }
 
-    // incandescência interna entre fumaça e subida da lava
-    const heat=rewardSceneEase((elapsed-3.3)/1.7);
-    if(heat>0){
-        ctx.save();ctx.globalCompositeOperation="screen";
-        ctx.fillStyle=rewardSceneRadial(ctx,cx,topY+8,w*.09,[[0,`rgba(255,245,168,${.70*heat})`],[.35,`rgba(255,92,31,${.55*heat})`],[1,"rgba(255,0,0,0)"]]);
-        ctx.beginPath();ctx.ellipse(cx,topY+8,w*.10,h*.035,0,0,Math.PI*2);ctx.fill();ctx.restore();
-    }
+    // cratera escura, sem incandescência
+    ctx.fillStyle="#161216";
+    ctx.beginPath();
+    ctx.ellipse(cx,topY+8,w*.083,h*.024,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle="rgba(112,98,96,.34)";
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.ellipse(cx,topY+7,w*.083,h*.024,0,Math.PI,Math.PI*2);
+    ctx.stroke();
 
-    // lava sobe 5s -> 7.5s, derrama 7s -> 10s, depois permanece
-    const rise=rewardSceneEase((elapsed-5.0)/2.4);
-    const spill=rewardSceneEase((elapsed-7.0)/3.0);
-    if(rise>0){
-        ctx.save();ctx.globalCompositeOperation="screen";
-        const lg=ctx.createLinearGradient(0,topY,0,baseY);
-        lg.addColorStop(0,"#fff3a1");lg.addColorStop(.18,"#ffbd45");lg.addColorStop(.52,"#ff5c1d");lg.addColorStop(1,"#8f170c");
-        ctx.strokeStyle=lg;ctx.lineCap="round";
-        ctx.shadowBlur=20;ctx.shadowColor="rgba(255,74,19,.76)";
-        // lava dentro da cratera subindo
-        ctx.lineWidth=8+rise*8;ctx.beginPath();ctx.moveTo(cx,topY+20);ctx.lineTo(cx,topY+20-rise*28);ctx.stroke();
-        // derramamentos: crescem e depois ficam
-        if(spill>0){
-            const streams=[
-                {dx:0,endX:cx-w*.02,endY:baseY*.96,width:16},
-                {dx:-w*.045,endX:cx-w*.16,endY:baseY*.91,width:8},
-                {dx:w*.04,endX:cx+w*.15,endY:baseY*.88,width:9}
-            ];
-            streams.forEach((s,idx)=>{
-                const sy=topY+18;
-                const ex=cx+(s.endX-cx)*spill;
-                const ey=sy+(s.endY-sy)*spill;
-                ctx.lineWidth=s.width;
-                ctx.beginPath();ctx.moveTo(cx+s.dx,sy);ctx.bezierCurveTo(cx+s.dx*1.7,h*.55,ex-(idx-1)*18,h*.72,ex,ey);ctx.stroke();
-            });
-        }
+    // fumaça cinza contínua: sobe, abre e se dissolve com vento leve.
+    // Não há lava, brilho interno, brasas ou repetição de erupção.
+    const smoke=rewardSceneData?.smoke||[];
+    smoke.forEach((p,i)=>{
+        const speed=.055+.018*(i%4);
+        const t=(elapsed*speed+p.phase)%1;
+        const lift=rewardSceneEase(t);
+        const sideWind=Math.sin(elapsed*.18+i*.73)*8 + p.drift*w*.045*lift;
+        const x=cx+p.x*w*.085+sideWind;
+        const y=topY-8-lift*h*.42;
+        const r=(20+lift*88)*p.scale;
+        const fadeIn=Math.min(1,t/.16);
+        const fadeOut=Math.max(0,1-(t-.58)/.42);
+        const alpha=.56*fadeIn*fadeOut;
+
+        ctx.save();
+        ctx.globalAlpha=alpha;
+        const g=ctx.createRadialGradient(x-r*.20,y-r*.20,r*.05,x,y,r);
+        g.addColorStop(0,"rgba(205,205,207,.78)");
+        g.addColorStop(.36,"rgba(145,142,147,.66)");
+        g.addColorStop(.70,"rgba(82,79,86,.38)");
+        g.addColorStop(1,"rgba(45,42,48,0)");
+        ctx.fillStyle=g;
+        ctx.beginPath();
+        ctx.ellipse(x,y,r*(1+.20*lift),r*.76,Math.sin(i)*.16,0,Math.PI*2);
+        ctx.fill();
         ctx.restore();
-    }
+    });
 
-    // brasas depois da erupção, contínuas sem resetar a cena
-    if(elapsed>6){
-        for(let i=0;i<(runtimePerf?.tier==="weak"?10:24);i++){
-            const p=((elapsed-6)*(.12+.02*(i%4))+rewardSceneHash(i+700))%1;
-            const x=cx+(rewardSceneHash(i+900)-.5)*w*.22+Math.sin(p*9+i)*12;
-            const y=topY-p*h*.34;
-            ctx.fillStyle=`rgba(255,${120+Math.floor(rewardSceneHash(i)*100)},42,${(1-p)*.85})`;
-            ctx.beginPath();ctx.arc(x,y,1.2+rewardSceneHash(i+300)*2.1,0,Math.PI*2);ctx.fill();
-        }
-    }
+    // camada baixa de névoa/fumaça distante, bem discreta
+    ctx.save();
+    ctx.globalAlpha=.10+.035*Math.sin(elapsed*.22);
+    ctx.fillStyle=rewardSceneGradient(ctx,0,h*.56,0,h*.86,[[0,"rgba(170,164,168,0)"],[.55,"rgba(132,126,132,.30)"],[1,"rgba(60,56,63,0)"]]);
+    ctx.fillRect(0,h*.52,w,h*.34);
+    ctx.restore();
 
-    // chão escuro / reflexo da lava
-    ctx.fillStyle=rewardSceneGradient(ctx,0,h*.83,0,h,[[0,"rgba(29,19,23,.15)"],[1,"#080609"]]);ctx.fillRect(0,h*.83,w,h*.17);
-    if(spill>0){ctx.fillStyle=`rgba(255,74,22,${.04+.06*spill})`;ctx.fillRect(0,h*.82,w,h*.18);}
+    // chão escuro sem reflexo de lava
+    ctx.fillStyle=rewardSceneGradient(ctx,0,h*.83,0,h,[[0,"rgba(31,27,32,.12)"],[1,"#09080b"]]);
+    ctx.fillRect(0,h*.83,w,h*.17);
 }
 
 function rewardSceneDrawFrost(ctx,w,h,elapsed,dt){
