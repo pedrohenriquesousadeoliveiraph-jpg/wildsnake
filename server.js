@@ -12,15 +12,20 @@ const app = express();
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://wildsnake.onrender.com',
   'http://localhost:3000',
-  'http://127.0.0.1:3000'
+  'http://127.0.0.1:3000',
+  /* Capacitor Android/iOS local WebView origins. */
+  'https://localhost',
+  'http://localhost',
+  'capacitor://localhost'
 ];
 
-const ALLOWED_ORIGINS = new Set(
-  String(process.env.ALLOWED_ORIGINS || DEFAULT_ALLOWED_ORIGINS.join(','))
+const ALLOWED_ORIGINS = new Set([
+  ...DEFAULT_ALLOWED_ORIGINS,
+  ...String(process.env.ALLOWED_ORIGINS || '')
     .split(',')
     .map(value => value.trim())
     .filter(Boolean)
-);
+]);
 
 function originAllowed(origin) {
   if (!origin) return true; // apps nativos, curl e handshake sem Origin
@@ -29,6 +34,36 @@ function originAllowed(origin) {
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
+
+/* =========================================================
+   v13.25 - CORS DO APP NATIVO + CROSSPLAY (CAPACITOR)
+   Permite apenas origens explicitamente aprovadas acima.
+   O app continua usando o MESMO backend/Socket.IO do navegador.
+========================================================= */
+app.use((req, res, next) => {
+  const origin = String(req.headers.origin || '').trim();
+
+  if (origin && originAllowed(origin)) {
+    res.set('Access-Control-Allow-Origin', origin);
+    res.set('Vary', 'Origin');
+    res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Supabase-Token, X-Runtime-Token'
+    );
+    res.set('Access-Control-Max-Age', '86400');
+  }
+
+  if (req.method === 'OPTIONS') {
+    if (origin && !originAllowed(origin)) {
+      return res.status(403).end();
+    }
+    return res.status(204).end();
+  }
+
+  next();
+});
+
 app.use(express.json({ limit: '128kb', strict: true }));
 
 app.use((req, res, next) => {
@@ -77,8 +112,8 @@ const io = new Server(httpServer, {
 ========================================================= */
 
 const PORT = Number(process.env.PORT || 3000);
-const GAME_VERSION = 'v13.20.0';
-const BUILD = 'wildsnake-v13.20.0-smart-public-bots-35-slots';
+const GAME_VERSION = 'v13.25.0';
+const BUILD = 'wildsnake-v13.25.0-android-crossplay-mobile-cors';
 
 const WORLD_RADIUS = 4200;
 const SAFE_RADIUS = 3900;
