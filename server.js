@@ -112,8 +112,8 @@ const io = new Server(httpServer, {
 ========================================================= */
 
 const PORT = Number(process.env.PORT || 3000);
-const GAME_VERSION = 'v13.25.0';
-const BUILD = 'wildsnake-v13.25.0-android-crossplay-mobile-cors';
+const GAME_VERSION = 'v13.27.0';
+const BUILD = 'wildsnake-v13.27.0-market-splash-8s';
 
 const WORLD_RADIUS = 4200;
 const SAFE_RADIUS = 3900;
@@ -1593,22 +1593,46 @@ const TUTORIAL_SKIN_ODDS = Object.freeze([
 
 const WILD_GEM_COIN_VALUE = 100;
 
-const WILD_ANIMAL_COMBO = Object.freeze({
-  id: 'wildAnimalCombo',
-  name: 'Combo Animais Selvagens',
-  coinPrice: 50_000,
-  gemPrice: 500,
-  skins: Object.freeze([
-    'crocodile',
-    'bat',
-    'scorpion',
-    'cow',
-    'cockatielLutino',
-    'cockatielPearl'
-  ])
+const SHOP_COMBOS = Object.freeze({
+  wildAnimalCombo:Object.freeze({
+    id:'wildAnimalCombo',
+    name:'Combo Animais Selvagens',
+    subtitle:'COMBO ORIGINAL',
+    badge:'EXCLUSIVO',
+    accent:'#55d98b',
+    coinPrice:50_000,
+    gemPrice:500,
+    skins:Object.freeze([
+      'crocodile',
+      'bat',
+      'scorpion',
+      'cow',
+      'cockatielLutino',
+      'cockatielPearl'
+    ])
+  }),
+
+  lunarEventCombo:Object.freeze({
+    id:'lunarEventCombo',
+    name:'Combo Evento Lunar',
+    subtitle:'EVENTO LUNAR',
+    badge:'PROMOÇÃO',
+    accent:'#ff384d',
+    coinPrice:75_000,
+    gemPrice:750,
+    skins:Object.freeze([
+      'lunarDragon',
+      'lunarJadeRabbit',
+      'lunarTiger'
+    ])
+  })
 });
 
-const COMBO_ONLY_SKIN_IDS = new Set(WILD_ANIMAL_COMBO.skins);
+const WILD_ANIMAL_COMBO = SHOP_COMBOS.wildAnimalCombo;
+
+const COMBO_ONLY_SKIN_IDS = new Set(
+  Object.values(SHOP_COMBOS).flatMap(combo => combo.skins)
+);
 
 /*
    Catálogo autoritativo das skins AVULSAS não limitadas.
@@ -1644,8 +1668,39 @@ const SHOP_SKIN_CATALOG = Object.freeze({
   alien:{ id:'alien', name:'Alien Nebuloso', currency:'gem', price:320, rarity:'legendary', active:true },
   octopus:{ id:'octopus', name:'Polvo Abissal', currency:'coin', price:18000, rarity:'epic', active:true },
   crab:{ id:'crab', name:'Caranguejo Rubi', currency:'coin', price:15000, rarity:'epic', active:true },
-  lizard:{ id:'lizard', name:'Lagarto Esmeralda', currency:'coin', price:16000, rarity:'epic', active:true }
+  lizard:{ id:'lizard', name:'Lagarto Esmeralda', currency:'coin', price:16000, rarity:'epic', active:true },
+  fireDragon:{ id:'fireDragon', name:'Dragão de Fogo', currency:'gem', price:600, rarity:'mythic', active:true },
+
+  crocodile:{ id:'crocodile', name:'Crocodilo', currency:'combo', price:0, rarity:'epic', active:true },
+  bat:{ id:'bat', name:'Morcego', currency:'combo', price:0, rarity:'epic', active:true },
+  scorpion:{ id:'scorpion', name:'Escorpião', currency:'combo', price:0, rarity:'legendary', active:true },
+  cow:{ id:'cow', name:'Vaquinha', currency:'combo', price:0, rarity:'rare', active:true },
+  cockatielLutino:{ id:'cockatielLutino', name:'Calopsita Lutina', currency:'combo', price:0, rarity:'legendary', active:true },
+  cockatielPearl:{ id:'cockatielPearl', name:'Calopsita Pérola', currency:'combo', price:0, rarity:'legendary', active:true },
+
+  lunarDragon:{ id:'lunarDragon', name:'Dragão Lunar', currency:'combo', price:0, rarity:'mythic', active:true },
+  lunarJadeRabbit:{ id:'lunarJadeRabbit', name:'Coelho de Jade', currency:'combo', price:0, rarity:'mythic', active:true },
+  lunarTiger:{ id:'lunarTiger', name:'Tigre Lunar Imperial', currency:'combo', price:0, rarity:'mythic', active:true }
 });
+
+
+const SHOP_MONEY_PACKS = Object.freeze([
+  { id:'coins15000', kind:'currency', type:'coin', title:'Coins Inicial', amount:15_000, bonus:0, cash:3.90, badge:'', featured:false },
+  { id:'coins50000', kind:'currency', type:'coin', title:'Coins Popular', amount:50_000, bonus:10_000, cash:7.90, badge:'MAIS VENDIDO', featured:true },
+  { id:'coins100000', kind:'currency', type:'coin', title:'Coins Turbo', amount:100_000, bonus:25_000, cash:12.90, badge:'+25.000 BÔNUS', featured:false },
+  { id:'coins250000', kind:'currency', type:'coin', title:'Coins Mega', amount:250_000, bonus:75_000, cash:19.90, badge:'MELHOR VALOR', featured:true },
+
+  { id:'gems300', kind:'currency', type:'gem', title:'Gems Mini', amount:300, bonus:0, cash:5.90, badge:'', featured:false },
+  { id:'gems600', kind:'currency', type:'gem', title:'Gems Starter', amount:600, bonus:0, cash:9.90, badge:'', featured:false },
+  { id:'gems1200', kind:'currency', type:'gem', title:'Gems Popular', amount:1_200, bonus:0, cash:15.50, badge:'MAIS VENDIDO', featured:true },
+  { id:'gems2000', kind:'currency', type:'gem', title:'Gems Turbo', amount:2_000, bonus:200, cash:19.90, badge:'+200 BÔNUS', featured:false },
+  { id:'gems3000', kind:'currency', type:'gem', title:'Gems Premium', amount:3_000, bonus:400, cash:24.90, badge:'+400 BÔNUS', featured:false },
+  { id:'gems5000', kind:'currency', type:'gem', title:'Gems Mega', amount:5_000, bonus:800, cash:29.90, badge:'MELHOR VALOR', featured:true },
+
+  { id:'rouletteStarter', kind:'roulette', type:'mixed', title:'Roleta Starter', cash:6.90, badge:'1 SKIN + BÔNUS', featured:false, coinBonus:10_000, gemBonus:0, rarityFloor:'rare' },
+  { id:'rouletteTurbo', kind:'roulette', type:'mixed', title:'Roleta Turbo', cash:14.90, badge:'RECOMENDADO', featured:true, coinBonus:35_000, gemBonus:300, rarityFloor:'rare' },
+  { id:'rouletteElite', kind:'roulette', type:'mixed', title:'Roleta Elite', cash:24.90, badge:'CHANCE PREMIUM', featured:false, coinBonus:75_000, gemBonus:800, rarityFloor:'epic' }
+]);
 
 let shopCatalogSyncPromise = null;
 
@@ -2847,8 +2902,9 @@ function secureAccountView(state) {
     ownedSkins: Array.isArray(ownedSkins) ? ownedSkins : ['basic'],
     ownedCombos:
       Array.isArray(ownedSkins)
-      && WILD_ANIMAL_COMBO.skins.every(skinId => ownedSkins.includes(skinId))
-        ? [WILD_ANIMAL_COMBO.id]
+        ? Object.values(SHOP_COMBOS)
+            .filter(combo => combo.skins.every(skinId => ownedSkins.includes(skinId)))
+            .map(combo => combo.id)
         : []
   };
 }
@@ -3355,6 +3411,7 @@ function secureErrorMessage(error) {
   if (raw.includes('CARTEIRA_NAO_ENCONTRADA')) return 'Carteira da conta não encontrada.';
   if (raw.includes('MATCH_REWARD_FAILED')) return 'Não foi possível creditar a recompensa da partida.';
   if (raw.includes('COMBO_JA_POSSUI')) return 'Você já possui este combo.';
+  if (raw.includes('COMBO_INVALIDO')) return 'Combo ou forma de pagamento inválida.';
   if (raw.includes('COMBO_INVALIDO')) return 'Combo inválido.';
   if (raw.includes('RECOMPENSA_JA_RESGATADA')) return 'Esta recompensa já foi resgatada.';
   if (raw.includes('XP_INSUFICIENTE')) return 'Você ainda não possui XP suficiente.';
@@ -3606,6 +3663,127 @@ async function purchaseShopSkinForAccount(accountId, requestedSkinId) {
     return {
       skin:{ ...skin },
       account:secureAccountView(updatedState)
+    };
+  });
+}
+
+
+async function deleteOwnedSkinRows(accountId, skinIds) {
+  if (!skinIds.length) return;
+  const encoded = skinIds.map(id => `"${String(id).replace(/"/g,'')}"`).join(',');
+  await supabaseAdminRequest(
+    `/rest/v1/${encodeURIComponent(SECURE_DB_TABLES.skins)}?account_id=eq.${encodeURIComponent(accountId)}&skin_id=in.(${encoded})`,
+    { method:'DELETE' }
+  );
+}
+
+async function purchaseShopComboForAccount(accountId, requestedComboId, requestedCurrency) {
+  const comboId = String(requestedComboId || '').trim();
+  const currency = String(requestedCurrency || '').trim().toLowerCase();
+  const combo = SHOP_COMBOS[comboId];
+
+  if (!combo || !['coin','gem'].includes(currency)) {
+    throw new Error('COMBO_INVALIDO');
+  }
+
+  if (!secureDbReady()) {
+    throw new Error('SUPABASE_SERVER_NOT_CONFIGURED');
+  }
+
+  return withMatchRewardLock(accountId, async () => {
+    await ensureAuthoritativeShopCatalog();
+
+    const state = await loadSecureGameState(accountId);
+    if (!state?.wallet) throw new Error('CARTEIRA_NAO_ENCONTRADA');
+
+    const owned = new Set(Array.isArray(state.ownedSkins) ? state.ownedSkins : []);
+    if (combo.skins.every(id => owned.has(id))) {
+      throw new Error('COMBO_JA_POSSUI');
+    }
+
+    const price = currency === 'gem' ? combo.gemPrice : combo.coinPrice;
+    const oldCoins = Math.max(0, Number(state.wallet.coins || 0));
+    const oldGems = Math.max(0, Number(state.wallet.wildgems || 0));
+
+    if (currency === 'coin' && oldCoins < price) throw new Error('COINS_INSUFICIENTES');
+    if (currency === 'gem' && oldGems < price) throw new Error('GEMS_INSUFICIENTES');
+
+    const newSkinIds = combo.skins.filter(id => !owned.has(id));
+
+    const walletPatch = { updated_at:new Date().toISOString() };
+    if (currency === 'coin') walletPatch.coins = oldCoins - price;
+    else walletPatch.wildgems = oldGems - price;
+
+    await dbUpdate(
+      SECURE_DB_TABLES.wallets,
+      { account_id:`eq.${accountId}` },
+      walletPatch
+    );
+
+    const inserted = [];
+
+    try {
+      for (const skinId of newSkinIds) {
+        await dbInsert(
+          SECURE_DB_TABLES.skins,
+          {
+            account_id:accountId,
+            skin_id:skinId,
+            source:`combo:${comboId}`
+          },
+          { upsert:true, onConflict:'account_id,skin_id' }
+        );
+        inserted.push(skinId);
+      }
+    } catch (error) {
+      await dbUpdate(
+        SECURE_DB_TABLES.wallets,
+        { account_id:`eq.${accountId}` },
+        {
+          coins:oldCoins,
+          wildgems:oldGems,
+          updated_at:new Date().toISOString()
+        }
+      ).catch(()=>{});
+
+      await deleteOwnedSkinRows(accountId, inserted).catch(()=>{});
+      throw error;
+    }
+
+    try {
+      await dbInsert(SECURE_DB_TABLES.ledger, {
+        account_id:accountId,
+        event_type:'combo_purchase',
+        currency,
+        amount:-price,
+        skin_id:null,
+        idempotency_key:`combo-purchase:${accountId}:${comboId}`,
+        metadata:{
+          comboId,
+          comboName:combo.name,
+          skins:[...combo.skins],
+          currency,
+          price,
+          purchasedAt:new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      if (error?.status !== 409) {
+        console.error('combo purchase ledger:', error?.message || error);
+      }
+    }
+
+    const updated = await loadSecureGameState(accountId);
+
+    return {
+      combo:{
+        id:combo.id,
+        name:combo.name,
+        currency,
+        price,
+        skins:[...combo.skins]
+      },
+      account:secureAccountView(updated)
     };
   });
 }
@@ -6825,6 +7003,57 @@ app.post('/api/account/profile', async (req, res) => {
   }
 });
 
+
+app.get('/api/shop/catalog', async (_req, res) => {
+  res.set('Cache-Control', 'no-store');
+
+  try {
+    const regular = Object.values(SHOP_SKIN_CATALOG).map(skin => ({
+      id:skin.id,
+      name:skin.name,
+      currency:skin.currency,
+      price:skin.price,
+      rarity:skin.rarity,
+      limited:false,
+      comboOnly:COMBO_ONLY_SKIN_IDS.has(skin.id)
+    }));
+
+    const limited = Object.values(LIMITED_SKIN_CATALOG).map(skin => ({
+      id:skin.id,
+      name:skin.name,
+      currency:skin.currency,
+      price:skin.price,
+      rarity:'limited',
+      limited:true,
+      comboOnly:false
+    }));
+
+    return res.json({
+      ok:true,
+      version:GAME_VERSION,
+      economy:{
+        gemCoinValue:WILD_GEM_COIN_VALUE,
+        cashCurrency:'BRL'
+      },
+      skins:[...regular,...limited],
+      combos:Object.values(SHOP_COMBOS).map(combo => ({
+        id:combo.id,
+        name:combo.name,
+        subtitle:combo.subtitle,
+        badge:combo.badge,
+        accent:combo.accent,
+        coinPrice:combo.coinPrice,
+        gemPrice:combo.gemPrice,
+        skins:[...combo.skins]
+      })),
+      packs:SHOP_MONEY_PACKS
+    });
+  } catch (error) {
+    console.error('shop catalog:', error?.message || error);
+    return res.status(500).json({ ok:false, error:'Não foi possível carregar o catálogo.' });
+  }
+});
+
 app.get('/api/shop/limited', async (_req, res) => {
   res.set('Cache-Control', 'no-store');
   try {
@@ -6913,13 +7142,13 @@ app.post('/api/shop/limited/purchase', async (req, res) => {
 
 
 /* =========================================================
-   V13.16 - COMBO AUTORITATIVO
+   V13.26 - COMBOS AUTORITATIVOS
 ========================================================= */
 
 app.post('/api/shop/combo/purchase', async (req, res) => {
   const session = sessionFromRequest(req);
   if (!session) {
-    return res.status(401).json({ ok:false, error:'Entre na sua conta para comprar combos.' });
+    return res.status(401).json({ ok:false, error:'A conta principal do WildSnake é necessária para gravar a compra.' });
   }
 
   const key = `combo-purchase:${session.accountId}`;
@@ -6930,23 +7159,17 @@ app.post('/api/shop/combo/purchase', async (req, res) => {
   const comboId = String(req.body?.comboId || '').trim();
   const currency = String(req.body?.currency || '').trim().toLowerCase();
 
-  if (comboId !== WILD_ANIMAL_COMBO.id || !['coin','gem'].includes(currency)) {
-    return res.status(400).json({ ok:false, error:'Combo ou forma de pagamento inválida.' });
-  }
-
   try {
-    const result = await dbRpc('ws_purchase_combo', {
-      p_account_id:session.accountId,
-      p_combo_id:comboId,
-      p_currency:currency
-    });
-
-    const state = await loadSecureGameState(session.accountId);
+    const result = await purchaseShopComboForAccount(
+      session.accountId,
+      comboId,
+      currency
+    );
 
     return res.json({
       ok:true,
-      combo:result,
-      account:secureAccountView(state),
+      combo:result.combo,
+      account:result.account,
       economy:{ gemCoinValue:WILD_GEM_COIN_VALUE }
     });
   } catch (error) {
