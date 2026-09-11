@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>WildSnake - Tutorial v13.29</title>
+<title>WildSnake - Tutorial WEB PC v13.30</title>
 
 <style>
 *{
@@ -2135,9 +2135,308 @@ body.firstKill #gameCanvas{
 }
 
 </style>
+
+<script id="wildsnakeWebDeviceGuard">
+(function(){
+    function isMobileWebDevice(){
+        try{
+            if(
+                navigator.userAgentData &&
+                typeof navigator.userAgentData.mobile === "boolean" &&
+                navigator.userAgentData.mobile
+            ){
+                return true;
+            }
+        }catch{}
+
+        const ua = String(navigator.userAgent || "");
+
+        if(
+            /Android|iPhone|iPod|IEMobile|Windows Phone|Opera Mini|Mobile/i.test(ua)
+        ){
+            return true;
+        }
+
+        /*
+           iPadOS pode se identificar como Macintosh.
+           Como a versão WEB será exclusiva de PC,
+           tablet também é bloqueado.
+        */
+        if(
+            navigator.platform === "MacIntel" &&
+            Number(navigator.maxTouchPoints || 0) > 1
+        ){
+            return true;
+        }
+
+        return false;
+    }
+
+    window.WILDSNAKE_IS_MOBILE_WEB =
+        isMobileWebDevice();
+
+    if(window.WILDSNAKE_IS_MOBILE_WEB){
+        document.documentElement.classList.add(
+            "wildsnake-mobile-web"
+        );
+    }
+})();
+</script>
+
+
+<style id="wildsnakeWebPcOnlyCSS">
+/* =========================================================
+   WILDSNAKE WEB v13.30
+   WEB EXCLUSIVO PARA PC
+========================================================= */
+
+#wildsnakeMobileWebBlocker{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    width:100vw;
+    min-height:100dvh;
+
+    padding:
+        max(22px,env(safe-area-inset-top))
+        max(18px,env(safe-area-inset-right))
+        max(22px,env(safe-area-inset-bottom))
+        max(18px,env(safe-area-inset-left));
+
+    overflow:auto;
+
+    background:
+        radial-gradient(
+            circle at 50% 28%,
+            rgba(53,219,255,.13),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 50% 58%,
+            rgba(105,255,156,.08),
+            transparent 38%
+        ),
+        linear-gradient(
+            180deg,
+            #07111f 0%,
+            #02060e 58%,
+            #000207 100%
+        );
+
+    color:#fff;
+    text-align:center;
+}
+
+html.wildsnake-mobile-web #wildsnakeMobileWebBlocker{
+    display:flex;
+}
+
+/*
+   Evita flash do tutorial/qualidade por baixo do aviso
+   em navegadores móveis.
+*/
+html.wildsnake-mobile-web body > *:not(#wildsnakeMobileWebBlocker):not(script){
+    visibility:hidden!important;
+}
+
+html.wildsnake-mobile-web #wildsnakeMobileWebBlocker{
+    visibility:visible!important;
+}
+
+.wildsnakeMobileWebCard{
+    width:min(92vw,430px);
+
+    padding:34px 24px 28px;
+
+    border-radius:30px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.11);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,29,49,.96),
+            rgba(4,9,18,.98)
+        );
+
+    box-shadow:
+        0 35px 100px rgba(0,0,0,.68),
+        0 0 70px rgba(57,221,255,.06);
+}
+
+.wildsnakeMobileWebLogo{
+    width:88px;
+    height:88px;
+
+    margin:0 auto 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:26px;
+
+    color:#041009;
+
+    font-size:46px;
+    font-weight:1000;
+
+    background:
+        linear-gradient(
+            135deg,
+            #75ff9e,
+            #39ddff
+        );
+
+    box-shadow:
+        0 0 55px rgba(78,255,165,.23);
+}
+
+.wildsnakeMobileWebTag{
+    color:#71ffb1;
+
+    font-size:9px;
+    font-weight:1000;
+
+    letter-spacing:4px;
+}
+
+.wildsnakeMobileWebCard h1{
+    margin-top:12px;
+
+    font-size:
+        clamp(
+            29px,
+            9vw,
+            42px
+        );
+
+    line-height:1;
+    letter-spacing:-1.5px;
+}
+
+.wildsnakeMobileWebCard p{
+    margin:
+        16px auto 0;
+
+    max-width:340px;
+
+    color:
+        rgba(255,255,255,.61);
+
+    font-size:13px;
+    line-height:1.65;
+}
+
+.wildsnakeMobileWebCard strong{
+    color:#fff;
+}
+
+#wildsnakeMobileAppLink{
+    width:100%;
+
+    margin-top:25px;
+    padding:16px 18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    text-decoration:none;
+
+    color:#041008;
+
+    font-size:11px;
+    font-weight:1000;
+
+    letter-spacing:1.6px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #74ff9e,
+            #38dcff
+        );
+
+    box-shadow:
+        0 0 35px rgba(70,255,150,.16);
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+}
+
+#wildsnakeMobileAppLink[data-ready="true"]:active{
+    transform:scale(.98);
+}
+
+#wildsnakeMobileAppLink[data-ready="false"]{
+    opacity:.58;
+    cursor:default;
+}
+
+#wildsnakeMobileAppStatus{
+    display:block;
+
+    margin-top:11px;
+
+    color:
+        rgba(255,255,255,.37);
+
+    font-size:8px;
+    font-weight:800;
+
+    letter-spacing:1.3px;
+    line-height:1.45;
+}
+</style>
+
 </head>
 
 <body>
+
+<div id="wildsnakeMobileWebBlocker" role="dialog" aria-modal="true" aria-labelledby="wildsnakeMobileWebTitle">
+    <div class="wildsnakeMobileWebCard">
+        <div class="wildsnakeMobileWebLogo">W</div>
+
+        <div class="wildsnakeMobileWebTag">
+            WILDSNAKE WEB
+        </div>
+
+        <h1 id="wildsnakeMobileWebTitle">
+            Jogue pelo aplicativo
+        </h1>
+
+        <p>
+            A versão web do WildSnake foi feita para
+            <strong>computador</strong>.
+            Para jogar no celular, instale o aplicativo WildSnake.
+        </p>
+
+        <a
+            id="wildsnakeMobileAppLink"
+            href="#"
+            data-ready="false"
+            rel="noopener noreferrer"
+        >
+            INSTALAR O APP
+        </a>
+
+        <span id="wildsnakeMobileAppStatus">
+            LINK DO APLICATIVO EM BREVE
+        </span>
+    </div>
+</div>
+
 
 <canvas id="gameCanvas"></canvas>
 
@@ -6786,17 +7085,23 @@ async function startTutorial(){
         true;
 
 
-    state =
-        STATE.DEVICE;
+    /*
+       WEB v13.30:
+       não existe mais escolha PC / MOBILE.
+       A versão web é PC e entra direto nos controles de teclado.
+    */
+    deviceMode =
+        "pc";
 
 
-    document
-    .getElementById(
-        "deviceOverlay"
-    )
-    .classList
-    .add(
-        "show"
+    localStorage.setItem(
+        "wildsnake_control_mode",
+        "pc"
+    );
+
+
+    openControls(
+        "pc"
     );
 }
 
@@ -9018,6 +9323,88 @@ document.addEventListener(
 );
 
 
+
+/* =========================================================
+   WILDSNAKE WEB v13.30 - LINK FUTURO DO APP
+   Quando o app estiver publicado, coloque a URL entre aspas.
+   Exemplo:
+   const WILDSNAKE_ANDROID_APP_URL =
+       "https://play.google.com/store/apps/details?id=com.wildsnake.game";
+========================================================= */
+
+const WILDSNAKE_ANDROID_APP_URL =
+    "";
+
+
+function configureWildSnakeMobileAppLink(){
+
+    const link =
+        document.getElementById(
+            "wildsnakeMobileAppLink"
+        );
+
+
+    const status =
+        document.getElementById(
+            "wildsnakeMobileAppStatus"
+        );
+
+
+    if(!link){
+        return;
+    }
+
+
+    if(WILDSNAKE_ANDROID_APP_URL){
+
+        link.href =
+            WILDSNAKE_ANDROID_APP_URL;
+
+
+        link.dataset.ready =
+            "true";
+
+
+        link.target =
+            "_blank";
+
+
+        if(status){
+            status.textContent =
+                "ABRIR PÁGINA DO APLICATIVO";
+        }
+
+        return;
+    }
+
+
+    link.href =
+        "#";
+
+
+    link.dataset.ready =
+        "false";
+
+
+    link.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            if(status){
+                status.textContent =
+                    "O LINK DO APLICATIVO SERÁ LIBERADO EM BREVE";
+            }
+
+        }
+    );
+}
+
+
+configureWildSnakeMobileAppLink();
+
+
 /* =========================================================
    INICIALIZAÇÃO
 ========================================================= */
@@ -9031,12 +9418,60 @@ requestAnimationFrame(
 );
 
 /*
-   O gate fica acima do tutorial até o servidor confirmar que:
-   - a conta é válida;
-   - o tutorial ainda não foi concluído;
-   - não existe resgate duplicado.
+   WEB v13.30
+   Celular/tablet: o tutorial NÃO inicia e nenhuma etapa de jogo é liberada.
+   PC: segue normalmente com validação segura e tutorial.
 */
-tutorialSecureBootstrap();
+if(
+    window.WILDSNAKE_IS_MOBILE_WEB
+){
+
+    worldPaused =
+        true;
+
+
+    document
+    .getElementById(
+        "secureGate"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+
+    document
+    .getElementById(
+        "qualityOverlay"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+}else{
+
+    deviceMode =
+        "pc";
+
+
+    try{
+        localStorage.setItem(
+            "wildsnake_control_mode",
+            "pc"
+        );
+    }catch{}
+
+
+    /*
+       O gate fica acima do tutorial até o servidor confirmar que:
+       - a conta é válida;
+       - o tutorial ainda não foi concluído;
+       - não existe resgate duplicado.
+    */
+    tutorialSecureBootstrap();
+
+}
 
 </script>
 
