@@ -101,6 +101,7 @@ const io = new Server(httpServer, {
     credentials: false
   },
   transports: ['websocket', 'polling'],
+  allowUpgrades: true,
   pingInterval: 10000,
   pingTimeout: 8000,
   connectTimeout: 12000,
@@ -112,8 +113,8 @@ const io = new Server(httpServer, {
 ========================================================= */
 
 const PORT = Number(process.env.PORT || 3000);
-const GAME_VERSION = 'v13.27.0';
-const BUILD = 'wildsnake-v13.27.0-market-splash-8s';
+const GAME_VERSION = 'v13.33.0';
+const BUILD = 'wildsnake-v13.33.0-low-latency-cache-broadphase';
 
 const WORLD_RADIUS = 4200;
 const SAFE_RADIUS = 3900;
@@ -3997,25 +3998,25 @@ const NETWORK_PROFILES = {
   weak:{
     id:'weak',
     worldHz:6,
-    segmentLimit:28,
+    segmentLimit:24,
     foodHz:1,
     interpolationHint:0.18
   },
 
   medium:{
     id:'medium',
-    worldHz:9,
-    segmentLimit:46,
+    worldHz:8,
+    segmentLimit:34,
     foodHz:2,
     interpolationHint:0.13
   },
 
   strong:{
     id:'strong',
-    worldHz:12,
-    segmentLimit:70,
+    worldHz:10,
+    segmentLimit:48,
     foodHz:2,
-    interpolationHint:0.09
+    interpolationHint:0.10
   }
 
 };
@@ -4105,9 +4106,8 @@ function sampleBodyForNetwork(
 ){
 
   const body =
-    bodySegments(
-      snake,
-      0
+    cachedBodySegments(
+      snake
     );
 
   if(
@@ -4618,7 +4618,10 @@ function seedTrail(snake) {
       y: snake.y - Math.sin(snake.angle) * i * 3
     });
   }
-  snake.prevBodySegments = bodySegments(snake, 0).map(p => ({ x: p.x, y: p.y }));
+  const seededBody = bodySegments(snake, 0).map(p => ({ x: p.x, y: p.y }));
+  snake.bodySegmentsCache = seededBody;
+  snake.prevBodySegments = seededBody.map(p => ({ x: p.x, y: p.y }));
+  snake.bodyBoundsCache = bodyBounds(seededBody);
 }
 
 function updateTrail(snake) {
@@ -4648,6 +4651,81 @@ function bodySegments(snake, offset = 0) {
   }
 
   return result;
+}
+
+
+/* =========================================================
+   V13.33 - CACHE DE CORPO / BROAD PHASE
+   Um corpo é calculado uma vez por tick e reutilizado em:
+   colisões + snapshots de rede. Isso corta muito trabalho repetido.
+========================================================= */
+
+function bodyBounds(points) {
+  if (!Array.isArray(points) || !points.length) {
+    return null;
+  }
+
+  let minX = points[0].x;
+  let maxX = points[0].x;
+  let minY = points[0].y;
+  let maxY = points[0].y;
+
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i];
+    if (!p) continue;
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.y > maxY) maxY = p.y;
+  }
+
+  return { minX, maxX, minY, maxY };
+}
+
+function cachedBodySegments(snake) {
+  if (
+    Array.isArray(snake.bodySegmentsCache)
+    &&
+    snake.bodySegmentsCache.length
+  ) {
+    return snake.bodySegmentsCache;
+  }
+
+  const body = bodySegments(snake, 0).map(p => ({ x:p.x, y:p.y }));
+  snake.bodySegmentsCache = body;
+  snake.bodyBoundsCache = bodyBounds(body);
+  return body;
+}
+
+function refreshBodyCache(snake) {
+  const body = bodySegments(snake, 0).map(p => ({ x:p.x, y:p.y }));
+  snake.bodySegmentsCache = body;
+  snake.bodyBoundsCache = bodyBounds(body);
+  return body;
+}
+
+function sweptHeadMayTouchBody(attacker, defender, padding = HEAD_BODY_DISTANCE + 8) {
+  const bounds =
+    defender.bodyBoundsCache
+    ||
+    bodyBounds(cachedBodySegments(defender));
+
+  if (!bounds) return false;
+
+  const minX = Math.min(attacker.prevX, attacker.x) - padding;
+  const maxX = Math.max(attacker.prevX, attacker.x) + padding;
+  const minY = Math.min(attacker.prevY, attacker.y) - padding;
+  const maxY = Math.max(attacker.prevY, attacker.y) + padding;
+
+  return !(
+    maxX < bounds.minX
+    ||
+    minX > bounds.maxX
+    ||
+    maxY < bounds.minY
+    ||
+    minY > bounds.maxY
+  );
 }
 
 /* =========================================================
@@ -5078,10 +5156,18 @@ function sweptHeads(a, b) {
 }
 
 function sweptHeadAgainstBody(attacker, defender) {
-  const current = bodySegments(defender, 0);
+  /*
+    Broad phase barato: se a trajetória da cabeça nem cruza a caixa
+    do corpo, evita centenas de testes de segmento.
+  */
+  if (!sweptHeadMayTouchBody(attacker, defender)) {
+    return Infinity;
+  }
+
+  const current = cachedBodySegments(defender);
   const previous = Array.isArray(defender.prevBodySegments) && defender.prevBodySegments.length
     ? defender.prevBodySegments
-    : bodySegments(defender, 1);
+    : current;
 
   if (current.length < 4) return Infinity;
 
@@ -5139,7 +5225,7 @@ function sweptHeadAgainstBody(attacker, defender) {
 ========================================================= */
 
 function scatterDeathFood(room, snake) {
-  const body = bodySegments(snake, 0);
+  const body = cachedBodySegments(snake);
 
   for (let i = 1; i < body.length; i += 2) {
     if (room.foods.size >= FOOD_HARD_LIMIT) break;
@@ -5245,7 +5331,12 @@ function killSnake(room, snake, reason, killer = null) {
 ========================================================= */
 
 function moveSnake(snake, dt, turnSpeed = 3.2) {
-  snake.prevBodySegments = bodySegments(snake, 0).map(p => ({ x: p.x, y: p.y }));
+  const before =
+    Array.isArray(snake.bodySegmentsCache) && snake.bodySegmentsCache.length
+      ? snake.bodySegmentsCache
+      : bodySegments(snake, 0).map(p => ({ x:p.x, y:p.y }));
+
+  snake.prevBodySegments = before;
 
   const difference = Math.atan2(
     Math.sin(snake.targetAngle - snake.angle),
@@ -5266,6 +5357,12 @@ function moveSnake(snake, dt, turnSpeed = 3.2) {
   snake.x += Math.cos(snake.angle) * speed * dt;
   snake.y += Math.sin(snake.angle) * speed * dt;
   updateTrail(snake);
+
+  /*
+    O corpo novo é calculado UMA vez.
+    Colisão e transmissão reutilizam este mesmo array.
+  */
+  refreshBodyCache(snake);
 }
 
 /* =========================================================
@@ -5344,7 +5441,11 @@ function eatFood(room, snake) {
   let eaten = 0;
 
   for (const [id, food] of room.foods) {
-    if (Math.hypot(snake.x - food.x, snake.y - food.y) < HEAD_RADIUS + food.r + 4) {
+    const dx = snake.x - food.x;
+    const dy = snake.y - food.y;
+    const reach = HEAD_RADIUS + food.r + 4;
+
+    if ((dx * dx + dy * dy) < (reach * reach)) {
       room.foods.delete(id);
 
       room.foodRevision =
@@ -5362,12 +5463,14 @@ function eatFood(room, snake) {
    COLLISIONS
 ========================================================= */
 
-function handleCollisions(room) {
+function handleCollisions(room, dt = 1 / TICK_RATE) {
   let alive = activeRoomSnakes(room).filter(s => !s.waitingSolo && s.inArena !== false);
 
   // Boundary
+  const safeRadiusSq = SAFE_RADIUS * SAFE_RADIUS;
+
   for (const snake of alive) {
-    if (Math.hypot(snake.x, snake.y) > SAFE_RADIUS) {
+    if ((snake.x * snake.x + snake.y * snake.y) > safeRadiusSq) {
       killSnake(room, snake, 'Você saiu da área segura.');
     }
   }
@@ -5383,10 +5486,21 @@ function handleCollisions(room) {
       const b = alive[j];
       if (!b.alive) continue;
 
-      const currentDistance = Math.hypot(a.x - b.x, a.y - b.y);
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const maxHead = HEAD_HEAD_DISTANCE + Math.max(a.speed, b.speed) * dt + 8;
+
+      /*
+        Broad phase: não calcula colisão varrida para cobras claramente distantes.
+      */
+      if ((dx * dx + dy * dy) > (maxHead * maxHead)) {
+        continue;
+      }
+
+      const currentDistanceSq = dx * dx + dy * dy;
       const sweptDistance = sweptHeads(a, b);
 
-      if (currentDistance <= HEAD_HEAD_DISTANCE || sweptDistance <= HEAD_HEAD_DISTANCE) {
+      if (currentDistanceSq <= HEAD_HEAD_DISTANCE * HEAD_HEAD_DISTANCE || sweptDistance <= HEAD_HEAD_DISTANCE) {
         killSnake(room, a, `Cabeça com cabeça com ${b.name}.`);
         killSnake(room, b, `Cabeça com cabeça com ${a.name}.`);
       }
@@ -5442,7 +5556,7 @@ function updateRoom(room, dt) {
     }
   }
 
-  handleCollisions(room);
+  handleCollisions(room, dt);
   ensureFood(room);
   room.leaderId = currentLeaderId(room);
 }
@@ -5468,6 +5582,53 @@ function emitWorld(room) {
     activeRoomSnakes(
       room
     );
+
+  /*
+    Cada perfil de rede usa o mesmo snapshot para todos os jogadores
+    daquele perfil. Antes, o servidor reconstruía todos os corpos
+    novamente para CADA receptor.
+  */
+  const playerSnapshotCache =
+    new Map();
+
+  const getPlayersSnapshot =
+    segmentLimit => {
+
+      const key =
+        Number(
+          segmentLimit
+        )
+        ||
+        34;
+
+      if(
+        playerSnapshotCache.has(
+          key
+        )
+      ){
+        return playerSnapshotCache.get(
+          key
+        );
+      }
+
+      const snapshot =
+        snakes.map(
+          snake =>
+            serializePlayer(
+              snake,
+              leaderId,
+              key
+            )
+        );
+
+      playerSnapshotCache.set(
+        key,
+        snapshot
+      );
+
+      return snapshot;
+
+    };
 
   for(
     const receiver
@@ -5576,7 +5737,17 @@ function emitWorld(room) {
 
       };
 
-    socket.emit(
+    /*
+      Snapshot de mundo não deve formar fila.
+      Se a conexão estiver ocupada, descartamos o snapshot velho:
+      o próximo contém o estado mais novo.
+    */
+    const worldChannel =
+      socket.volatile
+      ||
+      socket;
+
+    worldChannel.emit(
       'worldState',
       {
 
@@ -5615,13 +5786,8 @@ function emitWorld(room) {
           serverView,
 
         players:
-          snakes.map(
-            snake =>
-              serializePlayer(
-                snake,
-                leaderId,
-                profile.segmentLimit
-              )
+          getPlayersSnapshot(
+            profile.segmentLimit
           )
 
       }
@@ -5732,8 +5898,25 @@ function emitFoods(
 
     }
 
+    const revision =
+      room.foodRevision
+      ||
+      0;
+
+    if(
+      !force
+      &&
+      receiver.lastFoodRevisionSent ===
+      revision
+    ){
+      continue;
+    }
+
     receiver.lastFoodSentAt =
       now;
+
+    receiver.lastFoodRevisionSent =
+      revision;
 
     receiverSocket.emit(
       'foodState',
@@ -6649,14 +6832,26 @@ io.on('connection', socket => {
 ========================================================= */
 
 const DT = 1 / TICK_RATE;
+let lastPhysicsTickAt = Date.now();
 
 setInterval(() => {
+  const now = Date.now();
+  const elapsed = Math.max(
+    1 / 120,
+    Math.min(
+      0.05,
+      (now - lastPhysicsTickAt) / 1000
+    )
+  );
+
+  lastPhysicsTickAt = now;
+
   for (const room of publicRooms.values()) {
-    if (room.players.size > 0) updateRoom(room, DT);
+    if (room.players.size > 0) updateRoom(room, elapsed);
   }
 
   for (const room of privateRooms.values()) {
-    if (room.started) updateRoom(room, DT);
+    if (room.started) updateRoom(room, elapsed);
   }
 }, 1000 / TICK_RATE);
 
