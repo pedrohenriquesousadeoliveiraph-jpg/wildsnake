@@ -9869,9 +9869,343 @@ body.mobile-mode .skin-grid{
 }
 </style>
 
+
+<style id="wildsnakeWebPcV1333CSS">
+/* =========================================================
+   WILDSNAKE WEB PC v13.33
+   WEB = SOMENTE COMPUTADOR
+========================================================= */
+
+.platform-box{
+    display:none!important;
+}
+
+/* ---------- MENU / BOTÕES ---------- */
+.menu-center{
+    width:min(680px,94vw);
+}
+
+.main-play{
+    position:relative;
+    overflow:hidden;
+    height:64px;
+    border:1px solid rgba(142,255,214,.32);
+    border-radius:20px;
+    background:
+        radial-gradient(circle at 50% -30%,rgba(255,255,255,.46),transparent 52%),
+        linear-gradient(180deg,#65f2bd 0%,#31dc9a 56%,#19b97d 100%);
+    box-shadow:
+        0 7px 0 #08734f,
+        0 18px 46px rgba(53,230,155,.23),
+        inset 0 1px 0 rgba(255,255,255,.46);
+    color:#02130d;
+    font-size:18px;
+    letter-spacing:.35px;
+    transition:
+        transform .16s ease,
+        filter .16s ease,
+        box-shadow .16s ease;
+}
+
+.main-play::before{
+    content:"";
+    position:absolute;
+    top:-50%;
+    left:-28%;
+    width:24%;
+    height:200%;
+    transform:rotate(18deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);
+    animation:wildPlaySweep 3.6s ease-in-out infinite;
+}
+
+@keyframes wildPlaySweep{
+    0%,58%{left:-32%;opacity:0}
+    64%{opacity:.8}
+    82%{left:112%;opacity:0}
+    100%{left:112%;opacity:0}
+}
+
+.main-play:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.06);
+    box-shadow:
+        0 8px 0 #08734f,
+        0 23px 58px rgba(53,230,155,.31),
+        inset 0 1px 0 rgba(255,255,255,.55);
+}
+
+.main-play:active{
+    transform:translateY(4px);
+    box-shadow:
+        0 3px 0 #08734f,
+        0 10px 30px rgba(53,230,155,.18);
+}
+
+.menu-buttons{
+    gap:9px;
+}
+
+.menu-button,
+.bot-play,
+.friend-play{
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.10);
+    background:
+        linear-gradient(180deg,rgba(18,30,37,.94),rgba(6,13,18,.96));
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.045),
+        0 10px 24px rgba(0,0,0,.18);
+    color:#dce7eb;
+    font-weight:900;
+    transition:
+        transform .17s ease,
+        border-color .17s ease,
+        background .17s ease,
+        box-shadow .17s ease,
+        color .17s ease;
+}
+
+.menu-button:hover,
+.bot-play:hover,
+.friend-play:hover{
+    transform:translateY(-2px);
+    border-color:rgba(105,255,188,.27);
+    background:
+        linear-gradient(180deg,rgba(20,40,42,.96),rgba(7,19,20,.97));
+    color:#f1fff9;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        0 15px 34px rgba(0,0,0,.25),
+        0 0 25px rgba(53,230,155,.055);
+}
+
+.menu-button:active,
+.bot-play:active,
+.friend-play:active{
+    transform:translateY(0) scale(.985);
+}
+
+.shop-button{
+    border-color:rgba(255,218,91,.24);
+    color:#ffe27b;
+    background:
+        linear-gradient(180deg,rgba(61,50,12,.36),rgba(19,17,6,.78));
+}
+
+.shop-button:hover{
+    border-color:rgba(255,218,91,.46);
+    background:
+        linear-gradient(180deg,rgba(75,61,12,.48),rgba(25,20,5,.86));
+    box-shadow:0 0 28px rgba(255,211,90,.07);
+}
+
+.bot-play{
+    border-color:rgba(69,176,255,.25);
+    color:#b8e2ff;
+    background:
+        linear-gradient(180deg,rgba(20,54,75,.40),rgba(7,22,31,.84));
+}
+
+.bot-play:hover{
+    border-color:rgba(74,185,255,.48);
+    box-shadow:0 0 30px rgba(56,168,255,.08);
+}
+
+.friend-play{
+    border-color:rgba(177,123,255,.27);
+    color:#dbc6ff;
+    background:
+        linear-gradient(180deg,rgba(52,34,78,.46),rgba(19,13,31,.86));
+}
+
+.friend-play:hover{
+    border-color:rgba(184,135,255,.52);
+    box-shadow:0 0 30px rgba(168,121,255,.09);
+}
+
+.menu-status-row{
+    margin-top:13px;
+}
+
+.status-chip{
+    border-color:rgba(255,255,255,.075);
+    background:linear-gradient(180deg,rgba(9,17,21,.88),rgba(4,10,13,.88));
+}
+
+/* ---------- AVISO MOBILE WEB ---------- */
+#wildWebMobileBlocker{
+    position:fixed;
+    inset:0;
+    z-index:2147483000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:
+        radial-gradient(circle at 50% 28%,rgba(53,230,155,.12),transparent 34%),
+        radial-gradient(circle at 76% 74%,rgba(89,111,255,.10),transparent 30%),
+        linear-gradient(180deg,#061014,#010407 72%);
+    color:#fff;
+}
+
+html.wild-web-mobile #wildWebMobileBlocker{
+    display:flex;
+}
+
+html.wild-web-mobile body > *:not(#wildWebMobileBlocker):not(script){
+    visibility:hidden!important;
+}
+
+html.wild-web-mobile #wildWebMobileBlocker{
+    visibility:visible!important;
+}
+
+.wild-web-mobile-card{
+    width:min(440px,94vw);
+    padding:32px 24px 27px;
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:28px;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(53,230,155,.09),transparent 38%),
+        linear-gradient(150deg,rgba(13,26,31,.97),rgba(4,10,14,.99));
+    box-shadow:0 35px 110px rgba(0,0,0,.66);
+    text-align:center;
+}
+
+.wild-web-mobile-logo{
+    width:82px;
+    height:82px;
+    margin:0 auto 17px;
+    display:grid;
+    place-items:center;
+    border-radius:24px;
+    color:#04120d;
+    font-size:44px;
+    font-weight:1000;
+    background:linear-gradient(135deg,#76ffb0,#38dcff);
+    box-shadow:0 0 48px rgba(53,230,155,.20);
+}
+
+.wild-web-mobile-kicker{
+    color:#72f3b7;
+    font-size:8px;
+    font-weight:1000;
+    letter-spacing:2.4px;
+}
+
+.wild-web-mobile-card h1{
+    margin:9px 0 0;
+    font-size:30px;
+    line-height:1.02;
+    letter-spacing:-1px;
+}
+
+.wild-web-mobile-card p{
+    margin:13px auto 0;
+    max-width:350px;
+    color:#8fa1a9;
+    font-size:11px;
+    line-height:1.6;
+}
+
+#wildWebAppLink{
+    width:100%;
+    min-height:48px;
+    margin-top:21px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+    text-decoration:none;
+    color:#03110c;
+    font-size:10px;
+    font-weight:1000;
+    letter-spacing:.8px;
+    background:linear-gradient(135deg,#6ff2b7,#3edcff);
+}
+
+#wildWebAppLink[data-ready="false"]{
+    opacity:.55;
+    cursor:default;
+}
+
+#wildWebAppStatus{
+    display:block;
+    margin-top:9px;
+    color:#607179;
+    font-size:7px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+/* Ajuda de teclado dentro do game, sem poluir a interface */
+.wild-wasd-live{
+    position:fixed;
+    z-index:22;
+    left:50%;
+    bottom:14px;
+    transform:translateX(-50%);
+    padding:6px 10px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;
+    background:rgba(3,9,12,.68);
+    backdrop-filter:blur(10px);
+    color:rgba(218,231,235,.55);
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:.7px;
+    pointer-events:none;
+}
+</style>
+
+
+<script id="wildsnakeWebPcOnlyGuard">
+(function(){
+    function isMobileOrTablet(){
+        try{
+            if(navigator.userAgentData?.mobile === true) return true;
+        }catch{}
+
+        const ua=String(navigator.userAgent||"");
+        if(/Android|iPhone|iPod|IEMobile|Windows Phone|Opera Mini|Mobile/i.test(ua)){
+            return true;
+        }
+
+        if(navigator.platform==="MacIntel" && Number(navigator.maxTouchPoints||0)>1){
+            return true;
+        }
+
+        return false;
+    }
+
+    window.WILDSNAKE_WEB_MOBILE_BLOCKED=isMobileOrTablet();
+
+    if(window.WILDSNAKE_WEB_MOBILE_BLOCKED){
+        document.documentElement.classList.add("wild-web-mobile");
+    }
+})();
+</script>
+
 </head>
 
 <body>
+
+<div id="wildWebMobileBlocker" role="dialog" aria-modal="true">
+    <div class="wild-web-mobile-card">
+        <div class="wild-web-mobile-logo">W</div>
+        <div class="wild-web-mobile-kicker">WILDSNAKE WEB</div>
+        <h1>Jogue no computador</h1>
+        <p>
+            A versão web do WildSnake funciona somente no PC.
+            Para jogar no celular, use o aplicativo WildSnake.
+        </p>
+        <a id="wildWebAppLink" href="#" data-ready="false">INSTALAR O APP</a>
+        <span id="wildWebAppStatus">LINK DO APLICATIVO EM BREVE</span>
+    </div>
+</div>
+
 
 <!-- ======================================================
      WILDSNAKE V13 - ACESSO / LOGIN
@@ -10375,26 +10709,7 @@ body.mobile-mode .skin-grid{
     >
         👥 JOGAR COM AMIGOS
     </button>
-
-    <div class="platform-box">
-
-        <button
-            class="platform active"
-            data-platform="pc"
-        >
-            🖥️ PC
-        </button>
-
-        <button
-            class="platform"
-            data-platform="mobile"
-        >
-            📱 MOBILE
-        </button>
-
-    </div>
-
-    <div class="menu-status-row">
+<div class="menu-status-row">
 
         <div
             class="status-chip"
@@ -13173,16 +13488,86 @@ let measuredFrameCount = 0;
 let measuredFrameStart = performance.now();
 let measuredFPS = 0;
 
-let platform =
-    localStorage.getItem("wildsnakePlatform")
-    ||
-    (
-        matchMedia("(pointer:coarse)").matches
-        ?
-        "mobile"
-        :
-        "pc"
+let platform = "pc";
+
+
+/* =========================================================
+   WEB PC v13.33 - CONTROLE WASD / SETAS
+========================================================= */
+const keyboardDrive = {
+    up:false,
+    down:false,
+    left:false,
+    right:false
+};
+
+function wildIsTypingTarget(target){
+    if(!target) return false;
+    const tag=String(target.tagName||"").toLowerCase();
+    return (
+        tag==="input"
+        || tag==="textarea"
+        || tag==="select"
+        || target.isContentEditable===true
     );
+}
+
+function wildKeyboardAngle(){
+    const x=
+        (keyboardDrive.right ? 1 : 0)
+        -
+        (keyboardDrive.left ? 1 : 0);
+
+    const y=
+        (keyboardDrive.down ? 1 : 0)
+        -
+        (keyboardDrive.up ? 1 : 0);
+
+    if(x===0 && y===0){
+        return null;
+    }
+
+    return Math.atan2(y,x);
+}
+
+function wildSetDriveKey(code,value){
+    switch(code){
+        case "KeyW":
+        case "ArrowUp":
+            keyboardDrive.up=value;
+            return true;
+
+        case "KeyS":
+        case "ArrowDown":
+            keyboardDrive.down=value;
+            return true;
+
+        case "KeyA":
+        case "ArrowLeft":
+            keyboardDrive.left=value;
+            return true;
+
+        case "KeyD":
+        case "ArrowRight":
+            keyboardDrive.right=value;
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+function wildClearDriveKeys(){
+    keyboardDrive.up=false;
+    keyboardDrive.down=false;
+    keyboardDrive.left=false;
+    keyboardDrive.right=false;
+}
+
+
+try{
+    localStorage.setItem("wildsnakePlatform","pc");
+}catch{}
 
 let gameMode =
     "bots";
@@ -13229,7 +13614,7 @@ let onlineRemoteSnakes =
 let spectatingOnline = false;
 let spectatorTargetId = null;
 let hardwareProfile = null;
-let onlineInputIntervalMs = 65;
+let onlineInputIntervalMs = 40;
 
 let gameRunning =
     false;
@@ -23927,28 +24312,44 @@ function getDesiredOnlineAngle(){
     }
     else{
 
-        const dx =
-            mouse.x
-            -
-            innerWidth/2;
-
-        const dy =
-            mouse.y
-            -
-            innerHeight/2;
+        const keyboardAngle =
+            wildKeyboardAngle();
 
         if(
-            Math.hypot(
-                dx,
-                dy
-            )>8
+            keyboardAngle !==
+            null
         ){
 
             target =
-                Math.atan2(
-                    dy,
-                    dx
-                );
+                keyboardAngle;
+
+        }
+        else{
+
+            const dx =
+                mouse.x
+                -
+                innerWidth/2;
+
+            const dy =
+                mouse.y
+                -
+                innerHeight/2;
+
+            if(
+                Math.hypot(
+                    dx,
+                    dy
+                )>8
+            ){
+
+                target =
+                    Math.atan2(
+                        dy,
+                        dx
+                    );
+
+            }
 
         }
 
@@ -24235,7 +24636,16 @@ function updateOnlineGame(
         now-lastOnlineInputSend>=onlineInputIntervalMs
     ){
 
-        socket.emit(
+        /*
+           Estado de direção é descartável: se a rede estiver congestionada,
+           não enfileira comandos antigos. O próximo pacote já leva o estado atual.
+        */
+        const inputChannel =
+            socket.volatile
+            ||
+            socket;
+
+        inputChannel.emit(
             "input",
             {
                 angle:
@@ -27085,30 +27495,46 @@ function updatePlayerControl(dt){
         platform==="pc"
     ){
 
-        const dx =
-            mouse.x
-            -
-            innerWidth/2;
-
-        const dy =
-            mouse.y
-            -
-            innerHeight/2;
+        const keyboardAngle =
+            wildKeyboardAngle();
 
         if(
-            Math.hypot(
-                dx,
-                dy
-            )
-            >
-            10
+            keyboardAngle !==
+            null
         ){
 
             target =
-                Math.atan2(
-                    dy,
-                    dx
-                );
+                keyboardAngle;
+
+        }
+        else{
+
+            const dx =
+                mouse.x
+                -
+                innerWidth/2;
+
+            const dy =
+                mouse.y
+                -
+                innerHeight/2;
+
+            if(
+                Math.hypot(
+                    dx,
+                    dy
+                )
+                >
+                10
+            ){
+
+                target =
+                    Math.atan2(
+                        dy,
+                        dx
+                    );
+
+            }
 
         }
 
@@ -29299,16 +29725,47 @@ addEventListener(
     "keydown",
     event=>{
 
+        if(
+            wildIsTypingTarget(
+                event.target
+            )
+        ){
+            return;
+        }
+
         ensureAudio();
+
+        if(
+            wildSetDriveKey(
+                event.code,
+                true
+            )
+        ){
+
+            /*
+               Durante a partida, WASD e setas pertencem ao jogo.
+               Zera o relógio para o próximo frame mandar a direção imediatamente.
+            */
+            if(gameRunning){
+                event.preventDefault();
+                lastOnlineInputSend = 0;
+            }
+
+            return;
+        }
 
         if(
             event.code==="Space"
         ){
 
-            event.preventDefault();
+            if(gameRunning){
+                event.preventDefault();
+            }
 
             boosting =
                 true;
+
+            lastOnlineInputSend = 0;
 
         }
 
@@ -29320,11 +29777,36 @@ addEventListener(
     event=>{
 
         if(
+            wildIsTypingTarget(
+                event.target
+            )
+        ){
+            return;
+        }
+
+        if(
+            wildSetDriveKey(
+                event.code,
+                false
+            )
+        ){
+
+            if(gameRunning){
+                event.preventDefault();
+                lastOnlineInputSend = 0;
+            }
+
+            return;
+        }
+
+        if(
             event.code==="Space"
         ){
 
             boosting =
                 false;
+
+            lastOnlineInputSend = 0;
 
         }
 
@@ -29377,6 +29859,7 @@ addEventListener(
     "blur",
     ()=>{
         boosting = false;
+        wildClearDriveKeys();
     }
 );
 
@@ -40107,6 +40590,62 @@ document.getElementById("toggleReadyButton")?.addEventListener(
         </button>
     </div>
 </div>
+
+
+<script id="wildsnakeWebPcV1333Runtime">
+(function(){
+    const APP_URL = ""; // Futuro: URL da Play Store.
+
+    function configureMobileBlock(){
+        const link=document.getElementById("wildWebAppLink");
+        const status=document.getElementById("wildWebAppStatus");
+
+        if(!link) return;
+
+        if(APP_URL){
+            link.href=APP_URL;
+            link.target="_blank";
+            link.rel="noopener noreferrer";
+            link.dataset.ready="true";
+            if(status) status.textContent="ABRIR PÁGINA DO APLICATIVO";
+        }else{
+            link.href="#";
+            link.dataset.ready="false";
+            link.addEventListener("click",event=>{
+                event.preventDefault();
+                if(status){
+                    status.textContent="O APLICATIVO SERÁ LIBERADO EM BREVE";
+                }
+            });
+        }
+    }
+
+    function forceWebPc(){
+        try{
+            localStorage.setItem("wildsnakePlatform","pc");
+            localStorage.setItem("wildsnake_control_mode","pc");
+        }catch{}
+
+        try{
+            if(typeof applyPlatformMode==="function"){
+                applyPlatformMode("pc");
+            }
+        }catch(error){
+            console.debug("WildSnake PC mode:",error);
+        }
+
+        document.querySelectorAll(".platform-box").forEach(el=>el.remove());
+    }
+
+    document.addEventListener("DOMContentLoaded",()=>{
+        configureMobileBlock();
+
+        if(!window.WILDSNAKE_WEB_MOBILE_BLOCKED){
+            forceWebPc();
+        }
+    },{once:true});
+})();
+</script>
 
 </body>
 </html>
